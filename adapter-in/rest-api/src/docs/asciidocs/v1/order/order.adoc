@@ -1,0 +1,76 @@
+[[order-search]]
+=== 상품주문 목록 조회
+
+`order:read` 권한
+
+==== HTTP Request
+include::{snippets}/order/search/http-request.adoc[]
+
+==== Query Parameters
+include::{snippets}/order/search/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/order/search/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/order/search/response-fields.adoc[]
+
+
+[[order-detail]]
+=== 상품주문 상세 조회
+
+`order:read` 권한
+
+==== HTTP Request
+include::{snippets}/order/detail/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/order/detail/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/order/detail/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/order/detail/response-fields.adoc[]
+
+
+[[order-claim-histories]]
+=== 주문 클레임 이력 조회
+
+`order:read` 권한
+
+==== HTTP Request
+include::{snippets}/order/claim-histories/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/order/claim-histories/path-parameters.adoc[]
+
+==== Query Parameters
+include::{snippets}/order/claim-histories/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/order/claim-histories/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/order/claim-histories/response-fields.adoc[]
+
+
+[[order-add-memo]]
+=== 주문 수기 메모 등록
+
+`order:write` 권한
+
+==== HTTP Request
+include::{snippets}/order/add-memo/http-request.adoc[]
+
+==== Path Parameters
+include::{snippets}/order/add-memo/path-parameters.adoc[]
+
+==== Request Fields
+include::{snippets}/order/add-memo/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/order/add-memo/http-response.adoc[]
+
+==== Response Fields
+include::{snippets}/order/add-memo/response-fields.adoc[]

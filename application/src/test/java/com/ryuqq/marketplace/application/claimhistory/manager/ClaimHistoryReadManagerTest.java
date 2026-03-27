@@ -7,7 +7,10 @@ import static org.mockito.BDDMockito.then;
 import com.ryuqq.marketplace.application.claimhistory.port.out.query.ClaimHistoryQueryPort;
 import com.ryuqq.marketplace.domain.claimhistory.ClaimHistoryFixtures;
 import com.ryuqq.marketplace.domain.claimhistory.aggregate.ClaimHistory;
+import com.ryuqq.marketplace.domain.claimhistory.query.ClaimHistoryPageCriteria;
+import com.ryuqq.marketplace.domain.claimhistory.query.ClaimHistorySortKey;
 import com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType;
+import com.ryuqq.marketplace.domain.common.vo.QueryContext;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -151,6 +154,153 @@ class ClaimHistoryReadManagerTest {
             // then
             assertThat(result).isEmpty();
             then(queryPort).should().findByClaimTypeAndClaimIds(claimType, emptyClaimIds);
+        }
+    }
+
+    @Nested
+    @DisplayName("findByOrderItemId() - 주문 아이템 ID로 이력 조회")
+    class FindByOrderItemIdTest {
+
+        @Test
+        @DisplayName("주문 아이템 ID로 해당 이력 목록을 반환한다")
+        void findByOrderItemId_ValidOrderItemId_ReturnsHistories() {
+            // given
+            String orderItemId = ClaimHistoryFixtures.DEFAULT_ORDER_ITEM_ID;
+            List<ClaimHistory> expected =
+                    List.of(
+                            ClaimHistoryFixtures.cancelStatusChangeHistory(),
+                            ClaimHistoryFixtures.refundStatusChangeHistory());
+
+            given(queryPort.findByOrderItemId(orderItemId)).willReturn(expected);
+
+            // when
+            List<ClaimHistory> result = sut.findByOrderItemId(orderItemId);
+
+            // then
+            assertThat(result).isEqualTo(expected);
+            assertThat(result).hasSize(2);
+            then(queryPort).should().findByOrderItemId(orderItemId);
+        }
+
+        @Test
+        @DisplayName("이력이 없는 주문 아이템 조회 시 빈 목록을 반환한다")
+        void findByOrderItemId_NoHistories_ReturnsEmptyList() {
+            // given
+            String orderItemId = "order-item-999";
+
+            given(queryPort.findByOrderItemId(orderItemId)).willReturn(List.of());
+
+            // when
+            List<ClaimHistory> result = sut.findByOrderItemId(orderItemId);
+
+            // then
+            assertThat(result).isEmpty();
+            then(queryPort).should().findByOrderItemId(orderItemId);
+        }
+    }
+
+    @Nested
+    @DisplayName("findByCriteria() - 페이지 조건으로 이력 조회")
+    class FindByCriteriaTest {
+
+        @Test
+        @DisplayName("조회 조건으로 클레임 이력 목록을 반환한다")
+        void findByCriteria_ValidCriteria_ReturnsHistories() {
+            // given
+            ClaimHistoryPageCriteria criteria =
+                    ClaimHistoryPageCriteria.defaultOf(ClaimHistoryFixtures.DEFAULT_ORDER_ITEM_ID);
+            List<ClaimHistory> expected =
+                    List.of(
+                            ClaimHistoryFixtures.cancelStatusChangeHistory(),
+                            ClaimHistoryFixtures.manualClaimHistory());
+
+            given(queryPort.findByCriteria(criteria)).willReturn(expected);
+
+            // when
+            List<ClaimHistory> result = sut.findByCriteria(criteria);
+
+            // then
+            assertThat(result).isEqualTo(expected);
+            assertThat(result).hasSize(2);
+            then(queryPort).should().findByCriteria(criteria);
+        }
+
+        @Test
+        @DisplayName("조회 결과가 없으면 빈 목록을 반환한다")
+        void findByCriteria_NoResults_ReturnsEmptyList() {
+            // given
+            ClaimHistoryPageCriteria criteria =
+                    ClaimHistoryPageCriteria.defaultOf("order-item-999");
+
+            given(queryPort.findByCriteria(criteria)).willReturn(List.of());
+
+            // when
+            List<ClaimHistory> result = sut.findByCriteria(criteria);
+
+            // then
+            assertThat(result).isEmpty();
+            then(queryPort).should().findByCriteria(criteria);
+        }
+
+        @Test
+        @DisplayName("클레임 타입 필터가 있는 조건으로 이력을 조회한다")
+        void findByCriteria_WithClaimTypeFilter_ReturnsFilteredHistories() {
+            // given
+            ClaimHistoryPageCriteria criteria =
+                    ClaimHistoryPageCriteria.of(
+                            ClaimHistoryFixtures.DEFAULT_ORDER_ITEM_ID,
+                            ClaimType.CANCEL,
+                            QueryContext.defaultOf(ClaimHistorySortKey.defaultKey()));
+            List<ClaimHistory> expected = List.of(ClaimHistoryFixtures.cancelStatusChangeHistory());
+
+            given(queryPort.findByCriteria(criteria)).willReturn(expected);
+
+            // when
+            List<ClaimHistory> result = sut.findByCriteria(criteria);
+
+            // then
+            assertThat(result).hasSize(1);
+            then(queryPort).should().findByCriteria(criteria);
+        }
+    }
+
+    @Nested
+    @DisplayName("countByCriteria() - 페이지 조건으로 이력 수 조회")
+    class CountByCriteriaTest {
+
+        @Test
+        @DisplayName("조회 조건으로 클레임 이력 수를 반환한다")
+        void countByCriteria_ValidCriteria_ReturnsCount() {
+            // given
+            ClaimHistoryPageCriteria criteria =
+                    ClaimHistoryPageCriteria.defaultOf(ClaimHistoryFixtures.DEFAULT_ORDER_ITEM_ID);
+            long expected = 5L;
+
+            given(queryPort.countByCriteria(criteria)).willReturn(expected);
+
+            // when
+            long result = sut.countByCriteria(criteria);
+
+            // then
+            assertThat(result).isEqualTo(expected);
+            then(queryPort).should().countByCriteria(criteria);
+        }
+
+        @Test
+        @DisplayName("이력이 없으면 0을 반환한다")
+        void countByCriteria_NoResults_ReturnsZero() {
+            // given
+            ClaimHistoryPageCriteria criteria =
+                    ClaimHistoryPageCriteria.defaultOf("order-item-999");
+
+            given(queryPort.countByCriteria(criteria)).willReturn(0L);
+
+            // when
+            long result = sut.countByCriteria(criteria);
+
+            // then
+            assertThat(result).isZero();
+            then(queryPort).should().countByCriteria(criteria);
         }
     }
 }

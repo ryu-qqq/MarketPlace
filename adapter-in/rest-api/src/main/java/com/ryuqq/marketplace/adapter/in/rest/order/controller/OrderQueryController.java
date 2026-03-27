@@ -3,16 +3,21 @@ package com.ryuqq.marketplace.adapter.in.rest.order.controller;
 import com.ryuqq.authhub.sdk.annotation.RequirePermission;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.ApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimHistoryApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.OrderAdminEndpoints;
+import com.ryuqq.marketplace.adapter.in.rest.order.dto.query.SearchOrderClaimHistoriesApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.query.SearchOrdersApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderDetailApiResponseV4;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponseV4;
 import com.ryuqq.marketplace.adapter.in.rest.order.mapper.OrderQueryApiMapper;
+import com.ryuqq.marketplace.application.claimhistory.dto.response.ClaimHistoryPageResult;
+import com.ryuqq.marketplace.application.claimhistory.port.in.query.GetOrderClaimHistoriesUseCase;
 import com.ryuqq.marketplace.application.order.dto.query.OrderSearchParams;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderDetailResult;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderPageResult;
 import com.ryuqq.marketplace.application.order.port.in.query.GetOrderDetailUseCase;
 import com.ryuqq.marketplace.application.order.port.in.query.GetProductOrderListUseCase;
+import com.ryuqq.marketplace.domain.claimhistory.query.ClaimHistoryPageCriteria;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -32,14 +37,17 @@ public class OrderQueryController {
 
     private final GetProductOrderListUseCase getProductOrderListUseCase;
     private final GetOrderDetailUseCase getOrderDetailUseCase;
+    private final GetOrderClaimHistoriesUseCase getOrderClaimHistoriesUseCase;
     private final OrderQueryApiMapper mapper;
 
     public OrderQueryController(
             GetProductOrderListUseCase getProductOrderListUseCase,
             GetOrderDetailUseCase getOrderDetailUseCase,
+            GetOrderClaimHistoriesUseCase getOrderClaimHistoriesUseCase,
             OrderQueryApiMapper mapper) {
         this.getProductOrderListUseCase = getProductOrderListUseCase;
         this.getOrderDetailUseCase = getOrderDetailUseCase;
+        this.getOrderClaimHistoriesUseCase = getOrderClaimHistoriesUseCase;
         this.mapper = mapper;
     }
 
@@ -68,6 +76,24 @@ public class OrderQueryController {
 
         ProductOrderDetailResult result = getOrderDetailUseCase.execute(orderItemId);
         OrderDetailApiResponseV4 response = mapper.toDetailResponseV4(result);
+
+        return ResponseEntity.ok(ApiResponse.of(response));
+    }
+
+    @Operation(
+            summary = "주문 클레임 이력 조회",
+            description = "주문 건에 대한 클레임 이력(메모 포함)을 페이지 조회합니다. claimType 필터 가능.")
+    @PreAuthorize("@access.hasPermission('order:read')")
+    @RequirePermission(value = "order:read", description = "주문 클레임 이력 조회")
+    @GetMapping(OrderAdminEndpoints.HISTORIES)
+    public ResponseEntity<ApiResponse<PageApiResponse<ClaimHistoryApiResponse>>> getClaimHistories(
+            @PathVariable(OrderAdminEndpoints.PATH_ORDER_ITEM_ID) String orderItemId,
+            @Valid @ParameterObject SearchOrderClaimHistoriesApiRequest request) {
+
+        ClaimHistoryPageCriteria criteria = mapper.toClaimHistoryCriteria(orderItemId, request);
+        ClaimHistoryPageResult result = getOrderClaimHistoriesUseCase.execute(criteria);
+        PageApiResponse<ClaimHistoryApiResponse> response =
+                mapper.toClaimHistoryPageResponse(result);
 
         return ResponseEntity.ok(ApiResponse.of(response));
     }

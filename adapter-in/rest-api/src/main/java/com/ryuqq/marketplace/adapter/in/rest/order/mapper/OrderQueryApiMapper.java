@@ -1,7 +1,9 @@
 package com.ryuqq.marketplace.adapter.in.rest.order.mapper;
 
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimHistoryApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.util.DateTimeFormatUtils;
+import com.ryuqq.marketplace.adapter.in.rest.order.dto.query.SearchOrderClaimHistoriesApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.query.SearchOrdersApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderDetailApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderDetailApiResponse.CancelInfoApiResponse;
@@ -19,6 +21,8 @@ import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResp
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponse.ProductOrderApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponse.ReceiverApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponseV4;
+import com.ryuqq.marketplace.application.claimhistory.dto.response.ClaimHistoryPageResult;
+import com.ryuqq.marketplace.application.claimhistory.dto.response.ClaimHistoryResult;
 import com.ryuqq.marketplace.application.common.dto.query.CommonSearchParams;
 import com.ryuqq.marketplace.application.order.dto.query.OrderSearchParams;
 import com.ryuqq.marketplace.application.order.dto.response.OrderCancelResult;
@@ -27,6 +31,11 @@ import com.ryuqq.marketplace.application.order.dto.response.OrderHistoryResult;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderDetailResult;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResult;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderPageResult;
+import com.ryuqq.marketplace.domain.claimhistory.query.ClaimHistoryPageCriteria;
+import com.ryuqq.marketplace.domain.claimhistory.query.ClaimHistorySortKey;
+import com.ryuqq.marketplace.domain.common.vo.PageRequest;
+import com.ryuqq.marketplace.domain.common.vo.QueryContext;
+import com.ryuqq.marketplace.domain.common.vo.SortDirection;
 import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
@@ -369,6 +378,44 @@ public class OrderQueryApiMapper {
 
     private String nullToEmpty(String value) {
         return value != null ? value : "";
+    }
+
+    // ==================== 클레임 이력 조회 ====================
+
+    public ClaimHistoryPageCriteria toClaimHistoryCriteria(
+            String orderItemId, SearchOrderClaimHistoriesApiRequest request) {
+        int page = request.page() != null ? request.page() : DEFAULT_PAGE;
+        int size = request.size() != null ? request.size() : DEFAULT_SIZE;
+
+        QueryContext<ClaimHistorySortKey> queryContext =
+                QueryContext.of(
+                        ClaimHistorySortKey.defaultKey(),
+                        SortDirection.DESC,
+                        PageRequest.of(page, size));
+
+        return ClaimHistoryPageCriteria.of(orderItemId, request.claimType(), queryContext);
+    }
+
+    public PageApiResponse<ClaimHistoryApiResponse> toClaimHistoryPageResponse(
+            ClaimHistoryPageResult result) {
+        List<ClaimHistoryApiResponse> responses =
+                result.results().stream().map(this::toClaimHistoryResponse).toList();
+        return PageApiResponse.of(
+                responses,
+                result.pageMeta().page(),
+                result.pageMeta().size(),
+                result.pageMeta().totalElements());
+    }
+
+    private ClaimHistoryApiResponse toClaimHistoryResponse(ClaimHistoryResult history) {
+        return new ClaimHistoryApiResponse(
+                history.historyId(),
+                history.type(),
+                history.title(),
+                history.message(),
+                new ClaimHistoryApiResponse.ActorApiResponse(
+                        history.actorType(), history.actorId(), history.actorName()),
+                formatIso(history.createdAt()));
     }
 
     // ==================== V4 변환 (기본값: 숫자 0, 문자열 "") ====================

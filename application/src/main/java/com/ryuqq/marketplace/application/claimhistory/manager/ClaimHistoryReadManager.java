@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.application.claimhistory.manager;
 
 import com.ryuqq.marketplace.application.claimhistory.port.out.query.ClaimHistoryQueryPort;
 import com.ryuqq.marketplace.domain.claimhistory.aggregate.ClaimHistory;
+import com.ryuqq.marketplace.domain.claimhistory.query.ClaimHistoryPageCriteria;
 import com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType;
 import java.util.List;
 import org.springframework.stereotype.Component;
@@ -30,5 +31,15 @@ public class ClaimHistoryReadManager {
     @Transactional(readOnly = true)
     public List<ClaimHistory> findByOrderItemId(String orderItemId) {
         return queryPort.findByOrderItemId(orderItemId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ClaimHistory> findByCriteria(ClaimHistoryPageCriteria criteria) {
+        return queryPort.findByCriteria(criteria);
+    }
+
+    @Transactional(readOnly = true)
+    public long countByCriteria(ClaimHistoryPageCriteria criteria) {
+        return queryPort.countByCriteria(criteria);
     }
 }

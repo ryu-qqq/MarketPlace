@@ -10,4 +10,5 @@ public final class OrderAdminEndpoints {
     public static final String ORDER_ITEM_ID = "/{orderItemId}";
     public static final String PATH_ORDER_ITEM_ID = "orderItemId";
     public static final String SUMMARY = "/summary";
+    public static final String HISTORIES = "/{orderItemId}/histories";
 }

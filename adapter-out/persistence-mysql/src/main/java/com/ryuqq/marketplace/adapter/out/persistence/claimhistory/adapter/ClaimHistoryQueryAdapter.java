@@ -4,6 +4,7 @@ import com.ryuqq.marketplace.adapter.out.persistence.claimhistory.mapper.ClaimHi
 import com.ryuqq.marketplace.adapter.out.persistence.claimhistory.repository.ClaimHistoryQueryDslRepository;
 import com.ryuqq.marketplace.application.claimhistory.port.out.query.ClaimHistoryQueryPort;
 import com.ryuqq.marketplace.domain.claimhistory.aggregate.ClaimHistory;
+import com.ryuqq.marketplace.domain.claimhistory.query.ClaimHistoryPageCriteria;
 import com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType;
 import java.util.List;
 import org.springframework.stereotype.Component;
@@ -44,5 +45,17 @@ public class ClaimHistoryQueryAdapter implements ClaimHistoryQueryPort {
         return claimHistoryRepository.findByOrderItemId(orderItemId).stream()
                 .map(mapper::toDomain)
                 .toList();
+    }
+
+    @Override
+    public List<ClaimHistory> findByCriteria(ClaimHistoryPageCriteria criteria) {
+        return claimHistoryRepository.findByCriteria(criteria).stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public long countByCriteria(ClaimHistoryPageCriteria criteria) {
+        return claimHistoryRepository.countByCriteria(criteria);
     }
 }

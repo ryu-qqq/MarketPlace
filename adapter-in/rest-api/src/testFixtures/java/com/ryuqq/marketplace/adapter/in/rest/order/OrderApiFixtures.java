@@ -1,6 +1,10 @@
 package com.ryuqq.marketplace.adapter.in.rest.order;
 
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.common.dto.request.AddClaimHistoryMemoApiRequest;
+import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimHistoryApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimHistoryApiResponse.ActorApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.order.dto.query.SearchOrderClaimHistoriesApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.query.SearchOrdersApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderDetailApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderDetailApiResponse.CancelInfoApiResponse;
@@ -17,6 +21,8 @@ import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResp
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponse.ProductOrderApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponse.ReceiverApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponseV4;
+import com.ryuqq.marketplace.application.claimhistory.dto.response.ClaimHistoryPageResult;
+import com.ryuqq.marketplace.application.claimhistory.dto.response.ClaimHistoryResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderCancelResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderClaimResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderHistoryResult;
@@ -513,5 +519,96 @@ public final class OrderApiFixtures {
                 List.of(cancelInfoApiResponse()),
                 List.of(claimInfoApiResponse()),
                 List.of(timeLineApiResponse()));
+    }
+
+    // ===== AddClaimHistoryMemoApiRequest =====
+
+    public static AddClaimHistoryMemoApiRequest addMemoRequest() {
+        return new AddClaimHistoryMemoApiRequest("주문 수기 메모 내용입니다.");
+    }
+
+    // ===== SearchOrderClaimHistoriesApiRequest =====
+
+    public static SearchOrderClaimHistoriesApiRequest searchClaimHistoriesRequest() {
+        return new SearchOrderClaimHistoriesApiRequest(null, 0, 20);
+    }
+
+    public static SearchOrderClaimHistoriesApiRequest searchClaimHistoriesRequest(
+            String claimType, int page, int size) {
+        com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType type =
+                claimType != null
+                        ? com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType.valueOf(claimType)
+                        : null;
+        return new SearchOrderClaimHistoriesApiRequest(type, page, size);
+    }
+
+    // ===== ClaimHistoryResult (Application) =====
+
+    public static final Instant DEFAULT_HISTORY_INSTANT = Instant.parse("2026-01-01T00:00:00Z");
+    public static final String DEFAULT_HISTORY_ID = "HIST-ORDER-001";
+    public static final String DEFAULT_HISTORY_TYPE = "MEMO";
+    public static final String DEFAULT_HISTORY_TITLE = "수기 메모";
+    public static final String DEFAULT_HISTORY_MESSAGE = "주문 수기 메모 내용입니다.";
+    public static final String DEFAULT_ACTOR_TYPE = "SELLER";
+    public static final String DEFAULT_ACTOR_ID = "100";
+    public static final String DEFAULT_ACTOR_NAME = "seller01";
+
+    public static ClaimHistoryResult claimHistoryResult() {
+        return new ClaimHistoryResult(
+                DEFAULT_HISTORY_ID,
+                DEFAULT_HISTORY_TYPE,
+                DEFAULT_HISTORY_TITLE,
+                DEFAULT_HISTORY_MESSAGE,
+                DEFAULT_ACTOR_TYPE,
+                DEFAULT_ACTOR_ID,
+                DEFAULT_ACTOR_NAME,
+                DEFAULT_HISTORY_INSTANT);
+    }
+
+    public static List<ClaimHistoryResult> claimHistoryResults(int count) {
+        return IntStream.rangeClosed(1, count)
+                .mapToObj(
+                        i ->
+                                new ClaimHistoryResult(
+                                        "HIST-ORDER-" + String.format("%03d", i),
+                                        DEFAULT_HISTORY_TYPE,
+                                        DEFAULT_HISTORY_TITLE,
+                                        DEFAULT_HISTORY_MESSAGE,
+                                        DEFAULT_ACTOR_TYPE,
+                                        DEFAULT_ACTOR_ID,
+                                        DEFAULT_ACTOR_NAME,
+                                        DEFAULT_HISTORY_INSTANT))
+                .toList();
+    }
+
+    public static ClaimHistoryPageResult claimHistoryPageResult(int count, int page, int size) {
+        List<ClaimHistoryResult> results = claimHistoryResults(count);
+        PageMeta pageMeta = PageMeta.of(page, size, count);
+        return ClaimHistoryPageResult.of(results, pageMeta);
+    }
+
+    public static ClaimHistoryPageResult emptyClaimHistoryPageResult() {
+        PageMeta pageMeta = PageMeta.of(0, 20, 0);
+        return ClaimHistoryPageResult.of(List.of(), pageMeta);
+    }
+
+    // ===== ClaimHistoryApiResponse =====
+
+    public static ClaimHistoryApiResponse claimHistoryApiResponse() {
+        return new ClaimHistoryApiResponse(
+                DEFAULT_HISTORY_ID,
+                DEFAULT_HISTORY_TYPE,
+                DEFAULT_HISTORY_TITLE,
+                DEFAULT_HISTORY_MESSAGE,
+                new ActorApiResponse(DEFAULT_ACTOR_TYPE, DEFAULT_ACTOR_ID, DEFAULT_ACTOR_NAME),
+                "2026-01-01 09:00:00");
+    }
+
+    public static List<ClaimHistoryApiResponse> claimHistoryApiResponses(int count) {
+        return IntStream.rangeClosed(1, count).mapToObj(i -> claimHistoryApiResponse()).toList();
+    }
+
+    public static PageApiResponse<ClaimHistoryApiResponse> claimHistoryPageApiResponse(int count) {
+        return PageApiResponse.of(claimHistoryApiResponses(count), 0, 20, count);
     }
 }

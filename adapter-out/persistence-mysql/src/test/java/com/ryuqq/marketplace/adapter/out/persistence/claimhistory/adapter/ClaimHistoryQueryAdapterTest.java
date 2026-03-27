@@ -10,6 +10,7 @@ import com.ryuqq.marketplace.adapter.out.persistence.claimhistory.mapper.ClaimHi
 import com.ryuqq.marketplace.adapter.out.persistence.claimhistory.repository.ClaimHistoryQueryDslRepository;
 import com.ryuqq.marketplace.domain.claimhistory.ClaimHistoryFixtures;
 import com.ryuqq.marketplace.domain.claimhistory.aggregate.ClaimHistory;
+import com.ryuqq.marketplace.domain.claimhistory.query.ClaimHistoryPageCriteria;
 import com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -212,6 +213,145 @@ class ClaimHistoryQueryAdapterTest {
 
             // then
             assertThat(result).isEmpty();
+        }
+    }
+
+    // ========================================================================
+    // 3. findByOrderItemId 테스트
+    // ========================================================================
+
+    @Nested
+    @DisplayName("findByOrderItemId 메서드 테스트")
+    class FindByOrderItemIdTest {
+
+        @Test
+        @DisplayName("orderItemId로 이력 목록을 반환합니다")
+        void findByOrderItemId_WithValidOrderItemId_ReturnsDomainList() {
+            // given
+            String orderItemId = "order-item-001";
+
+            ClaimHistoryJpaEntity entity1 =
+                    ClaimHistoryJpaEntityFixtures.cancelStatusChangeEntity("cancel-001");
+            ClaimHistoryJpaEntity entity2 =
+                    ClaimHistoryJpaEntityFixtures.orderMemoEntity(orderItemId);
+
+            ClaimHistory domain1 = ClaimHistoryFixtures.cancelStatusChangeHistory();
+            ClaimHistory domain2 = ClaimHistoryFixtures.orderManualClaimHistory();
+
+            given(claimHistoryRepository.findByOrderItemId(orderItemId))
+                    .willReturn(List.of(entity1, entity2));
+            given(mapper.toDomain(entity1)).willReturn(domain1);
+            given(mapper.toDomain(entity2)).willReturn(domain2);
+
+            // when
+            List<ClaimHistory> result = queryAdapter.findByOrderItemId(orderItemId);
+
+            // then
+            assertThat(result).hasSize(2);
+            then(claimHistoryRepository).should().findByOrderItemId(orderItemId);
+        }
+
+        @Test
+        @DisplayName("이력이 없으면 빈 리스트를 반환합니다")
+        void findByOrderItemId_WithNoResults_ReturnsEmptyList() {
+            // given
+            String orderItemId = "non-existent-order-item";
+
+            given(claimHistoryRepository.findByOrderItemId(orderItemId)).willReturn(List.of());
+
+            // when
+            List<ClaimHistory> result = queryAdapter.findByOrderItemId(orderItemId);
+
+            // then
+            assertThat(result).isEmpty();
+        }
+    }
+
+    // ========================================================================
+    // 4. findByCriteria 테스트
+    // ========================================================================
+
+    @Nested
+    @DisplayName("findByCriteria 메서드 테스트")
+    class FindByCriteriaTest {
+
+        @Test
+        @DisplayName("criteria로 이력 목록을 반환합니다")
+        void findByCriteria_WithValidCriteria_ReturnsDomainList() {
+            // given
+            ClaimHistoryPageCriteria criteria =
+                    ClaimHistoryPageCriteria.defaultOf("order-item-001");
+
+            ClaimHistoryJpaEntity entity = ClaimHistoryJpaEntityFixtures.defaultEntity();
+            ClaimHistory domain = ClaimHistoryFixtures.reconstitutedClaimHistory();
+
+            given(claimHistoryRepository.findByCriteria(criteria)).willReturn(List.of(entity));
+            given(mapper.toDomain(entity)).willReturn(domain);
+
+            // when
+            List<ClaimHistory> result = queryAdapter.findByCriteria(criteria);
+
+            // then
+            assertThat(result).hasSize(1);
+            then(claimHistoryRepository).should().findByCriteria(criteria);
+        }
+
+        @Test
+        @DisplayName("조회 결과가 없으면 빈 리스트를 반환합니다")
+        void findByCriteria_WithNoResults_ReturnsEmptyList() {
+            // given
+            ClaimHistoryPageCriteria criteria =
+                    ClaimHistoryPageCriteria.defaultOf("non-existent-order-item");
+
+            given(claimHistoryRepository.findByCriteria(criteria)).willReturn(List.of());
+
+            // when
+            List<ClaimHistory> result = queryAdapter.findByCriteria(criteria);
+
+            // then
+            assertThat(result).isEmpty();
+        }
+    }
+
+    // ========================================================================
+    // 5. countByCriteria 테스트
+    // ========================================================================
+
+    @Nested
+    @DisplayName("countByCriteria 메서드 테스트")
+    class CountByCriteriaTest {
+
+        @Test
+        @DisplayName("criteria에 해당하는 이력 수를 반환합니다")
+        void countByCriteria_WithValidCriteria_ReturnsCount() {
+            // given
+            ClaimHistoryPageCriteria criteria =
+                    ClaimHistoryPageCriteria.defaultOf("order-item-001");
+
+            given(claimHistoryRepository.countByCriteria(criteria)).willReturn(3L);
+
+            // when
+            long count = queryAdapter.countByCriteria(criteria);
+
+            // then
+            assertThat(count).isEqualTo(3L);
+            then(claimHistoryRepository).should().countByCriteria(criteria);
+        }
+
+        @Test
+        @DisplayName("조건에 맞는 데이터가 없으면 0을 반환합니다")
+        void countByCriteria_WithNoResults_ReturnsZero() {
+            // given
+            ClaimHistoryPageCriteria criteria =
+                    ClaimHistoryPageCriteria.defaultOf("non-existent-order-item");
+
+            given(claimHistoryRepository.countByCriteria(criteria)).willReturn(0L);
+
+            // when
+            long count = queryAdapter.countByCriteria(criteria);
+
+            // then
+            assertThat(count).isZero();
         }
     }
 }
