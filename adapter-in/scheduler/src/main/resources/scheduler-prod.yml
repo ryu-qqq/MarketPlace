@@ -114,13 +114,13 @@ scheduler:
       process-pending:
         # Prod: 활성화
         enabled: true
-        # Prod: 5분마다
-        cron: "0 */5 * * * *"
+        # Prod: 5초마다
+        cron: "*/5 * * * * *"
         timezone: "Asia/Seoul"
         # Prod: 큰 배치
         batch-size: 100
-        # Prod: 안전한 지연
-        delay-seconds: 60
+        # Prod: 지연
+        delay-seconds: 5
 
       recover-timeout:
         # Prod: 활성화

@@ -103,7 +103,9 @@ public class LegacyToInternalUpdateBundleFactory {
                 resolvedContext.categoryId(),
                 resolvedContext.shippingPolicyId(),
                 resolvedContext.refundPolicyId(),
-                OptionType.valueOf(composite.optionType()),
+                com.ryuqq.marketplace.domain.legacy.productgroup.vo.OptionType.valueOf(
+                                composite.optionType())
+                        .toInternalOptionType(),
                 now);
     }
 
