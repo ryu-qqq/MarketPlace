@@ -8,11 +8,11 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
+import com.ryuqq.marketplace.application.categorymapping.manager.CategoryMappingReadManager;
 import com.ryuqq.marketplace.application.outboundproduct.manager.OutboundProductReadManager;
 import com.ryuqq.marketplace.application.outboundsync.OutboundSyncExecutionContextFixtures;
 import com.ryuqq.marketplace.application.outboundsync.dto.vo.OutboundSyncExecutionContext;
 import com.ryuqq.marketplace.application.outboundsync.dto.vo.OutboundSyncExecutionResult;
-import com.ryuqq.marketplace.application.outboundsync.dto.vo.SalesChannelMappingResult;
 import com.ryuqq.marketplace.application.outboundsync.manager.SalesChannelProductClientManager;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeQueryResult;
@@ -47,7 +47,7 @@ class SellicUpdateProductStrategyTest {
 
     @Mock private OutboundProductReadManager outboundProductReadManager;
     @Mock private ProductGroupReadFacade productGroupReadFacade;
-    @Mock private OutboundMappingResolver mappingResolver;
+    @Mock private CategoryMappingReadManager categoryMappingReadManager;
     @Mock private SalesChannelProductClientManager productClientManager;
 
     @Nested
@@ -99,19 +99,14 @@ class SellicUpdateProductStrategyTest {
                     OutboundSyncExecutionContextFixtures.sellicUpdateContext();
             OutboundProduct registeredProduct = OutboundProductFixtures.registeredProduct();
             ProductGroupDetailBundle bundle = defaultDetailBundle();
-            SalesChannelMappingResult mapping =
-                    new SalesChannelMappingResult(
-                            OutboundSyncExecutionContextFixtures.DEFAULT_CATEGORY_ID,
-                            OutboundSyncExecutionContextFixtures.DEFAULT_BRAND_ID,
-                            OutboundSyncExecutionContextFixtures.DEFAULT_EXTERNAL_CATEGORY_CODE,
-                            OutboundSyncExecutionContextFixtures.DEFAULT_EXTERNAL_BRAND_CODE);
 
             given(outboundProductReadManager.getByProductGroupIdAndSalesChannelId(
                             context.productGroupId(), context.outbox().salesChannelIdValue()))
                     .willReturn(registeredProduct);
             given(productGroupReadFacade.getDetailBundle(context.productGroupId()))
                     .willReturn(bundle);
-            given(mappingResolver.resolve(anyLong(), anyLong(), anyLong())).willReturn(mapping);
+            given(categoryMappingReadManager.getSalesChannelCategoryId(anyLong(), anyLong()))
+                    .willReturn(OutboundSyncExecutionContextFixtures.DEFAULT_CATEGORY_ID);
 
             // when
             OutboundSyncExecutionResult result = sut.execute(context);
@@ -204,7 +199,7 @@ class SellicUpdateProductStrategyTest {
                     .willReturn(registeredProduct);
             given(productGroupReadFacade.getDetailBundle(context.productGroupId()))
                     .willReturn(bundle);
-            given(mappingResolver.resolve(anyLong(), anyLong(), anyLong()))
+            given(categoryMappingReadManager.getSalesChannelCategoryId(anyLong(), anyLong()))
                     .willThrow(new CategoryMappingNotFoundException(10L, 300L));
 
             // when
