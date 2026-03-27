@@ -69,6 +69,7 @@ public class ClaimShipment {
      * @param courierCode 택배사 코드
      * @param courierName 택배사 명
      * @param trackingNumber 송장번호
+     * @param feeInfo 배송비 정보 (null이면 무료 배송)
      * @param now 현재 시간
      * @return ClaimShipment (수거중 상태)
      */
@@ -77,21 +78,20 @@ public class ClaimShipment {
             String courierCode,
             String courierName,
             String trackingNumber,
+            ShippingFeeInfo feeInfo,
             Instant now) {
         ClaimShipmentMethod method =
                 ClaimShipmentMethod.of(ShipmentMethodType.COURIER, courierCode, courierName);
-        ClaimShipment shipment =
-                new ClaimShipment(
-                        id,
-                        ClaimShipmentStatus.IN_TRANSIT,
-                        method,
-                        trackingNumber,
-                        ShippingFeeInfo.free(),
-                        null,
-                        null,
-                        now,
-                        null);
-        return shipment;
+        return new ClaimShipment(
+                id,
+                ClaimShipmentStatus.IN_TRANSIT,
+                method,
+                trackingNumber,
+                feeInfo != null ? feeInfo : ShippingFeeInfo.free(),
+                null,
+                null,
+                now,
+                null);
     }
 
     public static ClaimShipment reconstitute(

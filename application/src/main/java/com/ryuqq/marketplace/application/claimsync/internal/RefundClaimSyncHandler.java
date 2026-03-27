@@ -12,6 +12,8 @@ import com.ryuqq.marketplace.application.refund.manager.RefundCommandManager;
 import com.ryuqq.marketplace.application.refund.manager.RefundReadManager;
 import com.ryuqq.marketplace.domain.claim.aggregate.ClaimShipment;
 import com.ryuqq.marketplace.domain.claim.id.ClaimShipmentId;
+import com.ryuqq.marketplace.domain.claim.vo.FeePayer;
+import com.ryuqq.marketplace.domain.claim.vo.ShippingFeeInfo;
 import com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType;
 import com.ryuqq.marketplace.domain.claimsync.vo.ClaimSyncAction;
 import com.ryuqq.marketplace.domain.claimsync.vo.InternalClaimType;
@@ -234,6 +236,7 @@ public class RefundClaimSyncHandler implements ClaimSyncHandler {
                         claim.collectDeliveryCompany(),
                         claim.collectDeliveryCompany(),
                         claim.collectTrackingNumber(),
+                        resolveShippingFeeInfo(claim),
                         now);
         claimShipmentCommandManager.persist(claimShipment);
         refundClaim.attachCollectShipment(claimShipment);
@@ -244,6 +247,22 @@ public class RefundClaimSyncHandler implements ClaimSyncHandler {
                 && !claim.collectDeliveryCompany().isBlank()
                 && claim.collectTrackingNumber() != null
                 && !claim.collectTrackingNumber().isBlank();
+    }
+
+    private ShippingFeeInfo resolveShippingFeeInfo(ExternalClaimPayload claim) {
+        int amount = claim.claimDeliveryFeeAmount() != null ? claim.claimDeliveryFeeAmount() : 0;
+        FeePayer payer = resolveFeePayer(claim.shippingFeeType());
+        return ShippingFeeInfo.of(Money.of(amount), payer, false);
+    }
+
+    private FeePayer resolveFeePayer(String shippingFeeType) {
+        if (shippingFeeType == null) {
+            return FeePayer.SELLER;
+        }
+        return switch (shippingFeeType) {
+            case "CASH_ON_DELIVERY" -> FeePayer.BUYER;
+            default -> FeePayer.SELLER;
+        };
     }
 
     private long completeCollection(RefundClaim refundClaim) {

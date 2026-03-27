@@ -13,6 +13,7 @@ import com.ryuqq.marketplace.application.order.manager.OrderItemReadManager;
 import com.ryuqq.marketplace.domain.claim.aggregate.ClaimShipment;
 import com.ryuqq.marketplace.domain.claim.id.ClaimShipmentId;
 import com.ryuqq.marketplace.domain.claim.vo.FeePayer;
+import com.ryuqq.marketplace.domain.claim.vo.ShippingFeeInfo;
 import com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType;
 import com.ryuqq.marketplace.domain.claimsync.vo.ClaimSyncAction;
 import com.ryuqq.marketplace.domain.claimsync.vo.InternalClaimType;
@@ -188,8 +189,9 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
         ExchangeClaimNumber claimNumber = ExchangeClaimNumber.generate();
         int exchangeQty = resolveQty(claim.requestQuantity());
         ExchangeReason reason = resolveDefaultExchangeReason(claim);
+        String optionName = resolveOptionName(claim);
         ExchangeOption exchangeOption =
-                new ExchangeOption(0L, "UNKNOWN", 0L, 0L, "UNKNOWN", exchangeQty);
+                new ExchangeOption(0L, optionName, 0L, 0L, optionName, exchangeQty);
         AmountAdjustment amountAdjustment =
                 AmountAdjustment.calculate(
                         Money.zero(), Money.zero(), Money.zero(), Money.zero(), FeePayer.BUYER);
@@ -253,6 +255,7 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
                         claim.collectDeliveryCompany(),
                         claim.collectDeliveryCompany(),
                         claim.collectTrackingNumber(),
+                        resolveShippingFeeInfo(claim),
                         now);
         claimShipmentCommandManager.persist(claimShipment);
         exchangeClaim.attachCollectShipment(claimShipment);
@@ -263,6 +266,29 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
                 && !claim.collectDeliveryCompany().isBlank()
                 && claim.collectTrackingNumber() != null
                 && !claim.collectTrackingNumber().isBlank();
+    }
+
+    private ShippingFeeInfo resolveShippingFeeInfo(ExternalClaimPayload claim) {
+        int amount = claim.claimDeliveryFeeAmount() != null ? claim.claimDeliveryFeeAmount() : 0;
+        FeePayer payer = resolveFeePayer(claim.shippingFeeType());
+        return ShippingFeeInfo.of(Money.of(amount), payer, false);
+    }
+
+    private FeePayer resolveFeePayer(String shippingFeeType) {
+        if (shippingFeeType == null) {
+            return FeePayer.SELLER;
+        }
+        return switch (shippingFeeType) {
+            case "CASH_ON_DELIVERY" -> FeePayer.BUYER;
+            default -> FeePayer.SELLER;
+        };
+    }
+
+    private String resolveOptionName(ExternalClaimPayload claim) {
+        if (claim.productOption() != null && !claim.productOption().isBlank()) {
+            return claim.productOption();
+        }
+        return "동일상품";
     }
 
     private long completeCollection(ExchangeClaim exchangeClaim) {
@@ -323,8 +349,9 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
         ExchangeClaimNumber claimNumber = ExchangeClaimNumber.generate();
         int exchangeQty = resolveQty(claim.requestQuantity());
         ExchangeReason reason = resolveDefaultExchangeReason(claim);
+        String optionName = resolveOptionName(claim);
         ExchangeOption exchangeOption =
-                new ExchangeOption(0L, "UNKNOWN", 0L, 0L, "UNKNOWN", exchangeQty);
+                new ExchangeOption(0L, optionName, 0L, 0L, optionName, exchangeQty);
         AmountAdjustment amountAdjustment =
                 AmountAdjustment.calculate(
                         Money.zero(), Money.zero(), Money.zero(), Money.zero(), FeePayer.BUYER);

@@ -26,6 +26,9 @@ import java.time.Instant;
  * @param holdbackReason 보류 유형. null 허용.
  * @param claimRequestDate 클레임 요청일시
  * @param lastChangedDate 마지막 변경일시
+ * @param claimDeliveryFeeAmount 클레임 배송비 금액. null 허용.
+ * @param shippingFeeType 배송비 형태 (FREE/PREPAID/CASH_ON_DELIVERY). null 허용.
+ * @param productOption 원주문 옵션명. null 허용.
  */
 public record ExternalClaimPayload(
         String externalOrderId,
@@ -48,4 +51,7 @@ public record ExternalClaimPayload(
         String holdbackStatus,
         String holdbackReason,
         Instant claimRequestDate,
-        Instant lastChangedDate) {}
+        Instant lastChangedDate,
+        Integer claimDeliveryFeeAmount,
+        String shippingFeeType,
+        String productOption) {}

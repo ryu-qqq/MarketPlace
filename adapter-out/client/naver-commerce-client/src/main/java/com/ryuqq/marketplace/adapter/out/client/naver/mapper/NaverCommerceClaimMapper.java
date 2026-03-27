@@ -110,6 +110,15 @@ public class NaverCommerceClaimMapper {
         String reDeliveryStatus = claim != null ? claim.reDeliveryStatus() : null;
         Instant claimRequestDate = claim != null ? parseInstant(claim.claimRequestDate()) : null;
 
+        // 클레임 배송비: 교환은 claimDeliveryFeeDemandAmount, 반품은 deliveryFeeAmount
+        Integer claimDeliveryFeeAmount = null;
+        if ("EXCHANGE".equals(claimType) && exchange != null) {
+            claimDeliveryFeeAmount = exchange.claimDeliveryFeeDemandAmount();
+        }
+        if (claimDeliveryFeeAmount == null) {
+            claimDeliveryFeeAmount = po.deliveryFeeAmount();
+        }
+
         return new ExternalClaimPayload(
                 change.orderId(),
                 change.productOrderId(),
@@ -131,7 +140,10 @@ public class NaverCommerceClaimMapper {
                 holdbackStatus,
                 holdbackReason,
                 claimRequestDate,
-                parseInstant(change.lastChangedDate()));
+                parseInstant(change.lastChangedDate()),
+                claimDeliveryFeeAmount,
+                po.shippingFeeType(),
+                po.productOption());
     }
 
     private Instant parseInstant(String dateStr) {
