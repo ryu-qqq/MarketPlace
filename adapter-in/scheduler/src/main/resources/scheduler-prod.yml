@@ -165,7 +165,6 @@ scheduler:
       cron: "0 */1 * * * *"
       timezone: Asia/Seoul
       batch-size: 300
-      batch-size: 100
 
     # 레거시 주문 변환 타임아웃 복구
     legacy-order-conversion-timeout:
