@@ -257,23 +257,11 @@ module "scheduler_task_role" {
     ]
   })
 
+  attach_aws_managed_policies = [
+    local.sqs_access_policy_arn
+  ]
+
   custom_inline_policies = {
-    sqs-access = {
-      policy = jsonencode({
-        Version = "2012-10-17"
-        Statement = [
-          {
-            Effect = "Allow"
-            Action = [
-              "sqs:SendMessage",
-              "sqs:GetQueueUrl",
-              "sqs:GetQueueAttributes"
-            ]
-            Resource = "arn:aws:sqs:${var.aws_region}:*:${var.project_name}-*"
-          }
-        ]
-      })
-    }
     ses-access = {
       policy = jsonencode({
         Version = "2012-10-17"
