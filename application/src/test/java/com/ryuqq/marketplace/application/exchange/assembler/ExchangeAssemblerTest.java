@@ -135,8 +135,9 @@ class ExchangeAssemblerTest {
 
             // then
             assertThat(result.collectShipment()).isNotNull();
-            assertThat(result.collectShipment().collectStatus()).isEqualTo("PENDING");
-            assertThat(result.collectShipment().collectDeliveryCompany()).isEqualTo("CJ대한통운");
+            assertThat(result.collectShipment().status()).isEqualTo("PENDING");
+            assertThat(result.collectShipment().method()).isNotNull();
+            assertThat(result.collectShipment().method().courierName()).isEqualTo("CJ대한통운");
         }
     }
 

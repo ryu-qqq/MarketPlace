@@ -58,9 +58,11 @@ public class ExchangeAssembler {
                     new ExchangeOptionResult(
                             option.originalProductId(),
                             option.originalSkuCode(),
+                            null,
                             option.targetProductGroupId(),
                             option.targetProductId(),
                             option.targetSkuCode(),
+                            null,
                             option.quantity());
         }
 
@@ -83,11 +85,27 @@ public class ExchangeAssembler {
         ClaimShipment collectShipment = claim.collectShipment();
         CollectShipmentResult collectShipmentResult = null;
         if (collectShipment != null) {
+            ExchangeDetailResult.CollectShipmentMethodResult methodResult = null;
+            if (collectShipment.method() != null) {
+                methodResult =
+                        new ExchangeDetailResult.CollectShipmentMethodResult(
+                                collectShipment.method().type().name(),
+                                collectShipment.method().courierCode(),
+                                collectShipment.method().courierName());
+            }
+
+            ExchangeDetailResult.CollectShipmentFeeInfoResult feeInfoResult = null;
+            if (collectShipment.feeInfo() != null) {
+                feeInfoResult =
+                        new ExchangeDetailResult.CollectShipmentFeeInfoResult(
+                                collectShipment.feeInfo().amount().value(),
+                                collectShipment.feeInfo().payer().name());
+            }
+
             collectShipmentResult =
                     new CollectShipmentResult(
-                            collectShipment.method() != null
-                                    ? collectShipment.method().courierName()
-                                    : null,
+                            methodResult,
+                            feeInfoResult,
                             collectShipment.trackingNumber(),
                             collectShipment.status().name());
         }

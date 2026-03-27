@@ -48,7 +48,19 @@ public record RefundDetailApiResponse(
 
     @Schema(description = "수거 배송 정보")
     public record CollectShipmentApiResponse(
-            @Schema(description = "수거 택배사명") String collectDeliveryCompany,
-            @Schema(description = "수거 송장번호") String collectTrackingNumber,
-            @Schema(description = "수거 상태") String collectStatus) {}
+            @Schema(description = "수거 방법 정보") CollectShipmentMethodApiResponse method,
+            @Schema(description = "수거 배송비 정보") CollectShipmentFeeInfoApiResponse feeInfo,
+            @Schema(description = "수거 송장번호") String trackingNumber,
+            @Schema(description = "수거 상태") String status) {}
+
+    @Schema(description = "수거 방법 정보")
+    public record CollectShipmentMethodApiResponse(
+            @Schema(description = "배송 방식 유형 (COURIER, VISIT, QUICK)") String type,
+            @Schema(description = "택배사 코드") String courierCode,
+            @Schema(description = "택배사명") String courierName) {}
+
+    @Schema(description = "수거 배송비 정보")
+    public record CollectShipmentFeeInfoApiResponse(
+            @Schema(description = "배송비 금액") int amount,
+            @Schema(description = "배송비 부담 주체 (BUYER, SELLER)") String payer) {}
 }

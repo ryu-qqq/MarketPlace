@@ -30,9 +30,11 @@ public record ExchangeDetailResult(
     public record ExchangeOptionResult(
             long originalProductId,
             String originalSkuCode,
+            String originalOptionName,
             long targetProductGroupId,
             long targetProductId,
             String targetSkuCode,
+            String targetOptionName,
             int quantity) {}
 
     public record AmountAdjustmentResult(
@@ -47,5 +49,13 @@ public record ExchangeDetailResult(
             String shippingFeePayer) {}
 
     public record CollectShipmentResult(
-            String collectDeliveryCompany, String collectTrackingNumber, String collectStatus) {}
+            CollectShipmentMethodResult method,
+            CollectShipmentFeeInfoResult feeInfo,
+            String trackingNumber,
+            String status) {}
+
+    public record CollectShipmentMethodResult(
+            String type, String courierCode, String courierName) {}
+
+    public record CollectShipmentFeeInfoResult(int amount, String payer) {}
 }

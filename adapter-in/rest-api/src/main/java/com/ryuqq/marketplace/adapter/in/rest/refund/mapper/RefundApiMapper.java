@@ -230,13 +230,37 @@ public class RefundApiMapper {
         }
 
         RefundDetailApiResponse.CollectShipmentApiResponse collectShipment =
-                new RefundDetailApiResponse.CollectShipmentApiResponse("", "", "");
+                new RefundDetailApiResponse.CollectShipmentApiResponse(
+                        new RefundDetailApiResponse.CollectShipmentMethodApiResponse("", "", ""),
+                        new RefundDetailApiResponse.CollectShipmentFeeInfoApiResponse(0, ""),
+                        "",
+                        "");
         if (result.collectShipment() != null) {
+            RefundDetailApiResponse.CollectShipmentMethodApiResponse methodResponse =
+                    new RefundDetailApiResponse.CollectShipmentMethodApiResponse("", "", "");
+            if (result.collectShipment().method() != null) {
+                methodResponse =
+                        new RefundDetailApiResponse.CollectShipmentMethodApiResponse(
+                                nullToEmpty(result.collectShipment().method().type()),
+                                nullToEmpty(result.collectShipment().method().courierCode()),
+                                nullToEmpty(result.collectShipment().method().courierName()));
+            }
+
+            RefundDetailApiResponse.CollectShipmentFeeInfoApiResponse feeInfoResponse =
+                    new RefundDetailApiResponse.CollectShipmentFeeInfoApiResponse(0, "");
+            if (result.collectShipment().feeInfo() != null) {
+                feeInfoResponse =
+                        new RefundDetailApiResponse.CollectShipmentFeeInfoApiResponse(
+                                result.collectShipment().feeInfo().amount(),
+                                nullToEmpty(result.collectShipment().feeInfo().payer()));
+            }
+
             collectShipment =
                     new RefundDetailApiResponse.CollectShipmentApiResponse(
-                            nullToEmpty(result.collectShipment().collectDeliveryCompany()),
-                            nullToEmpty(result.collectShipment().collectTrackingNumber()),
-                            nullToEmpty(result.collectShipment().collectStatus()));
+                            methodResponse,
+                            feeInfoResponse,
+                            nullToEmpty(result.collectShipment().trackingNumber()),
+                            nullToEmpty(result.collectShipment().status()));
         }
 
         RefundDetailApiResponse.RefundClaimInfoApiResponse claimInfo =

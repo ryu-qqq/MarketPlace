@@ -36,5 +36,13 @@ public record RefundDetailResult(
     public record HoldInfoResult(String holdReason, Instant holdAt) {}
 
     public record CollectShipmentResult(
-            String collectDeliveryCompany, String collectTrackingNumber, String collectStatus) {}
+            CollectShipmentMethodResult method,
+            CollectShipmentFeeInfoResult feeInfo,
+            String trackingNumber,
+            String status) {}
+
+    public record CollectShipmentMethodResult(
+            String type, String courierCode, String courierName) {}
+
+    public record CollectShipmentFeeInfoResult(int amount, String payer) {}
 }

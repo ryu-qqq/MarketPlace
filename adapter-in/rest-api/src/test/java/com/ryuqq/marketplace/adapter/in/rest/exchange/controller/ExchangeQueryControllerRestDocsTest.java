@@ -415,6 +415,56 @@ class ExchangeQueryControllerRestDocsTest {
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("교환 대상 수량")
                                                     .optional(),
+                                            fieldWithPath(
+                                                            "data.claimInfo.exchangeOption.originalOption")
+                                                    .type(JsonFieldType.OBJECT)
+                                                    .description("원 옵션 정보")
+                                                    .optional(),
+                                            fieldWithPath(
+                                                            "data.claimInfo.exchangeOption.originalOption.optionName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("원 옵션명")
+                                                    .optional(),
+                                            fieldWithPath(
+                                                            "data.claimInfo.exchangeOption.originalOption.optionValues")
+                                                    .type(JsonFieldType.ARRAY)
+                                                    .description("원 옵션값 목록")
+                                                    .optional(),
+                                            fieldWithPath(
+                                                            "data.claimInfo.exchangeOption.originalOption.optionValues[].name")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("옵션 속성명")
+                                                    .optional(),
+                                            fieldWithPath(
+                                                            "data.claimInfo.exchangeOption.originalOption.optionValues[].value")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("옵션 속성값")
+                                                    .optional(),
+                                            fieldWithPath(
+                                                            "data.claimInfo.exchangeOption.targetOption")
+                                                    .type(JsonFieldType.OBJECT)
+                                                    .description("교환 대상 옵션 정보")
+                                                    .optional(),
+                                            fieldWithPath(
+                                                            "data.claimInfo.exchangeOption.targetOption.optionName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("교환 대상 옵션명")
+                                                    .optional(),
+                                            fieldWithPath(
+                                                            "data.claimInfo.exchangeOption.targetOption.optionValues")
+                                                    .type(JsonFieldType.ARRAY)
+                                                    .description("교환 대상 옵션값 목록")
+                                                    .optional(),
+                                            fieldWithPath(
+                                                            "data.claimInfo.exchangeOption.targetOption.optionValues[].name")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("교환 대상 옵션 속성명")
+                                                    .optional(),
+                                            fieldWithPath(
+                                                            "data.claimInfo.exchangeOption.targetOption.optionValues[].value")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("교환 대상 옵션 속성값")
+                                                    .optional(),
                                             fieldWithPath("data.claimInfo.amountAdjustment")
                                                     .type(JsonFieldType.OBJECT)
                                                     .description("금액 조정 정보 (없을 경우 null)")
@@ -466,20 +516,47 @@ class ExchangeQueryControllerRestDocsTest {
                                                     .optional(),
                                             fieldWithPath("data.claimInfo.collectShipment")
                                                     .type(JsonFieldType.OBJECT)
-                                                    .description("수거 배송 정보 (없을 경우 null)")
+                                                    .description("수거 배송 정보")
+                                                    .optional(),
+                                            fieldWithPath("data.claimInfo.collectShipment.method")
+                                                    .type(JsonFieldType.OBJECT)
+                                                    .description("수거 방법 정보")
                                                     .optional(),
                                             fieldWithPath(
-                                                            "data.claimInfo.collectShipment.collectDeliveryCompany")
+                                                            "data.claimInfo.collectShipment.method.type")
                                                     .type(JsonFieldType.STRING)
-                                                    .description("수거 택배사명")
+                                                    .description("배송 방식 유형")
                                                     .optional(),
                                             fieldWithPath(
-                                                            "data.claimInfo.collectShipment.collectTrackingNumber")
+                                                            "data.claimInfo.collectShipment.method.courierCode")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("택배사 코드")
+                                                    .optional(),
+                                            fieldWithPath(
+                                                            "data.claimInfo.collectShipment.method.courierName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("택배사명")
+                                                    .optional(),
+                                            fieldWithPath("data.claimInfo.collectShipment.feeInfo")
+                                                    .type(JsonFieldType.OBJECT)
+                                                    .description("수거 배송비 정보")
+                                                    .optional(),
+                                            fieldWithPath(
+                                                            "data.claimInfo.collectShipment.feeInfo.amount")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("배송비 금액")
+                                                    .optional(),
+                                            fieldWithPath(
+                                                            "data.claimInfo.collectShipment.feeInfo.payer")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("배송비 부담 주체")
+                                                    .optional(),
+                                            fieldWithPath(
+                                                            "data.claimInfo.collectShipment.trackingNumber")
                                                     .type(JsonFieldType.STRING)
                                                     .description("수거 송장번호")
                                                     .optional(),
-                                            fieldWithPath(
-                                                            "data.claimInfo.collectShipment.collectStatus")
+                                            fieldWithPath("data.claimInfo.collectShipment.status")
                                                     .type(JsonFieldType.STRING)
                                                     .description("수거 상태")
                                                     .optional(),

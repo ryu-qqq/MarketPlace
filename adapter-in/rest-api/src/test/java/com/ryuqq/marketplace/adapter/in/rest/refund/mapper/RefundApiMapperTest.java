@@ -629,17 +629,23 @@ class RefundApiMapperTest {
 
             // then
             assertThat(response.claimInfo().collectShipment()).isNotNull();
-            assertThat(response.claimInfo().collectShipment().collectDeliveryCompany())
+            assertThat(response.claimInfo().collectShipment().method()).isNotNull();
+            assertThat(response.claimInfo().collectShipment().method().courierName())
                     .isEqualTo("CJ대한통운");
-            assertThat(response.claimInfo().collectShipment().collectTrackingNumber())
+            assertThat(response.claimInfo().collectShipment().method().type()).isEqualTo("COURIER");
+            assertThat(response.claimInfo().collectShipment().method().courierCode())
+                    .isEqualTo("CJGLS");
+            assertThat(response.claimInfo().collectShipment().feeInfo()).isNotNull();
+            assertThat(response.claimInfo().collectShipment().feeInfo().payer())
+                    .isEqualTo("SELLER");
+            assertThat(response.claimInfo().collectShipment().trackingNumber())
                     .isEqualTo("1234567890");
-            assertThat(response.claimInfo().collectShipment().collectStatus())
-                    .isEqualTo("IN_TRANSIT");
+            assertThat(response.claimInfo().collectShipment().status()).isEqualTo("IN_TRANSIT");
         }
 
         @Test
-        @DisplayName("collectShipment가 null이면 refundClaimInfo에 null collectShipment가 포함된다")
-        void toDetailResponse_NullCollectShipment_ReturnsNullCollectShipment() {
+        @DisplayName("collectShipment가 null이면 refundClaimInfo에 기본 collectShipment가 포함된다")
+        void toDetailResponse_NullCollectShipment_ReturnsDefaultCollectShipment() {
             // given
             RefundDetailResult result =
                     RefundApiFixtures.detailResultWithoutRefundInfo(
@@ -650,7 +656,7 @@ class RefundApiMapperTest {
                     mapper.toDetailResponse(result, null, null, null, null);
 
             // then
-            assertThat(response.claimInfo().collectShipment().collectDeliveryCompany()).isEmpty();
+            assertThat(response.claimInfo().collectShipment().method().courierName()).isEmpty();
         }
     }
 
