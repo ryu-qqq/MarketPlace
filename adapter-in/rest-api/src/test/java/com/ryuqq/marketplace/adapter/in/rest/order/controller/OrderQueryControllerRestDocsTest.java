@@ -309,8 +309,8 @@ class OrderQueryControllerRestDocsTest {
                                             parameterWithName("claimType")
                                                     .description(
                                                             "클레임 타입 필터. ORDER: 주문 메모,"
-                                                                + " CANCEL: 취소, REFUND: 환불,"
-                                                                + " EXCHANGE: 교환. 미전송 시 전체 조회")
+                                                                    + " CANCEL: 취소, REFUND: 환불,"
+                                                                    + " EXCHANGE: 교환. 미전송 시 전체 조회")
                                                     .optional(),
                                             parameterWithName("page")
                                                     .description("페이지 번호 (0부터). 기본값: 0")
