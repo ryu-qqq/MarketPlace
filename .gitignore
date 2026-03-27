@@ -45,6 +45,7 @@ bin/
 .claude/hooks/logs/
 .claude/commands/db.md
 .claude/skills/oms-test/
+.claude/skills/naver-sellic-sync/
 .serena/
 
 # Claude Code documentation and specs (auto-generated)
