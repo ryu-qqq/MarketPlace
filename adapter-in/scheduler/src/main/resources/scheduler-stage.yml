@@ -118,7 +118,7 @@ scheduler:
       cron: "*/5 * * * * *"
 
     legacy-order-conversion:
-      # 로컬 검증: 네이버 폴링 먼저 확인 후 활성화
+      # Stage: 비활성화 (로컬 Docker로 검증)
       enabled: false
       cron: "*/5 * * * * *"
 
@@ -195,7 +195,7 @@ scheduler:
       cron: "0 */1 * * * *"
       batch-size: 100
 
-    # 셀릭 주문 발행 (Stage: 비활성화 — 활성화 시 30초마다)
+    # 셀릭 주문 발행 (Stage: 비활성화 — 상품 연동 확인 후 활성화)
     sellic-order-issuing:
       enabled: false
       cron: "*/30 * * * * *"
