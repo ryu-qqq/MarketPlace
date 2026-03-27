@@ -349,6 +349,10 @@ public class ExchangeApiMapper {
                             nullToEmpty(result.collectShipment().status()));
         }
 
+        ExchangeDetailApiResponse.ClaimReasonApiResponse reason =
+                new ExchangeDetailApiResponse.ClaimReasonApiResponse(
+                        nullToEmpty(result.reasonType()), nullToEmpty(result.reasonDetail()));
+
         ExchangeDetailApiResponse.ExchangeClaimInfoApiResponse claimInfo =
                 new ExchangeDetailApiResponse.ExchangeClaimInfoApiResponse(
                         nullToEmpty(result.exchangeClaimId()),
@@ -356,8 +360,7 @@ public class ExchangeApiMapper {
                         result.sellerId(),
                         result.exchangeQty(),
                         nullToEmpty(result.exchangeStatus()),
-                        nullToEmpty(result.reasonType()),
-                        nullToEmpty(result.reasonDetail()),
+                        reason,
                         exchangeOption,
                         amountAdjustment,
                         collectShipment,

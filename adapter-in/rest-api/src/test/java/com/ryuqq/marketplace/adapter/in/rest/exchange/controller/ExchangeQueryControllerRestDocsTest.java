@@ -376,10 +376,13 @@ class ExchangeQueryControllerRestDocsTest {
                                             fieldWithPath("data.claimInfo.status")
                                                     .type(JsonFieldType.STRING)
                                                     .description("교환 상태"),
-                                            fieldWithPath("data.claimInfo.reasonType")
+                                            fieldWithPath("data.claimInfo.reason")
+                                                    .type(JsonFieldType.OBJECT)
+                                                    .description("교환 사유"),
+                                            fieldWithPath("data.claimInfo.reason.reasonType")
                                                     .type(JsonFieldType.STRING)
                                                     .description("교환 사유 유형"),
-                                            fieldWithPath("data.claimInfo.reasonDetail")
+                                            fieldWithPath("data.claimInfo.reason.reasonDetail")
                                                     .type(JsonFieldType.STRING)
                                                     .description("교환 상세 사유"),
                                             fieldWithPath("data.claimInfo.exchangeOption")

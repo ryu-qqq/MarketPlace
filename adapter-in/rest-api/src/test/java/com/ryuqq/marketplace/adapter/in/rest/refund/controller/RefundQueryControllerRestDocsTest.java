@@ -365,10 +365,13 @@ class RefundQueryControllerRestDocsTest {
                                             fieldWithPath("data.claimInfo.status")
                                                     .type(JsonFieldType.STRING)
                                                     .description("환불 상태"),
-                                            fieldWithPath("data.claimInfo.reasonType")
+                                            fieldWithPath("data.claimInfo.reason")
+                                                    .type(JsonFieldType.OBJECT)
+                                                    .description("환불 사유"),
+                                            fieldWithPath("data.claimInfo.reason.reasonType")
                                                     .type(JsonFieldType.STRING)
                                                     .description("환불 사유 유형"),
-                                            fieldWithPath("data.claimInfo.reasonDetail")
+                                            fieldWithPath("data.claimInfo.reason.reasonDetail")
                                                     .type(JsonFieldType.STRING)
                                                     .description("환불 상세 사유"),
                                             fieldWithPath("data.claimInfo.refundInfo")
@@ -542,8 +545,9 @@ class RefundQueryControllerRestDocsTest {
                             RefundApiFixtures.DEFAULT_CLAIM_NUMBER,
                             1,
                             "HOLD",
-                            RefundApiFixtures.DEFAULT_REASON_TYPE,
-                            RefundApiFixtures.DEFAULT_REASON_DETAIL,
+                            new RefundDetailApiResponse.ClaimReasonApiResponse(
+                                    RefundApiFixtures.DEFAULT_REASON_TYPE,
+                                    RefundApiFixtures.DEFAULT_REASON_DETAIL),
                             null,
                             holdInfo,
                             null,

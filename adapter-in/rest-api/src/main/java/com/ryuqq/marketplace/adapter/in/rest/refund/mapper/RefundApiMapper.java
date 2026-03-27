@@ -263,14 +263,17 @@ public class RefundApiMapper {
                             nullToEmpty(result.collectShipment().status()));
         }
 
+        RefundDetailApiResponse.ClaimReasonApiResponse reason =
+                new RefundDetailApiResponse.ClaimReasonApiResponse(
+                        nullToEmpty(result.reasonType()), nullToEmpty(result.reasonDetail()));
+
         RefundDetailApiResponse.RefundClaimInfoApiResponse claimInfo =
                 new RefundDetailApiResponse.RefundClaimInfoApiResponse(
                         nullToEmpty(result.refundClaimId()),
                         nullToEmpty(result.claimNumber()),
                         result.refundQty(),
                         nullToEmpty(result.refundStatus()),
-                        nullToEmpty(result.reasonType()),
-                        nullToEmpty(result.reasonDetail()),
+                        reason,
                         refundInfo,
                         holdInfo,
                         collectShipment,

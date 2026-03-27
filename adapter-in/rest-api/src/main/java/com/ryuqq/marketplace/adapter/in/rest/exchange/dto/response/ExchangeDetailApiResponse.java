@@ -34,14 +34,18 @@ public record ExchangeDetailApiResponse(
             @Schema(description = "판매자 ID") long sellerId,
             @Schema(description = "교환 수량") int exchangeQty,
             @Schema(description = "교환 상태") String status,
-            @Schema(description = "교환 사유 유형") String reasonType,
-            @Schema(description = "교환 상세 사유") String reasonDetail,
+            @Schema(description = "교환 사유") ClaimReasonApiResponse reason,
             @Schema(description = "교환 옵션 정보") ExchangeOptionApiResponse exchangeOption,
             @Schema(description = "금액 조정 정보") AmountAdjustmentApiResponse amountAdjustment,
             @Schema(description = "수거 배송 정보") CollectShipmentApiResponse collectShipment,
             @Schema(description = "연결 주문 ID") String linkedOrderId,
             @Schema(description = "요청일시") String requestedAt,
             @Schema(description = "완료일시") String completedAt) {}
+
+    @Schema(description = "클레임 사유")
+    public record ClaimReasonApiResponse(
+            @Schema(description = "사유 유형") String reasonType,
+            @Schema(description = "상세 사유") String reasonDetail) {}
 
     @Schema(description = "교환 옵션 정보")
     public record ExchangeOptionApiResponse(

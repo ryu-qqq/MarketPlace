@@ -381,8 +381,8 @@ public final class ExchangeApiFixtures {
                         DEFAULT_SELLER_ID,
                         DEFAULT_EXCHANGE_QTY,
                         DEFAULT_EXCHANGE_STATUS,
-                        DEFAULT_REASON_TYPE,
-                        DEFAULT_REASON_DETAIL,
+                        new ExchangeDetailApiResponse.ClaimReasonApiResponse(
+                                DEFAULT_REASON_TYPE, DEFAULT_REASON_DETAIL),
                         new ExchangeOptionApiResponse(
                                 DEFAULT_ORIGINAL_PRODUCT_ID,
                                 DEFAULT_ORIGINAL_SKU_CODE,

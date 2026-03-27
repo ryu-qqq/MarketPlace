@@ -33,13 +33,17 @@ public record RefundDetailApiResponse(
             @Schema(description = "환불 클레임 번호") String claimNumber,
             @Schema(description = "환불 수량") int refundQty,
             @Schema(description = "환불 상태") String status,
-            @Schema(description = "환불 사유 유형") String reasonType,
-            @Schema(description = "환불 상세 사유") String reasonDetail,
+            @Schema(description = "환불 사유") ClaimReasonApiResponse reason,
             @Schema(description = "환불 정보") ClaimListItemApiResponseV4.RefundInfoV4 refundInfo,
             @Schema(description = "보류 정보") HoldInfoApiResponse holdInfo,
             @Schema(description = "수거 배송 정보") CollectShipmentApiResponse collectShipment,
             @Schema(description = "요청일시") String requestedAt,
             @Schema(description = "완료일시") String completedAt) {}
+
+    @Schema(description = "클레임 사유")
+    public record ClaimReasonApiResponse(
+            @Schema(description = "사유 유형") String reasonType,
+            @Schema(description = "상세 사유") String reasonDetail) {}
 
     @Schema(description = "보류 정보")
     public record HoldInfoApiResponse(

@@ -500,7 +500,8 @@ class ExchangeApiMapperTest {
                     .isEqualTo(ExchangeApiFixtures.DEFAULT_EXCHANGE_QTY);
             assertThat(response.claimInfo().status())
                     .isEqualTo(ExchangeApiFixtures.DEFAULT_EXCHANGE_STATUS);
-            assertThat(response.claimInfo().reasonType())
+            assertThat(response.claimInfo().reason()).isNotNull();
+            assertThat(response.claimInfo().reason().reasonType())
                     .isEqualTo(ExchangeApiFixtures.DEFAULT_REASON_TYPE);
         }
 

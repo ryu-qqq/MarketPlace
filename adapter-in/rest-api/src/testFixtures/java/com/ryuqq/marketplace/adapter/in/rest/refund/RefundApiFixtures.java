@@ -355,8 +355,8 @@ public final class RefundApiFixtures {
                         DEFAULT_CLAIM_NUMBER,
                         1,
                         DEFAULT_REFUND_STATUS,
-                        DEFAULT_REASON_TYPE,
-                        DEFAULT_REASON_DETAIL,
+                        new RefundDetailApiResponse.ClaimReasonApiResponse(
+                                DEFAULT_REASON_TYPE, DEFAULT_REASON_DETAIL),
                         new ClaimListItemApiResponseV4.RefundInfoV4(
                                 15000, 0, "", 15000, "CARD", DEFAULT_FORMATTED_TIME),
                         null,
