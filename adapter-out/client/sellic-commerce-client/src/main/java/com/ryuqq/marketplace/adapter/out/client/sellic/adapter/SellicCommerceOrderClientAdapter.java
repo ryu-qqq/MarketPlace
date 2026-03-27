@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
  * <p>인증: ShopCredentials.vendorId() → customer_id, ShopCredentials.apiKey() → api_key
  */
 @Component
-@ConditionalOnProperty(prefix = "sellic-commerce", name = "customer-id")
+@ConditionalOnProperty(prefix = "sellic-commerce", name = "base-url")
 public class SellicCommerceOrderClientAdapter implements SalesChannelOrderClient {
 
     private static final Logger log =

@@ -78,6 +78,19 @@ public class ExecuteOutboundSyncService implements ExecuteOutboundSyncUseCase {
                             SellerId.of(outbox.sellerIdValue()),
                             SalesChannelId.of(outbox.salesChannelIdValue()));
 
+            if (!channel.isConnected()) {
+                log.info(
+                        "채널 연동 비활성 상태, 동기화 스킵: outboxId={}, channelCode={}, status={}",
+                        command.outboxId(),
+                        channel.channelCode(),
+                        channel.connectionStatus());
+                handleFailure(
+                        outbox,
+                        OutboundSyncExecutionResult.failure(
+                                "채널 연동 비활성 상태: " + channel.connectionStatus(), false));
+                return;
+            }
+
             OutboundSyncExecutionStrategy strategy =
                     strategyRouter.route(channel.channelCode(), command.syncType());
 

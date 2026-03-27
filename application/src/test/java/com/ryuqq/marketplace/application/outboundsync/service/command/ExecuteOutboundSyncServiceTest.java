@@ -132,6 +132,76 @@ class ExecuteOutboundSyncServiceTest {
     }
 
     @Nested
+    @DisplayName("execute() - 채널 연동 비활성 상태 시 스킵 처리")
+    class DisconnectedChannelTest {
+
+        @Test
+        @DisplayName("채널이 DISCONNECTED이면 동기화를 스킵하고 재시도 불필요로 실패 처리한다")
+        void execute_WhenChannelDisconnected_SkipsAndRecordsFailure() {
+            // given
+            OutboundSyncOutbox outbox = OutboundSyncOutboxFixtures.processingOutbox();
+            ExecuteOutboundSyncCommand command =
+                    ExecuteOutboundSyncCommand.of(
+                            outbox.idValue(),
+                            outbox.productGroupIdValue(),
+                            outbox.salesChannelIdValue(),
+                            SyncType.CREATE);
+
+            SellerSalesChannel disconnectedChannel =
+                    SellerSalesChannelFixtures.disconnectedSellerSalesChannel();
+
+            given(outboxReadManager.getById(command.outboxId())).willReturn(outbox);
+            given(channelReadManager.getBySellerIdAndSalesChannelId(any(), any()))
+                    .willReturn(disconnectedChannel);
+
+            OutboundSyncOutbox freshOutbox = OutboundSyncOutboxFixtures.processingOutbox();
+            given(outboxReadManager.getById(outbox.idValue()))
+                    .willReturn(outbox)
+                    .willReturn(freshOutbox);
+
+            // when
+            sut.execute(command);
+
+            // then
+            assertThat(freshOutbox.status()).isEqualTo(SyncStatus.FAILED);
+            then(strategyRouter).shouldHaveNoInteractions();
+            then(outboxCommandManager).should().persist(freshOutbox);
+        }
+
+        @Test
+        @DisplayName("채널이 DISCONNECTED이면 Strategy를 호출하지 않는다")
+        void execute_WhenChannelDisconnected_DoesNotCallStrategy() {
+            // given
+            OutboundSyncOutbox outbox = OutboundSyncOutboxFixtures.processingOutbox();
+            ExecuteOutboundSyncCommand command =
+                    ExecuteOutboundSyncCommand.of(
+                            outbox.idValue(),
+                            outbox.productGroupIdValue(),
+                            outbox.salesChannelIdValue(),
+                            SyncType.UPDATE);
+
+            SellerSalesChannel disconnectedChannel =
+                    SellerSalesChannelFixtures.disconnectedSellerSalesChannel();
+
+            given(outboxReadManager.getById(command.outboxId())).willReturn(outbox);
+            given(channelReadManager.getBySellerIdAndSalesChannelId(any(), any()))
+                    .willReturn(disconnectedChannel);
+
+            OutboundSyncOutbox freshOutbox = OutboundSyncOutboxFixtures.processingOutbox();
+            given(outboxReadManager.getById(outbox.idValue()))
+                    .willReturn(outbox)
+                    .willReturn(freshOutbox);
+
+            // when
+            sut.execute(command);
+
+            // then
+            then(strategy).shouldHaveNoInteractions();
+            then(shopReadManager).shouldHaveNoInteractions();
+        }
+    }
+
+    @Nested
     @DisplayName("execute() - 일반 예외 발생 시 failAndRetry 처리")
     class FailAndRetryTest {
 

@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
  * <p>ProductGroupReadFacade로 상품 데이터 조회 → 매핑 역조회 → SalesChannelProductClient로 API 호출.
  */
 @Component
-@ConditionalOnProperty(prefix = "sellic-commerce", name = "customer-id")
+@ConditionalOnProperty(prefix = "sellic-commerce", name = "base-url")
 public class SellicCreateProductStrategy implements OutboundSyncExecutionStrategy {
 
     private static final Logger log = LoggerFactory.getLogger(SellicCreateProductStrategy.class);

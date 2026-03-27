@@ -112,6 +112,11 @@ scheduler:
         batch-size: 50
         timeout-seconds: 180
 
+    legacy-conversion:
+      # Stage: 활성화 (레거시 상품 변환)
+      enabled: true
+      cron: "*/5 * * * * *"
+
     legacy-order-conversion:
       # 로컬 검증: 네이버 폴링 먼저 확인 후 활성화
       enabled: false

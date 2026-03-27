@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
  * <p>OutboundProduct에서 externalProductId 조회 → DELETE API 호출.
  */
 @Component
-@ConditionalOnProperty(prefix = "sellic-commerce", name = "customer-id")
+@ConditionalOnProperty(prefix = "sellic-commerce", name = "base-url")
 public class SellicDeleteProductStrategy implements OutboundSyncExecutionStrategy {
 
     private static final Logger log = LoggerFactory.getLogger(SellicDeleteProductStrategy.class);

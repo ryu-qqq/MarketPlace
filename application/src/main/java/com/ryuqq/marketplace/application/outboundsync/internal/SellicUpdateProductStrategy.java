@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
  * <p>OutboundProduct에서 externalProductId 조회 → 최신 상품 데이터 조회 → 매핑 역조회 → PUT API 호출.
  */
 @Component
-@ConditionalOnProperty(prefix = "sellic-commerce", name = "customer-id")
+@ConditionalOnProperty(prefix = "sellic-commerce", name = "base-url")
 public class SellicUpdateProductStrategy implements OutboundSyncExecutionStrategy {
 
     private static final Logger log = LoggerFactory.getLogger(SellicUpdateProductStrategy.class);

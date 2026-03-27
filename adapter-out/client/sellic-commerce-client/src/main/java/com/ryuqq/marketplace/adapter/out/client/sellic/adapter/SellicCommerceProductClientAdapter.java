@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Qualifier("sellicProductClient")
-@ConditionalOnProperty(prefix = "sellic-commerce", name = "customer-id")
+@ConditionalOnProperty(prefix = "sellic-commerce", name = "base-url")
 public class SellicCommerceProductClientAdapter implements SalesChannelProductClient {
 
     private static final Logger log =

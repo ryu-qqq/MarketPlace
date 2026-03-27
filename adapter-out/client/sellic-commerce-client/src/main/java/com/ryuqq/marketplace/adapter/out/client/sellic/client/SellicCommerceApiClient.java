@@ -22,7 +22,7 @@ import org.springframework.web.client.RestClient;
  * <p>모든 외부 HTTP 호출을 이 클래스에서 처리합니다. {@link SellicCommerceApiExecutor}를 통해 CB + Retry 보호 하에 실행합니다.
  */
 @Component
-@ConditionalOnProperty(prefix = "sellic-commerce", name = "customer-id")
+@ConditionalOnProperty(prefix = "sellic-commerce", name = "base-url")
 public class SellicCommerceApiClient {
 
     private static final Logger log = LoggerFactory.getLogger(SellicCommerceApiClient.class);

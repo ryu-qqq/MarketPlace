@@ -134,8 +134,8 @@ scheduler:
         timeout-seconds: 300
 
     legacy-conversion:
-      # Prod: 비활성화 (운영 주문 이관 미사용)
-      enabled: false
+      # Prod: 활성화 (레거시 상품 변환)
+      enabled: true
       cron: "*/5 * * * * *"
 
     legacy-conversion-timeout:
