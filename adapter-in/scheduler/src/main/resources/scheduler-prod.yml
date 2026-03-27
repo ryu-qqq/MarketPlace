@@ -161,9 +161,10 @@ scheduler:
     # 레거시 주문 변환 (luxurydb → 내부 Order)
     legacy-order-conversion:
       enabled: true
-      # Prod: 5분마다
-      cron: "0 */5 * * * *"
+      # Prod: 1분마다
+      cron: "0 */1 * * * *"
       timezone: Asia/Seoul
+      batch-size: 300
       batch-size: 100
 
     # 레거시 주문 변환 타임아웃 복구
