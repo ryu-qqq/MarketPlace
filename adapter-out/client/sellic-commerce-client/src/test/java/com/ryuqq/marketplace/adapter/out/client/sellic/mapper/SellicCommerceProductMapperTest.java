@@ -80,7 +80,7 @@ class SellicCommerceProductMapperTest {
             var syncData = createSyncData();
 
             SellicProductRegistrationRequest result =
-                    sut.toRegistrationRequest(syncData, CUSTOMER_ID, API_KEY);
+                    sut.toRegistrationRequest(syncData, CUSTOMER_ID, API_KEY, 517560L);
 
             assertThat(result.customerId()).isEqualTo(CUSTOMER_ID);
             assertThat(result.apiKey()).isEqualTo(API_KEY);
@@ -99,7 +99,7 @@ class SellicCommerceProductMapperTest {
             var syncData = createSyncData();
 
             SellicProductRegistrationRequest result =
-                    sut.toRegistrationRequest(syncData, CUSTOMER_ID, API_KEY);
+                    sut.toRegistrationRequest(syncData, CUSTOMER_ID, API_KEY, 517560L);
 
             assertThat(result.optionName1()).isEqualTo("단품");
         }
@@ -110,7 +110,7 @@ class SellicCommerceProductMapperTest {
             var syncData = createSyncData();
 
             SellicProductRegistrationRequest result =
-                    sut.toRegistrationRequest(syncData, CUSTOMER_ID, API_KEY);
+                    sut.toRegistrationRequest(syncData, CUSTOMER_ID, API_KEY, 517560L);
 
             assertThat(result.productStocks()).hasSize(1);
             assertThat(result.productStocks().get(0).presentStock())
@@ -128,7 +128,7 @@ class SellicCommerceProductMapperTest {
             var syncData = createSyncData();
 
             SellicProductUpdateRequest result =
-                    sut.toUpdateRequest(syncData, "EXT001", CUSTOMER_ID, API_KEY);
+                    sut.toUpdateRequest(syncData, "EXT001", CUSTOMER_ID, API_KEY, 517560L);
 
             assertThat(result.customerId()).isEqualTo(CUSTOMER_ID);
             assertThat(result.apiKey()).isEqualTo(API_KEY);

@@ -61,7 +61,7 @@ class SellicRealProductIntegrationTest {
         ProductGroupSyncData syncData = buildTestSyncData();
 
         SellicProductRegistrationRequest request =
-                mapper.toRegistrationRequest(syncData, CUSTOMER_ID, API_KEY);
+                mapper.toRegistrationRequest(syncData, CUSTOMER_ID, API_KEY, 517560L);
 
         String requestJson = objectMapper.writeValueAsString(request);
         System.out.println("=== 셀릭 상품 등록 요청 JSON ===");
@@ -93,7 +93,7 @@ class SellicRealProductIntegrationTest {
         ProductGroupSyncData syncData = buildTestSyncDataForUpdate();
 
         SellicProductUpdateRequest request =
-                mapper.toUpdateRequest(syncData, registeredProductId, CUSTOMER_ID, API_KEY);
+                mapper.toUpdateRequest(syncData, registeredProductId, CUSTOMER_ID, API_KEY, 517560L);
 
         String requestJson = objectMapper.writeValueAsString(request);
         System.out.println("=== 셀릭 상품 수정 요청 JSON ===");

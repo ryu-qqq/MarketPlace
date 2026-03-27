@@ -5,6 +5,7 @@ import com.ryuqq.marketplace.adapter.out.client.sellic.dto.SellicApiResponse;
 import com.ryuqq.marketplace.adapter.out.client.sellic.dto.SellicProductRegistrationRequest;
 import com.ryuqq.marketplace.adapter.out.client.sellic.dto.SellicProductUpdateRequest;
 import com.ryuqq.marketplace.adapter.out.client.sellic.mapper.SellicCommerceProductMapper;
+import com.ryuqq.marketplace.application.legacyconversion.manager.LegacyProductIdMappingReadManager;
 import com.ryuqq.marketplace.application.outboundsync.port.out.client.SalesChannelProductClient;
 import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
 import com.ryuqq.marketplace.domain.outboundsync.vo.ChangedArea;
@@ -36,11 +37,24 @@ public class SellicCommerceProductClientAdapter implements SalesChannelProductCl
 
     private final SellicCommerceApiClient apiClient;
     private final SellicCommerceProductMapper mapper;
+    private final LegacyProductIdMappingReadManager legacyMappingReadManager;
 
     public SellicCommerceProductClientAdapter(
-            SellicCommerceApiClient apiClient, SellicCommerceProductMapper mapper) {
+            SellicCommerceApiClient apiClient,
+            SellicCommerceProductMapper mapper,
+            LegacyProductIdMappingReadManager legacyMappingReadManager) {
         this.apiClient = apiClient;
         this.mapper = mapper;
+        this.legacyMappingReadManager = legacyMappingReadManager;
+    }
+
+    private Long resolveLegacyProductGroupId(Long internalProductGroupId) {
+        return legacyMappingReadManager
+                .findByInternalProductGroupId(internalProductGroupId)
+                .stream()
+                .findFirst()
+                .map(m -> m.legacyProductGroupId())
+                .orElse(null);
     }
 
     @Override
@@ -59,9 +73,10 @@ public class SellicCommerceProductClientAdapter implements SalesChannelProductCl
         Long productGroupId = syncData.queryResult().id();
         String customerId = channel.vendorId();
         String apiKey = channel.apiKey();
+        Long legacyId = resolveLegacyProductGroupId(productGroupId);
 
         SellicProductRegistrationRequest request =
-                mapper.toRegistrationRequest(syncData, customerId, apiKey);
+                mapper.toRegistrationRequest(syncData, customerId, apiKey, legacyId);
 
         log.info("셀릭 커머스 상품 등록 요청: productGroupId={}", productGroupId);
 
@@ -88,6 +103,7 @@ public class SellicCommerceProductClientAdapter implements SalesChannelProductCl
         Long productGroupId = syncData.queryResult().id();
         String customerId = channel.vendorId();
         String apiKey = channel.apiKey();
+        Long legacyId = resolveLegacyProductGroupId(productGroupId);
 
         log.info(
                 "셀릭 커머스 상품 수정 요청: productGroupId={}, externalProductId={}, changedAreas={}",
@@ -107,7 +123,8 @@ public class SellicCommerceProductClientAdapter implements SalesChannelProductCl
             validateResponse(response, "재고수정", productGroupId);
         } else {
             SellicProductUpdateRequest request =
-                    mapper.toUpdateRequest(syncData, externalProductId, customerId, apiKey);
+                    mapper.toUpdateRequest(
+                            syncData, externalProductId, customerId, apiKey, legacyId);
             SellicApiResponse response = apiClient.updateProduct(request);
             validateResponse(response, "수정", productGroupId);
         }

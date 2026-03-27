@@ -46,7 +46,10 @@ public class SellicCommerceProductMapper {
      * @return 셀릭 상품 등록 요청 DTO
      */
     public SellicProductRegistrationRequest toRegistrationRequest(
-            ProductGroupSyncData syncData, String customerId, String apiKey) {
+            ProductGroupSyncData syncData,
+            String customerId,
+            String apiKey,
+            Long legacyProductGroupId) {
 
         ProductGroupDetailCompositeQueryResult query = syncData.queryResult();
         List<String> imageUrls = resolveImageUrls(syncData.images());
@@ -57,11 +60,16 @@ public class SellicCommerceProductMapper {
         int marketPrice = resolveMarketPrice(syncData.products());
         int salePrice = resolveSalePrice(syncData.products());
 
+        String ownCode =
+                legacyProductGroupId != null
+                        ? String.valueOf(legacyProductGroupId)
+                        : String.valueOf(query.id());
+
         return new SellicProductRegistrationRequest(
                 customerId,
                 apiKey,
                 query.productGroupName(),
-                String.valueOf(query.id()),
+                ownCode,
                 0,
                 null,
                 null,
@@ -129,7 +137,8 @@ public class SellicCommerceProductMapper {
             ProductGroupSyncData syncData,
             String externalProductId,
             String customerId,
-            String apiKey) {
+            String apiKey,
+            Long legacyProductGroupId) {
 
         ProductGroupDetailCompositeQueryResult query = syncData.queryResult();
         List<String> imageUrls = resolveImageUrls(syncData.images());
@@ -141,12 +150,17 @@ public class SellicCommerceProductMapper {
         int salePrice = resolveSalePrice(syncData.products());
         int saleStatus = syncData.soldout() ? SALE_STATUS_TERMINATED : SALE_STATUS_ON_SALE;
 
+        String ownCode =
+                legacyProductGroupId != null
+                        ? String.valueOf(legacyProductGroupId)
+                        : String.valueOf(query.id());
+
         return new SellicProductUpdateRequest(
                 customerId,
                 apiKey,
                 externalProductId,
                 query.productGroupName(),
-                String.valueOf(query.id()),
+                ownCode,
                 0,
                 null,
                 null,
