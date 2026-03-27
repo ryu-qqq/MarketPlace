@@ -355,7 +355,8 @@ public class SellicCommerceProductMapper {
                         mappings.stream()
                                 .sorted(
                                         Comparator.comparing(
-                                                ProductOptionMappingResult::optionGroupName))
+                                                ProductOptionMappingResult::optionGroupName,
+                                                Comparator.nullsLast(Comparator.naturalOrder())))
                                 .toList();
 
                 if (sorted.size() > 0) {
