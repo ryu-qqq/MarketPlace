@@ -30,6 +30,9 @@ locals {
   # OutboundSync queue
   outbound_sync_queue_name = "${var.environment}-${var.project_name}-outbound-sync"
 
+  # Shipment Outbox queue
+  shipment_outbox_queue_name = "${var.environment}-${var.project_name}-shipment-outbox"
+
   # Claim Outbox queues
   claim_outbox_queue_names = {
     cancel   = "${var.environment}-${var.project_name}-cancel-outbox"
@@ -398,6 +401,38 @@ resource "aws_sqs_queue" "intelligence_aggregation" {
 }
 
 # ========================================
+# Shipment Outbox Queue
+# ========================================
+resource "aws_sqs_queue" "shipment_outbox_dlq" {
+  name                      = "${local.shipment_outbox_queue_name}-dlq"
+  message_retention_seconds = 1209600 # 14 days
+  kms_master_key_id         = aws_kms_key.sqs.arn
+
+  tags = merge(local.common_tags, {
+    Name    = "${local.shipment_outbox_queue_name}-dlq"
+    Purpose = "Dead letter queue for shipment outbox"
+  })
+}
+
+resource "aws_sqs_queue" "shipment_outbox" {
+  name                       = local.shipment_outbox_queue_name
+  visibility_timeout_seconds = 300    # 5 minutes
+  message_retention_seconds  = 345600 # 4 days
+  receive_wait_time_seconds  = 20     # Long polling
+  kms_master_key_id          = aws_kms_key.sqs.arn
+
+  redrive_policy = jsonencode({
+    deadLetterTargetArn = aws_sqs_queue.shipment_outbox_dlq.arn
+    maxReceiveCount     = 3
+  })
+
+  tags = merge(local.common_tags, {
+    Name    = local.shipment_outbox_queue_name
+    Purpose = "Shipment outbox relay"
+  })
+}
+
+# ========================================
 # Claim Outbox: Cancel
 # ========================================
 resource "aws_sqs_queue" "cancel_outbox_dlq" {
@@ -518,6 +553,9 @@ resource "aws_iam_policy" "sqs_access" {
           aws_sqs_queue.intelligence_notice_analysis_dlq.arn,
           aws_sqs_queue.intelligence_aggregation.arn,
           aws_sqs_queue.intelligence_aggregation_dlq.arn,
+          # Shipment outbox queues
+          aws_sqs_queue.shipment_outbox.arn,
+          aws_sqs_queue.shipment_outbox_dlq.arn,
           # Claim outbox queues
           aws_sqs_queue.cancel_outbox.arn,
           aws_sqs_queue.cancel_outbox_dlq.arn,
@@ -682,6 +720,28 @@ resource "aws_ssm_parameter" "intelligence_aggregation_queue_url" {
   tags  = local.common_tags
 }
 
+# Shipment Outbox Queue
+resource "aws_ssm_parameter" "shipment_outbox_queue_url" {
+  name  = "/${var.project_name}/${var.environment}/sqs/shipment-outbox-queue-url"
+  type  = "String"
+  value = aws_sqs_queue.shipment_outbox.url
+  tags  = local.common_tags
+}
+
+resource "aws_ssm_parameter" "shipment_outbox_queue_arn" {
+  name  = "/${var.project_name}/${var.environment}/sqs/shipment-outbox-queue-arn"
+  type  = "String"
+  value = aws_sqs_queue.shipment_outbox.arn
+  tags  = local.common_tags
+}
+
+resource "aws_ssm_parameter" "shipment_outbox_dlq_url" {
+  name  = "/${var.project_name}/${var.environment}/sqs/shipment-outbox-dlq-url"
+  type  = "String"
+  value = aws_sqs_queue.shipment_outbox_dlq.url
+  tags  = local.common_tags
+}
+
 # Claim Outbox Queues
 resource "aws_ssm_parameter" "cancel_outbox_queue_url" {
   name  = "/${var.project_name}/${var.environment}/sqs/cancel-outbox-queue-url"
@@ -803,6 +863,26 @@ resource "aws_cloudwatch_metric_alarm" "outbound_sync_dlq_messages" {
   tags = local.common_tags
 }
 
+# Shipment Outbox DLQ Alarm
+resource "aws_cloudwatch_metric_alarm" "shipment_outbox_dlq_messages" {
+  alarm_name          = "${var.project_name}-shipment-outbox-dlq-${var.environment}"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 1
+  metric_name         = "ApproximateNumberOfMessagesVisible"
+  namespace           = "AWS/SQS"
+  period              = 300
+  statistic           = "Sum"
+  threshold           = 0
+  alarm_description   = "Messages in shipment outbox DLQ (prod)"
+  treat_missing_data  = "notBreaching"
+
+  dimensions = {
+    QueueName = aws_sqs_queue.shipment_outbox_dlq.name
+  }
+
+  tags = local.common_tags
+}
+
 # ========================================
 # Outputs
 # ========================================
@@ -880,6 +960,17 @@ output "intelligence_notice_analysis_queue_url" {
 output "intelligence_aggregation_queue_url" {
   description = "Intelligence aggregation queue URL"
   value       = aws_sqs_queue.intelligence_aggregation.url
+}
+
+# Shipment Outbox Outputs
+output "shipment_outbox_queue_url" {
+  description = "Shipment outbox queue URL"
+  value       = aws_sqs_queue.shipment_outbox.url
+}
+
+output "shipment_outbox_queue_arn" {
+  description = "Shipment outbox queue ARN"
+  value       = aws_sqs_queue.shipment_outbox.arn
 }
 
 # Claim Outbox Outputs

@@ -192,6 +192,13 @@ data "aws_ssm_parameter" "sqs_intelligence_aggregation_queue_url" {
 }
 
 # ========================================
+# Shipment Outbox SQS Queue Reference
+# ========================================
+data "aws_ssm_parameter" "sqs_shipment_outbox_queue_url" {
+  name = "/${var.project_name}/${var.environment}/sqs/shipment-outbox-queue-url"
+}
+
+# ========================================
 # Claim Outbox SQS Queue References
 # ========================================
 data "aws_ssm_parameter" "sqs_cancel_outbox_queue_url" {
@@ -268,6 +275,9 @@ locals {
   sqs_intelligence_option_analysis_queue_url        = data.aws_ssm_parameter.sqs_intelligence_option_analysis_queue_url.value
   sqs_intelligence_notice_analysis_queue_url        = data.aws_ssm_parameter.sqs_intelligence_notice_analysis_queue_url.value
   sqs_intelligence_aggregation_queue_url            = data.aws_ssm_parameter.sqs_intelligence_aggregation_queue_url.value
+
+  # Shipment Outbox SQS Queue URL
+  sqs_shipment_outbox_queue_url = data.aws_ssm_parameter.sqs_shipment_outbox_queue_url.value
 
   # Claim Outbox SQS Queue URLs
   sqs_cancel_outbox_queue_url   = data.aws_ssm_parameter.sqs_cancel_outbox_queue_url.value

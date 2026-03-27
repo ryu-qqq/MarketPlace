@@ -182,6 +182,13 @@ data "aws_ssm_parameter" "sqs_intelligence_aggregation_queue_url" {
 }
 
 # ========================================
+# Shipment Outbox SQS Queue Reference
+# ========================================
+data "aws_ssm_parameter" "sqs_shipment_outbox_queue_url" {
+  name = "/${var.project_name}/${var.environment}/sqs/shipment-outbox-queue-url"
+}
+
+# ========================================
 # OpenAI Configuration
 # ========================================
 data "aws_ssm_parameter" "openai_api_key" {
@@ -226,6 +233,9 @@ locals {
 
   # OutboundSync SQS Queue URL
   sqs_outbound_sync_queue_url = data.aws_ssm_parameter.sqs_outbound_sync_queue_url.value
+
+  # Shipment Outbox SQS Queue URL
+  sqs_shipment_outbox_queue_url = data.aws_ssm_parameter.sqs_shipment_outbox_queue_url.value
 
   # Intelligence Pipeline SQS Queue URLs
   sqs_intelligence_orchestration_queue_url          = data.aws_ssm_parameter.sqs_intelligence_orchestration_queue_url.value
