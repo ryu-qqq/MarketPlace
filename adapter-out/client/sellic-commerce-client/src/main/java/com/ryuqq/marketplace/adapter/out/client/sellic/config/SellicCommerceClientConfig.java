@@ -34,7 +34,7 @@ import org.springframework.web.client.RestClient;
  */
 @Configuration
 @EnableConfigurationProperties(SellicCommerceProperties.class)
-@ConditionalOnProperty(prefix = "sellic-commerce", name = "customer-id")
+@ConditionalOnProperty(prefix = "sellic-commerce", name = "base-url")
 public class SellicCommerceClientConfig {
 
     /**

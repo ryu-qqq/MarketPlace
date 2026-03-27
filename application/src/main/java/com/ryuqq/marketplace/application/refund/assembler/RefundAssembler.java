@@ -71,11 +71,27 @@ public class RefundAssembler {
         ClaimShipment collectShipment = claim.collectShipment();
         CollectShipmentResult collectShipmentResult = null;
         if (collectShipment != null) {
+            RefundDetailResult.CollectShipmentMethodResult methodResult = null;
+            if (collectShipment.method() != null) {
+                methodResult =
+                        new RefundDetailResult.CollectShipmentMethodResult(
+                                collectShipment.method().type().name(),
+                                collectShipment.method().courierCode(),
+                                collectShipment.method().courierName());
+            }
+
+            RefundDetailResult.CollectShipmentFeeInfoResult feeInfoResult = null;
+            if (collectShipment.feeInfo() != null) {
+                feeInfoResult =
+                        new RefundDetailResult.CollectShipmentFeeInfoResult(
+                                collectShipment.feeInfo().amount().value(),
+                                collectShipment.feeInfo().payer().name());
+            }
+
             collectShipmentResult =
                     new CollectShipmentResult(
-                            collectShipment.method() != null
-                                    ? collectShipment.method().courierName()
-                                    : null,
+                            methodResult,
+                            feeInfoResult,
                             collectShipment.trackingNumber(),
                             collectShipment.status().name());
         }

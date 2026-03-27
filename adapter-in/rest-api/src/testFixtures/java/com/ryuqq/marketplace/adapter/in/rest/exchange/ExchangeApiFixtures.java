@@ -259,14 +259,20 @@ public final class ExchangeApiFixtures {
                 new ExchangeOptionResult(
                         DEFAULT_ORIGINAL_PRODUCT_ID,
                         DEFAULT_ORIGINAL_SKU_CODE,
+                        "단일옵션",
                         DEFAULT_TARGET_PRODUCT_GROUP_ID,
                         DEFAULT_TARGET_PRODUCT_ID,
                         DEFAULT_TARGET_SKU_CODE,
+                        "단일옵션",
                         DEFAULT_TARGET_QUANTITY),
                 new AmountAdjustmentResult(
                         30000, 35000, 5000, true, false, 3000, 3000, 6000, "SELLER"),
                 new ExchangeDetailResult.CollectShipmentResult(
-                        DEFAULT_DELIVERY_COMPANY, DEFAULT_TRACKING_NUMBER, "IN_TRANSIT"),
+                        new ExchangeDetailResult.CollectShipmentMethodResult(
+                                "COURIER", "CJGLS", DEFAULT_DELIVERY_COMPANY),
+                        new ExchangeDetailResult.CollectShipmentFeeInfoResult(0, "SELLER"),
+                        DEFAULT_TRACKING_NUMBER,
+                        "IN_TRANSIT"),
                 DEFAULT_LINKED_ORDER_ID,
                 DEFAULT_REQUESTED_BY,
                 DEFAULT_PROCESSED_BY,
@@ -375,19 +381,28 @@ public final class ExchangeApiFixtures {
                         DEFAULT_SELLER_ID,
                         DEFAULT_EXCHANGE_QTY,
                         DEFAULT_EXCHANGE_STATUS,
-                        DEFAULT_REASON_TYPE,
-                        DEFAULT_REASON_DETAIL,
+                        new ExchangeDetailApiResponse.ClaimReasonApiResponse(
+                                DEFAULT_REASON_TYPE, DEFAULT_REASON_DETAIL),
                         new ExchangeOptionApiResponse(
                                 DEFAULT_ORIGINAL_PRODUCT_ID,
                                 DEFAULT_ORIGINAL_SKU_CODE,
                                 DEFAULT_TARGET_PRODUCT_GROUP_ID,
                                 DEFAULT_TARGET_PRODUCT_ID,
                                 DEFAULT_TARGET_SKU_CODE,
-                                DEFAULT_TARGET_QUANTITY),
+                                DEFAULT_TARGET_QUANTITY,
+                                new ExchangeDetailApiResponse.ExchangeOptionDetailApiResponse(
+                                        "단일옵션", List.of()),
+                                new ExchangeDetailApiResponse.ExchangeOptionDetailApiResponse(
+                                        "단일옵션", List.of())),
                         new AmountAdjustmentApiResponse(
                                 30000, 35000, 5000, true, false, 3000, 3000, 6000, "SELLER"),
                         new CollectShipmentApiResponse(
-                                DEFAULT_DELIVERY_COMPANY, DEFAULT_TRACKING_NUMBER, "IN_TRANSIT"),
+                                new ExchangeDetailApiResponse.CollectShipmentMethodApiResponse(
+                                        "COURIER", "CJGLS", DEFAULT_DELIVERY_COMPANY),
+                                new ExchangeDetailApiResponse.CollectShipmentFeeInfoApiResponse(
+                                        0, "SELLER"),
+                                DEFAULT_TRACKING_NUMBER,
+                                "IN_TRANSIT"),
                         DEFAULT_LINKED_ORDER_ID,
                         DEFAULT_FORMATTED_TIME,
                         null);

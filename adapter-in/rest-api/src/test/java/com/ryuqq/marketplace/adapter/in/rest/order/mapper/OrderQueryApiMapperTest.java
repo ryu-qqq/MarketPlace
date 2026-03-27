@@ -3,16 +3,21 @@ package com.ryuqq.marketplace.adapter.in.rest.order.mapper;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimHistoryApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.OrderApiFixtures;
+import com.ryuqq.marketplace.adapter.in.rest.order.dto.query.SearchOrderClaimHistoriesApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.query.SearchOrdersApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderDetailApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderDetailApiResponseV4;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponseV4;
+import com.ryuqq.marketplace.application.claimhistory.dto.response.ClaimHistoryPageResult;
 import com.ryuqq.marketplace.application.order.dto.query.OrderSearchParams;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderDetailResult;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResult;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderPageResult;
+import com.ryuqq.marketplace.domain.claimhistory.query.ClaimHistoryPageCriteria;
+import com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -465,6 +470,170 @@ class OrderQueryApiMapperTest {
             // then
             assertThat(response.content()).hasSize(2);
             assertThat(response.totalElements()).isEqualTo(2);
+        }
+    }
+
+    @Nested
+    @DisplayName("toClaimHistoryCriteria() - 클레임 이력 조회 조건 변환")
+    class ToClaimHistoryCriteriaTest {
+
+        @Test
+        @DisplayName(
+                "orderItemId와 SearchOrderClaimHistoriesApiRequest를 ClaimHistoryPageCriteria로 변환한다")
+        void toClaimHistoryCriteria_ConvertsRequest_ReturnsCriteria() {
+            // given
+            String orderItemId = OrderApiFixtures.DEFAULT_ORDER_ITEM_ID;
+            SearchOrderClaimHistoriesApiRequest request =
+                    OrderApiFixtures.searchClaimHistoriesRequest();
+
+            // when
+            ClaimHistoryPageCriteria criteria = mapper.toClaimHistoryCriteria(orderItemId, request);
+
+            // then
+            assertThat(criteria.orderItemId()).isEqualTo(orderItemId);
+            assertThat(criteria.claimType()).isNull();
+            assertThat(criteria.page()).isZero();
+            assertThat(criteria.size()).isEqualTo(20);
+        }
+
+        @Test
+        @DisplayName("claimType 필터가 있으면 올바르게 변환된다")
+        void toClaimHistoryCriteria_WithClaimTypeFilter_FilterApplied() {
+            // given
+            String orderItemId = OrderApiFixtures.DEFAULT_ORDER_ITEM_ID;
+            SearchOrderClaimHistoriesApiRequest request =
+                    OrderApiFixtures.searchClaimHistoriesRequest("CANCEL", 0, 10);
+
+            // when
+            ClaimHistoryPageCriteria criteria = mapper.toClaimHistoryCriteria(orderItemId, request);
+
+            // then
+            assertThat(criteria.claimType()).isEqualTo(ClaimType.CANCEL);
+            assertThat(criteria.size()).isEqualTo(10);
+        }
+
+        @Test
+        @DisplayName("page/size가 null이면 기본값(0, 20)으로 변환된다")
+        void toClaimHistoryCriteria_NullPageSize_UsesDefaults() {
+            // given
+            String orderItemId = OrderApiFixtures.DEFAULT_ORDER_ITEM_ID;
+            SearchOrderClaimHistoriesApiRequest request =
+                    new SearchOrderClaimHistoriesApiRequest(null, null, null);
+
+            // when
+            ClaimHistoryPageCriteria criteria = mapper.toClaimHistoryCriteria(orderItemId, request);
+
+            // then
+            assertThat(criteria.page()).isZero();
+            assertThat(criteria.size()).isEqualTo(20);
+        }
+
+        @Test
+        @DisplayName("hasClaimTypeFilter()가 claimType 존재 여부를 올바르게 반환한다")
+        void toClaimHistoryCriteria_HasClaimTypeFilter_ReflectsFilterState() {
+            // given
+            String orderItemId = OrderApiFixtures.DEFAULT_ORDER_ITEM_ID;
+            SearchOrderClaimHistoriesApiRequest withFilter =
+                    OrderApiFixtures.searchClaimHistoriesRequest("ORDER", 0, 20);
+            SearchOrderClaimHistoriesApiRequest withoutFilter =
+                    OrderApiFixtures.searchClaimHistoriesRequest();
+
+            // when
+            ClaimHistoryPageCriteria withFilterCriteria =
+                    mapper.toClaimHistoryCriteria(orderItemId, withFilter);
+            ClaimHistoryPageCriteria withoutFilterCriteria =
+                    mapper.toClaimHistoryCriteria(orderItemId, withoutFilter);
+
+            // then
+            assertThat(withFilterCriteria.hasClaimTypeFilter()).isTrue();
+            assertThat(withoutFilterCriteria.hasClaimTypeFilter()).isFalse();
+        }
+    }
+
+    @Nested
+    @DisplayName("toClaimHistoryPageResponse() - 클레임 이력 페이지 응답 변환")
+    class ToClaimHistoryPageResponseTest {
+
+        @Test
+        @DisplayName("ClaimHistoryPageResult를 PageApiResponse<ClaimHistoryApiResponse>로 변환한다")
+        void toClaimHistoryPageResponse_ConvertsResult_ReturnsPageResponse() {
+            // given
+            ClaimHistoryPageResult pageResult = OrderApiFixtures.claimHistoryPageResult(3, 0, 20);
+
+            // when
+            PageApiResponse<ClaimHistoryApiResponse> response =
+                    mapper.toClaimHistoryPageResponse(pageResult);
+
+            // then
+            assertThat(response.content()).hasSize(3);
+            assertThat(response.page()).isZero();
+            assertThat(response.size()).isEqualTo(20);
+            assertThat(response.totalElements()).isEqualTo(3);
+        }
+
+        @Test
+        @DisplayName("각 이력 항목의 historyId, type, title, message가 올바르게 매핑된다")
+        void toClaimHistoryPageResponse_HistoryFieldsMapped() {
+            // given
+            ClaimHistoryPageResult pageResult = OrderApiFixtures.claimHistoryPageResult(1, 0, 20);
+
+            // when
+            PageApiResponse<ClaimHistoryApiResponse> response =
+                    mapper.toClaimHistoryPageResponse(pageResult);
+
+            // then
+            ClaimHistoryApiResponse first = response.content().get(0);
+            assertThat(first.historyId()).isEqualTo("HIST-ORDER-001");
+            assertThat(first.type()).isEqualTo(OrderApiFixtures.DEFAULT_HISTORY_TYPE);
+            assertThat(first.title()).isEqualTo(OrderApiFixtures.DEFAULT_HISTORY_TITLE);
+            assertThat(first.message()).isEqualTo(OrderApiFixtures.DEFAULT_HISTORY_MESSAGE);
+        }
+
+        @Test
+        @DisplayName("actor 정보가 올바르게 매핑된다")
+        void toClaimHistoryPageResponse_ActorFieldsMapped() {
+            // given
+            ClaimHistoryPageResult pageResult = OrderApiFixtures.claimHistoryPageResult(1, 0, 20);
+
+            // when
+            PageApiResponse<ClaimHistoryApiResponse> response =
+                    mapper.toClaimHistoryPageResponse(pageResult);
+
+            // then
+            ClaimHistoryApiResponse.ActorApiResponse actor = response.content().get(0).actor();
+            assertThat(actor.actorType()).isEqualTo(OrderApiFixtures.DEFAULT_ACTOR_TYPE);
+            assertThat(actor.actorId()).isEqualTo(OrderApiFixtures.DEFAULT_ACTOR_ID);
+            assertThat(actor.actorName()).isEqualTo(OrderApiFixtures.DEFAULT_ACTOR_NAME);
+        }
+
+        @Test
+        @DisplayName("createdAt이 ISO 8601 형식으로 변환된다")
+        void toClaimHistoryPageResponse_CreatedAtFormattedAsIso8601() {
+            // given
+            ClaimHistoryPageResult pageResult = OrderApiFixtures.claimHistoryPageResult(1, 0, 20);
+
+            // when
+            PageApiResponse<ClaimHistoryApiResponse> response =
+                    mapper.toClaimHistoryPageResponse(pageResult);
+
+            // then
+            assertThat(response.content().get(0).createdAt())
+                    .matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}");
+        }
+
+        @Test
+        @DisplayName("빈 결과이면 빈 페이지 응답을 반환한다")
+        void toClaimHistoryPageResponse_EmptyResult_ReturnsEmptyPage() {
+            // given
+            ClaimHistoryPageResult pageResult = OrderApiFixtures.emptyClaimHistoryPageResult();
+
+            // when
+            PageApiResponse<ClaimHistoryApiResponse> response =
+                    mapper.toClaimHistoryPageResponse(pageResult);
+
+            // then
+            assertThat(response.content()).isEmpty();
+            assertThat(response.totalElements()).isZero();
         }
     }
 }

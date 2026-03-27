@@ -32,7 +32,7 @@ import org.springframework.stereotype.Component;
  * </ul>
  */
 @Component
-@ConditionalOnProperty(prefix = "sellic-commerce", name = "customer-id")
+@ConditionalOnProperty(prefix = "sellic-commerce", name = "base-url")
 public class SellicCommerceApiExecutor {
 
     private static final Logger log = LoggerFactory.getLogger(SellicCommerceApiExecutor.class);

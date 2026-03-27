@@ -34,14 +34,18 @@ public record ExchangeDetailApiResponse(
             @Schema(description = "판매자 ID") long sellerId,
             @Schema(description = "교환 수량") int exchangeQty,
             @Schema(description = "교환 상태") String status,
-            @Schema(description = "교환 사유 유형") String reasonType,
-            @Schema(description = "교환 상세 사유") String reasonDetail,
+            @Schema(description = "교환 사유") ClaimReasonApiResponse reason,
             @Schema(description = "교환 옵션 정보") ExchangeOptionApiResponse exchangeOption,
             @Schema(description = "금액 조정 정보") AmountAdjustmentApiResponse amountAdjustment,
             @Schema(description = "수거 배송 정보") CollectShipmentApiResponse collectShipment,
             @Schema(description = "연결 주문 ID") String linkedOrderId,
             @Schema(description = "요청일시") String requestedAt,
             @Schema(description = "완료일시") String completedAt) {}
+
+    @Schema(description = "클레임 사유")
+    public record ClaimReasonApiResponse(
+            @Schema(description = "사유 유형") String reasonType,
+            @Schema(description = "상세 사유") String reasonDetail) {}
 
     @Schema(description = "교환 옵션 정보")
     public record ExchangeOptionApiResponse(
@@ -50,7 +54,19 @@ public record ExchangeDetailApiResponse(
             @Schema(description = "교환 대상 상품 그룹 ID") long targetProductGroupId,
             @Schema(description = "교환 대상 상품 ID") long targetProductId,
             @Schema(description = "교환 대상 SKU 코드") String targetSkuCode,
-            @Schema(description = "수량") int quantity) {}
+            @Schema(description = "수량") int quantity,
+            @Schema(description = "원 옵션 정보") ExchangeOptionDetailApiResponse originalOption,
+            @Schema(description = "교환 대상 옵션 정보") ExchangeOptionDetailApiResponse targetOption) {}
+
+    @Schema(description = "교환 옵션 상세")
+    public record ExchangeOptionDetailApiResponse(
+            @Schema(description = "옵션명") String optionName,
+            @Schema(description = "옵션값 목록") List<ExchangeOptionValueApiResponse> optionValues) {}
+
+    @Schema(description = "교환 옵션값")
+    public record ExchangeOptionValueApiResponse(
+            @Schema(description = "옵션 속성명") String name,
+            @Schema(description = "옵션 속성값") String value) {}
 
     @Schema(description = "금액 조정 정보")
     public record AmountAdjustmentApiResponse(
@@ -66,7 +82,19 @@ public record ExchangeDetailApiResponse(
 
     @Schema(description = "수거 배송 정보")
     public record CollectShipmentApiResponse(
-            @Schema(description = "수거 택배사명") String collectDeliveryCompany,
-            @Schema(description = "수거 송장번호") String collectTrackingNumber,
-            @Schema(description = "수거 상태") String collectStatus) {}
+            @Schema(description = "수거 방법 정보") CollectShipmentMethodApiResponse method,
+            @Schema(description = "수거 배송비 정보") CollectShipmentFeeInfoApiResponse feeInfo,
+            @Schema(description = "수거 송장번호") String trackingNumber,
+            @Schema(description = "수거 상태") String status) {}
+
+    @Schema(description = "수거 방법 정보")
+    public record CollectShipmentMethodApiResponse(
+            @Schema(description = "배송 방식 유형 (COURIER, VISIT, QUICK)") String type,
+            @Schema(description = "택배사 코드") String courierCode,
+            @Schema(description = "택배사명") String courierName) {}
+
+    @Schema(description = "수거 배송비 정보")
+    public record CollectShipmentFeeInfoApiResponse(
+            @Schema(description = "배송비 금액") int amount,
+            @Schema(description = "배송비 부담 주체 (BUYER, SELLER)") String payer) {}
 }

@@ -226,7 +226,12 @@ public final class RefundApiFixtures {
                 DEFAULT_REASON_DETAIL,
                 new RefundInfoResult(15000, 15000, 0, null, "CARD", DEFAULT_INSTANT),
                 null,
-                new RefundDetailResult.CollectShipmentResult("CJ대한통운", "1234567890", "IN_TRANSIT"),
+                new RefundDetailResult.CollectShipmentResult(
+                        new RefundDetailResult.CollectShipmentMethodResult(
+                                "COURIER", "CJGLS", "CJ대한통운"),
+                        new RefundDetailResult.CollectShipmentFeeInfoResult(0, "SELLER"),
+                        "1234567890",
+                        "IN_TRANSIT"),
                 DEFAULT_REQUESTED_BY,
                 null,
                 DEFAULT_INSTANT,
@@ -350,12 +355,18 @@ public final class RefundApiFixtures {
                         DEFAULT_CLAIM_NUMBER,
                         1,
                         DEFAULT_REFUND_STATUS,
-                        DEFAULT_REASON_TYPE,
-                        DEFAULT_REASON_DETAIL,
+                        new RefundDetailApiResponse.ClaimReasonApiResponse(
+                                DEFAULT_REASON_TYPE, DEFAULT_REASON_DETAIL),
                         new ClaimListItemApiResponseV4.RefundInfoV4(
                                 15000, 0, "", 15000, "CARD", DEFAULT_FORMATTED_TIME),
                         null,
-                        new CollectShipmentApiResponse("CJ대한통운", "1234567890", "IN_TRANSIT"),
+                        new CollectShipmentApiResponse(
+                                new RefundDetailApiResponse.CollectShipmentMethodApiResponse(
+                                        "COURIER", "CJGLS", "CJ대한통운"),
+                                new RefundDetailApiResponse.CollectShipmentFeeInfoApiResponse(
+                                        0, "SELLER"),
+                                "1234567890",
+                                "IN_TRANSIT"),
                         DEFAULT_FORMATTED_TIME,
                         null);
         return new RefundDetailApiResponse(

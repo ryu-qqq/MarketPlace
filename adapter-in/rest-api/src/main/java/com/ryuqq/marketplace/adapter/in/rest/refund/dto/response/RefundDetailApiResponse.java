@@ -33,13 +33,17 @@ public record RefundDetailApiResponse(
             @Schema(description = "환불 클레임 번호") String claimNumber,
             @Schema(description = "환불 수량") int refundQty,
             @Schema(description = "환불 상태") String status,
-            @Schema(description = "환불 사유 유형") String reasonType,
-            @Schema(description = "환불 상세 사유") String reasonDetail,
+            @Schema(description = "환불 사유") ClaimReasonApiResponse reason,
             @Schema(description = "환불 정보") ClaimListItemApiResponseV4.RefundInfoV4 refundInfo,
             @Schema(description = "보류 정보") HoldInfoApiResponse holdInfo,
             @Schema(description = "수거 배송 정보") CollectShipmentApiResponse collectShipment,
             @Schema(description = "요청일시") String requestedAt,
             @Schema(description = "완료일시") String completedAt) {}
+
+    @Schema(description = "클레임 사유")
+    public record ClaimReasonApiResponse(
+            @Schema(description = "사유 유형") String reasonType,
+            @Schema(description = "상세 사유") String reasonDetail) {}
 
     @Schema(description = "보류 정보")
     public record HoldInfoApiResponse(
@@ -48,7 +52,19 @@ public record RefundDetailApiResponse(
 
     @Schema(description = "수거 배송 정보")
     public record CollectShipmentApiResponse(
-            @Schema(description = "수거 택배사명") String collectDeliveryCompany,
-            @Schema(description = "수거 송장번호") String collectTrackingNumber,
-            @Schema(description = "수거 상태") String collectStatus) {}
+            @Schema(description = "수거 방법 정보") CollectShipmentMethodApiResponse method,
+            @Schema(description = "수거 배송비 정보") CollectShipmentFeeInfoApiResponse feeInfo,
+            @Schema(description = "수거 송장번호") String trackingNumber,
+            @Schema(description = "수거 상태") String status) {}
+
+    @Schema(description = "수거 방법 정보")
+    public record CollectShipmentMethodApiResponse(
+            @Schema(description = "배송 방식 유형 (COURIER, VISIT, QUICK)") String type,
+            @Schema(description = "택배사 코드") String courierCode,
+            @Schema(description = "택배사명") String courierName) {}
+
+    @Schema(description = "수거 배송비 정보")
+    public record CollectShipmentFeeInfoApiResponse(
+            @Schema(description = "배송비 금액") int amount,
+            @Schema(description = "배송비 부담 주체 (BUYER, SELLER)") String payer) {}
 }

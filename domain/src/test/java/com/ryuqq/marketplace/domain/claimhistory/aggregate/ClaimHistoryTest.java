@@ -243,6 +243,67 @@ class ClaimHistoryTest {
     }
 
     @Nested
+    @DisplayName("forStatusChangeWithQty() - 수량 포함 상태 변경 이력 생성")
+    class ForStatusChangeWithQtyTest {
+
+        @Test
+        @DisplayName("수량 정보를 포함한 상태 변경 이력을 생성한다")
+        void createStatusChangeHistoryWithQty() {
+            // given
+            ClaimHistoryId id = ClaimHistoryFixtures.defaultClaimHistoryId();
+            ClaimType claimType = ClaimType.CANCEL;
+            String claimId = "cancel-claim-001";
+            String fromStatus = "REQUESTED";
+            String toStatus = "APPROVED";
+            int quantity = 3;
+            Actor actor = ClaimHistoryFixtures.systemActor();
+            Instant now = CommonVoFixtures.now();
+
+            // when
+            ClaimHistory history =
+                    ClaimHistory.forStatusChangeWithQty(
+                            id,
+                            claimType,
+                            claimId,
+                            "order-item-001",
+                            fromStatus,
+                            toStatus,
+                            quantity,
+                            actor,
+                            now);
+
+            // then
+            assertThat(history.id()).isEqualTo(id);
+            assertThat(history.claimType()).isEqualTo(ClaimType.CANCEL);
+            assertThat(history.historyType()).isEqualTo(ClaimHistoryType.STATUS_CHANGE);
+            assertThat(history.message()).isEqualTo("REQUESTED → APPROVED (3건)");
+            assertThat(history.title()).isEqualTo("승인");
+            assertThat(history.actor()).isEqualTo(actor);
+            assertThat(history.createdAt()).isEqualTo(now);
+        }
+
+        @Test
+        @DisplayName("수량이 1인 경우에도 정상적으로 메시지를 생성한다")
+        void createStatusChangeHistoryWithSingleQty() {
+            // when
+            ClaimHistory history =
+                    ClaimHistory.forStatusChangeWithQty(
+                            ClaimHistoryFixtures.defaultClaimHistoryId(),
+                            ClaimType.EXCHANGE,
+                            "exchange-001",
+                            "order-item-001",
+                            "APPROVED",
+                            "COLLECTING",
+                            1,
+                            ClaimHistoryFixtures.systemActor(),
+                            CommonVoFixtures.now());
+
+            // then
+            assertThat(history.message()).isEqualTo("APPROVED → COLLECTING (1건)");
+        }
+    }
+
+    @Nested
     @DisplayName("forManual() - 수기 메모 이력 생성")
     class ForManualTest {
 

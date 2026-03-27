@@ -31,7 +31,7 @@ import org.springframework.context.annotation.Configuration;
  * </ul>
  */
 @Configuration
-@ConditionalOnProperty(prefix = "sellic-commerce", name = "customer-id")
+@ConditionalOnProperty(prefix = "sellic-commerce", name = "base-url")
 public class SellicCommerceCircuitBreakerConfig {
 
     private static final String CIRCUIT_BREAKER_NAME = "sellicCommerce";

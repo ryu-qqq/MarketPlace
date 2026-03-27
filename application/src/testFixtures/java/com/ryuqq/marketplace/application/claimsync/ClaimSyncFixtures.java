@@ -48,8 +48,12 @@ public final class ClaimSyncFixtures {
                 null,
                 null,
                 null,
+                null,
                 Instant.now(),
-                Instant.now());
+                Instant.now(),
+                null,
+                null,
+                null);
     }
 
     public static ExternalClaimPayload cancelPayload(String claimStatus) {
@@ -73,8 +77,12 @@ public final class ClaimSyncFixtures {
                 null,
                 null,
                 null,
+                null,
                 Instant.now(),
-                Instant.now());
+                Instant.now(),
+                null,
+                null,
+                null);
     }
 
     public static ExternalClaimPayload adminCancelPayload(String claimStatus) {
@@ -98,8 +106,12 @@ public final class ClaimSyncFixtures {
                 null,
                 null,
                 null,
+                null,
                 Instant.now(),
-                Instant.now());
+                Instant.now(),
+                null,
+                null,
+                null);
     }
 
     public static ExternalClaimPayload cancelPayloadWithReason(
@@ -124,8 +136,12 @@ public final class ClaimSyncFixtures {
                 null,
                 null,
                 null,
+                null,
                 Instant.now(),
-                Instant.now());
+                Instant.now(),
+                null,
+                null,
+                null);
     }
 
     // ===== ExternalClaimPayload - RETURN (환불) =====
@@ -151,8 +167,12 @@ public final class ClaimSyncFixtures {
                 null,
                 null,
                 null,
+                null,
                 Instant.now(),
-                Instant.now());
+                Instant.now(),
+                null,
+                null,
+                null);
     }
 
     public static ExternalClaimPayload returnPayload(String claimStatus) {
@@ -169,6 +189,7 @@ public final class ClaimSyncFixtures {
                 1,
                 "BUYER",
                 "CJ대한통운",
+                "CJ대한통운",
                 "1234567890",
                 "COLLECTING",
                 null,
@@ -177,7 +198,10 @@ public final class ClaimSyncFixtures {
                 null,
                 null,
                 Instant.now(),
-                Instant.now());
+                Instant.now(),
+                2500,
+                "PREPAID",
+                "단일옵션");
     }
 
     public static ExternalClaimPayload returnPayloadWithReason(String claimReason) {
@@ -201,8 +225,12 @@ public final class ClaimSyncFixtures {
                 null,
                 null,
                 null,
+                null,
                 Instant.now(),
-                Instant.now());
+                Instant.now(),
+                null,
+                null,
+                null);
     }
 
     // ===== ExternalClaimPayload - EXCHANGE =====
@@ -228,8 +256,12 @@ public final class ClaimSyncFixtures {
                 null,
                 null,
                 null,
+                null,
                 Instant.now(),
-                Instant.now());
+                Instant.now(),
+                null,
+                null,
+                null);
     }
 
     public static ExternalClaimPayload exchangePayload(String claimStatus) {
@@ -246,6 +278,7 @@ public final class ClaimSyncFixtures {
                 1,
                 "BUYER",
                 "CJ대한통운",
+                "CJ대한통운",
                 "9876543210",
                 "COLLECTING",
                 "한진택배",
@@ -254,7 +287,10 @@ public final class ClaimSyncFixtures {
                 null,
                 null,
                 Instant.now(),
-                Instant.now());
+                Instant.now(),
+                3000,
+                "PREPAID",
+                "색상: 블랙 / 사이즈: M");
     }
 
     public static ExternalClaimPayload exchangePayloadWithReason(
@@ -279,8 +315,12 @@ public final class ClaimSyncFixtures {
                 null,
                 null,
                 null,
+                null,
                 Instant.now(),
-                Instant.now());
+                Instant.now(),
+                null,
+                null,
+                null);
     }
 
     public static ExternalClaimPayload exchangeHoldbackPayload(
@@ -303,10 +343,14 @@ public final class ClaimSyncFixtures {
                 null,
                 null,
                 null,
+                null,
                 holdbackStatus,
                 holdbackReason,
                 Instant.now(),
-                Instant.now());
+                Instant.now(),
+                null,
+                null,
+                null);
     }
 
     public static ExternalClaimPayload returnHoldbackPayload(
@@ -329,10 +373,14 @@ public final class ClaimSyncFixtures {
                 null,
                 null,
                 null,
+                null,
                 holdbackStatus,
                 holdbackReason,
                 Instant.now(),
-                Instant.now());
+                Instant.now(),
+                null,
+                null,
+                null);
     }
 
     // ===== ExternalClaimPayload - CANCEL (수량 지정) =====
@@ -359,8 +407,12 @@ public final class ClaimSyncFixtures {
                 null,
                 null,
                 null,
+                null,
                 Instant.now(),
-                Instant.now());
+                Instant.now(),
+                null,
+                null,
+                null);
     }
 
     // ===== ExternalClaimPayload - 알 수 없는 유형 =====
@@ -386,8 +438,12 @@ public final class ClaimSyncFixtures {
                 null,
                 null,
                 null,
+                null,
                 Instant.now(),
-                Instant.now());
+                Instant.now(),
+                null,
+                null,
+                null);
     }
 
     // ===== ExternalOrderItemMapping =====

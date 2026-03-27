@@ -272,6 +272,22 @@ public class ExchangeApiMapper {
             ClaimListItemApiResponseV4.ReceiverInfoV4 receiverInfo) {
         ExchangeDetailApiResponse.ExchangeOptionApiResponse exchangeOption = null;
         if (result.exchangeOption() != null) {
+            String originalOptionName = nullToEmpty(result.exchangeOption().originalOptionName());
+            String targetOptionName = nullToEmpty(result.exchangeOption().targetOptionName());
+
+            // 옵션명이 비어있으면 orderProduct의 option 필드에서 가져온다
+            if (originalOptionName.isEmpty() && orderProduct != null) {
+                originalOptionName = nullToEmpty(orderProduct.option());
+            }
+            if (targetOptionName.isEmpty() && orderProduct != null) {
+                targetOptionName = nullToEmpty(orderProduct.option());
+            }
+
+            ExchangeDetailApiResponse.ExchangeOptionDetailApiResponse originalOption =
+                    toOptionDetail(originalOptionName);
+            ExchangeDetailApiResponse.ExchangeOptionDetailApiResponse targetOption =
+                    toOptionDetail(targetOptionName);
+
             exchangeOption =
                     new ExchangeDetailApiResponse.ExchangeOptionApiResponse(
                             result.exchangeOption().originalProductId(),
@@ -279,7 +295,9 @@ public class ExchangeApiMapper {
                             result.exchangeOption().targetProductGroupId(),
                             result.exchangeOption().targetProductId(),
                             nullToEmpty(result.exchangeOption().targetSkuCode()),
-                            result.exchangeOption().quantity());
+                            result.exchangeOption().quantity(),
+                            originalOption,
+                            targetOption);
         }
 
         ExchangeDetailApiResponse.AmountAdjustmentApiResponse amountAdjustment = null;
@@ -298,14 +316,42 @@ public class ExchangeApiMapper {
         }
 
         ExchangeDetailApiResponse.CollectShipmentApiResponse collectShipment =
-                new ExchangeDetailApiResponse.CollectShipmentApiResponse("", "", "");
+                new ExchangeDetailApiResponse.CollectShipmentApiResponse(
+                        new ExchangeDetailApiResponse.CollectShipmentMethodApiResponse("", "", ""),
+                        new ExchangeDetailApiResponse.CollectShipmentFeeInfoApiResponse(0, ""),
+                        "",
+                        "");
         if (result.collectShipment() != null) {
+            ExchangeDetailApiResponse.CollectShipmentMethodApiResponse methodResponse =
+                    new ExchangeDetailApiResponse.CollectShipmentMethodApiResponse("", "", "");
+            if (result.collectShipment().method() != null) {
+                methodResponse =
+                        new ExchangeDetailApiResponse.CollectShipmentMethodApiResponse(
+                                nullToEmpty(result.collectShipment().method().type()),
+                                nullToEmpty(result.collectShipment().method().courierCode()),
+                                nullToEmpty(result.collectShipment().method().courierName()));
+            }
+
+            ExchangeDetailApiResponse.CollectShipmentFeeInfoApiResponse feeInfoResponse =
+                    new ExchangeDetailApiResponse.CollectShipmentFeeInfoApiResponse(0, "");
+            if (result.collectShipment().feeInfo() != null) {
+                feeInfoResponse =
+                        new ExchangeDetailApiResponse.CollectShipmentFeeInfoApiResponse(
+                                result.collectShipment().feeInfo().amount(),
+                                nullToEmpty(result.collectShipment().feeInfo().payer()));
+            }
+
             collectShipment =
                     new ExchangeDetailApiResponse.CollectShipmentApiResponse(
-                            nullToEmpty(result.collectShipment().collectDeliveryCompany()),
-                            nullToEmpty(result.collectShipment().collectTrackingNumber()),
-                            nullToEmpty(result.collectShipment().collectStatus()));
+                            methodResponse,
+                            feeInfoResponse,
+                            nullToEmpty(result.collectShipment().trackingNumber()),
+                            nullToEmpty(result.collectShipment().status()));
         }
+
+        ExchangeDetailApiResponse.ClaimReasonApiResponse reason =
+                new ExchangeDetailApiResponse.ClaimReasonApiResponse(
+                        nullToEmpty(result.reasonType()), nullToEmpty(result.reasonDetail()));
 
         ExchangeDetailApiResponse.ExchangeClaimInfoApiResponse claimInfo =
                 new ExchangeDetailApiResponse.ExchangeClaimInfoApiResponse(
@@ -314,8 +360,7 @@ public class ExchangeApiMapper {
                         result.sellerId(),
                         result.exchangeQty(),
                         nullToEmpty(result.exchangeStatus()),
-                        nullToEmpty(result.reasonType()),
-                        nullToEmpty(result.reasonDetail()),
+                        reason,
                         exchangeOption,
                         amountAdjustment,
                         collectShipment,
@@ -389,6 +434,41 @@ public class ExchangeApiMapper {
     }
 
     // ==================== 유틸 ====================
+
+    /**
+     * 옵션 문자열을 ExchangeOptionDetailApiResponse로 변환.
+     *
+     * <p>"색상: 블랙 / 사이즈: L" → optionName = "색상: 블랙 / 사이즈: L", optionValues = [{name: "색상", value:
+     * "블랙"}, {name: "사이즈", value: "L"}]
+     */
+    private ExchangeDetailApiResponse.ExchangeOptionDetailApiResponse toOptionDetail(
+            String optionString) {
+        if (optionString == null || optionString.isEmpty()) {
+            return new ExchangeDetailApiResponse.ExchangeOptionDetailApiResponse(
+                    "", java.util.List.of());
+        }
+
+        java.util.List<ExchangeDetailApiResponse.ExchangeOptionValueApiResponse> optionValues =
+                java.util.Arrays.stream(optionString.split("/"))
+                        .map(String::trim)
+                        .filter(s -> !s.isEmpty())
+                        .map(
+                                part -> {
+                                    int colonIdx = part.indexOf(':');
+                                    if (colonIdx > 0) {
+                                        return new ExchangeDetailApiResponse
+                                                .ExchangeOptionValueApiResponse(
+                                                part.substring(0, colonIdx).trim(),
+                                                part.substring(colonIdx + 1).trim());
+                                    }
+                                    return new ExchangeDetailApiResponse
+                                            .ExchangeOptionValueApiResponse("옵션", part.trim());
+                                })
+                        .toList();
+
+        return new ExchangeDetailApiResponse.ExchangeOptionDetailApiResponse(
+                optionString, optionValues);
+    }
 
     private String nullToEmpty(String value) {
         return value != null ? value : "";

@@ -500,7 +500,8 @@ class ExchangeApiMapperTest {
                     .isEqualTo(ExchangeApiFixtures.DEFAULT_EXCHANGE_QTY);
             assertThat(response.claimInfo().status())
                     .isEqualTo(ExchangeApiFixtures.DEFAULT_EXCHANGE_STATUS);
-            assertThat(response.claimInfo().reasonType())
+            assertThat(response.claimInfo().reason()).isNotNull();
+            assertThat(response.claimInfo().reason().reasonType())
                     .isEqualTo(ExchangeApiFixtures.DEFAULT_REASON_TYPE);
         }
 
@@ -583,17 +584,17 @@ class ExchangeApiMapperTest {
 
             // then
             assertThat(response.claimInfo().collectShipment()).isNotNull();
-            assertThat(response.claimInfo().collectShipment().collectDeliveryCompany())
+            assertThat(response.claimInfo().collectShipment().method()).isNotNull();
+            assertThat(response.claimInfo().collectShipment().method().courierName())
                     .isEqualTo(ExchangeApiFixtures.DEFAULT_DELIVERY_COMPANY);
-            assertThat(response.claimInfo().collectShipment().collectTrackingNumber())
+            assertThat(response.claimInfo().collectShipment().trackingNumber())
                     .isEqualTo(ExchangeApiFixtures.DEFAULT_TRACKING_NUMBER);
-            assertThat(response.claimInfo().collectShipment().collectStatus())
-                    .isEqualTo("IN_TRANSIT");
+            assertThat(response.claimInfo().collectShipment().status()).isEqualTo("IN_TRANSIT");
         }
 
         @Test
-        @DisplayName("collectShipment가 null이면 claimInfo에 null collectShipment가 포함된다")
-        void toDetailResponse_NullCollectShipment_ReturnsNullCollectShipment() {
+        @DisplayName("collectShipment가 null이면 claimInfo에 기본 collectShipment가 포함된다")
+        void toDetailResponse_NullCollectShipment_ReturnsDefaultCollectShipment() {
             // given
             ExchangeDetailResult result = ExchangeApiFixtures.detailResultWithoutOption();
 
@@ -602,7 +603,7 @@ class ExchangeApiMapperTest {
                     mapper.toDetailResponse(result, null, null, null, null);
 
             // then
-            assertThat(response.claimInfo().collectShipment().collectDeliveryCompany()).isEmpty();
+            assertThat(response.claimInfo().collectShipment().method().courierName()).isEmpty();
         }
 
         @Test

@@ -118,8 +118,12 @@ public class InternalWebhookApiMapper {
                 null,
                 null,
                 null,
+                null,
                 Instant.now(),
-                Instant.now());
+                Instant.now(),
+                null,
+                null,
+                null);
     }
 
     private ExternalClaimPayload toReturnRequestClaimPayload(
@@ -137,6 +141,7 @@ public class InternalWebhookApiMapper {
                 item.returnQuantity(),
                 "BUYER",
                 item.collectDeliveryCompany(),
+                null,
                 item.collectTrackingNumber(),
                 null,
                 null,
@@ -145,7 +150,10 @@ public class InternalWebhookApiMapper {
                 null,
                 null,
                 Instant.now(),
-                Instant.now());
+                Instant.now(),
+                null,
+                null,
+                null);
     }
 
     private ExternalClaimPayload toReturnWithdrawnClaimPayload(
@@ -170,8 +178,12 @@ public class InternalWebhookApiMapper {
                 null,
                 null,
                 null,
+                null,
                 Instant.now(),
-                Instant.now());
+                Instant.now(),
+                null,
+                null,
+                null);
     }
 
     // ===== QnA 웹훅 변환 =====

@@ -8,6 +8,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
@@ -15,11 +16,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.common.dto.response.ClaimHistoryApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.common.error.ErrorMapperRegistry;
 import com.ryuqq.marketplace.adapter.in.rest.order.OrderAdminEndpoints;
 import com.ryuqq.marketplace.adapter.in.rest.order.OrderApiFixtures;
 import com.ryuqq.marketplace.adapter.in.rest.order.dto.response.OrderListApiResponseV4;
 import com.ryuqq.marketplace.adapter.in.rest.order.mapper.OrderQueryApiMapper;
+import com.ryuqq.marketplace.application.claimhistory.dto.response.ClaimHistoryPageResult;
+import com.ryuqq.marketplace.application.claimhistory.port.in.query.GetOrderClaimHistoriesUseCase;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderDetailResult;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderPageResult;
 import com.ryuqq.marketplace.application.order.port.in.query.GetOrderDetailUseCase;
@@ -52,6 +56,7 @@ class OrderQueryControllerRestDocsTest {
 
     @MockitoBean private GetProductOrderListUseCase getProductOrderListUseCase;
     @MockitoBean private GetOrderDetailUseCase getOrderDetailUseCase;
+    @MockitoBean private GetOrderClaimHistoriesUseCase getOrderClaimHistoriesUseCase;
     @MockitoBean private OrderQueryApiMapper mapper;
     @MockitoBean private ErrorMapperRegistry errorMapperRegistry;
 
@@ -257,6 +262,163 @@ class OrderQueryControllerRestDocsTest {
 
             // when & then
             mockMvc.perform(RestDocumentationRequestBuilders.get(BASE_URL))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.content").isEmpty())
+                    .andExpect(jsonPath("$.data.totalElements").value(0));
+        }
+    }
+
+    @Nested
+    @DisplayName("주문 클레임 이력 조회 API")
+    class GetClaimHistoriesTest {
+
+        @Test
+        @DisplayName("주문 클레임 이력 조회 성공 - 200과 페이지 응답을 반환한다")
+        void getClaimHistories_Success() throws Exception {
+            // given
+            ClaimHistoryPageResult pageResult = OrderApiFixtures.claimHistoryPageResult(2, 0, 20);
+            PageApiResponse<ClaimHistoryApiResponse> pageResponse =
+                    OrderApiFixtures.claimHistoryPageApiResponse(2);
+
+            given(mapper.toClaimHistoryCriteria(any(), any())).willReturn(null);
+            given(getOrderClaimHistoriesUseCase.execute(any())).willReturn(pageResult);
+            given(mapper.toClaimHistoryPageResponse(any(ClaimHistoryPageResult.class)))
+                    .willReturn(pageResponse);
+
+            // when & then
+            mockMvc.perform(
+                            RestDocumentationRequestBuilders.get(
+                                            BASE_URL + OrderAdminEndpoints.HISTORIES, ORDER_ITEM_ID)
+                                    .param("page", "0")
+                                    .param("size", "20"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.content").isArray())
+                    .andExpect(jsonPath("$.data.content.length()").value(2))
+                    .andExpect(jsonPath("$.data.page").value(0))
+                    .andExpect(jsonPath("$.data.size").value(20))
+                    .andExpect(jsonPath("$.data.totalElements").value(2))
+                    .andDo(
+                            document(
+                                    "order/claim-histories",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    pathParameters(
+                                            parameterWithName("orderItemId")
+                                                    .description("상품주문 ID (UUIDv7)")),
+                                    queryParameters(
+                                            parameterWithName("claimType")
+                                                    .description(
+                                                            "클레임 타입 필터. ORDER: 주문 메모,"
+                                                                    + " CANCEL: 취소, REFUND: 환불,"
+                                                                    + " EXCHANGE: 교환. 미전송 시 전체 조회")
+                                                    .optional(),
+                                            parameterWithName("page")
+                                                    .description("페이지 번호 (0부터). 기본값: 0")
+                                                    .optional(),
+                                            parameterWithName("size")
+                                                    .description("페이지 크기. 기본값: 20")
+                                                    .optional()),
+                                    responseFields(
+                                            fieldWithPath("data.content[]")
+                                                    .type(JsonFieldType.ARRAY)
+                                                    .description("클레임 이력 목록"),
+                                            fieldWithPath("data.content[].historyId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("이력 ID"),
+                                            fieldWithPath("data.content[].type")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description(
+                                                            "이력 유형 (STATUS_CHANGE: 상태 변경,"
+                                                                    + " MANUAL: 수기 메모)"),
+                                            fieldWithPath("data.content[].title")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("제목"),
+                                            fieldWithPath("data.content[].message")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("내용"),
+                                            fieldWithPath("data.content[].actor")
+                                                    .type(JsonFieldType.OBJECT)
+                                                    .description("처리자 정보"),
+                                            fieldWithPath("data.content[].actor.actorType")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description(
+                                                            "처리자 유형 (SELLER, ADMIN, SYSTEM 등)"),
+                                            fieldWithPath("data.content[].actor.actorId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("처리자 ID"),
+                                            fieldWithPath("data.content[].actor.actorName")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("처리자 이름"),
+                                            fieldWithPath("data.content[].createdAt")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("생성일시"),
+                                            fieldWithPath("data.page")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("현재 페이지 번호"),
+                                            fieldWithPath("data.size")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("페이지 크기"),
+                                            fieldWithPath("data.totalElements")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("전체 데이터 수"),
+                                            fieldWithPath("data.totalPages")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("전체 페이지 수"),
+                                            fieldWithPath("data.first")
+                                                    .type(JsonFieldType.BOOLEAN)
+                                                    .description("첫 페이지 여부"),
+                                            fieldWithPath("data.last")
+                                                    .type(JsonFieldType.BOOLEAN)
+                                                    .description("마지막 페이지 여부"),
+                                            fieldWithPath("timestamp")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("응답 시간"),
+                                            fieldWithPath("requestId")
+                                                    .type(JsonFieldType.STRING)
+                                                    .description("요청 ID"))));
+        }
+
+        @Test
+        @DisplayName("claimType 필터를 함께 사용할 수 있다")
+        void getClaimHistories_WithClaimTypeFilter_Returns200() throws Exception {
+            // given
+            ClaimHistoryPageResult pageResult = OrderApiFixtures.claimHistoryPageResult(1, 0, 20);
+            PageApiResponse<ClaimHistoryApiResponse> pageResponse =
+                    OrderApiFixtures.claimHistoryPageApiResponse(1);
+
+            given(mapper.toClaimHistoryCriteria(any(), any())).willReturn(null);
+            given(getOrderClaimHistoriesUseCase.execute(any())).willReturn(pageResult);
+            given(mapper.toClaimHistoryPageResponse(any(ClaimHistoryPageResult.class)))
+                    .willReturn(pageResponse);
+
+            // when & then
+            mockMvc.perform(
+                            RestDocumentationRequestBuilders.get(
+                                            BASE_URL + OrderAdminEndpoints.HISTORIES, ORDER_ITEM_ID)
+                                    .param("claimType", "CANCEL")
+                                    .param("page", "0")
+                                    .param("size", "20"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.content").isArray());
+        }
+
+        @Test
+        @DisplayName("빈 결과이면 200과 빈 페이지를 반환한다")
+        void getClaimHistories_EmptyResult_Returns200WithEmptyPage() throws Exception {
+            // given
+            ClaimHistoryPageResult emptyResult = OrderApiFixtures.emptyClaimHistoryPageResult();
+            PageApiResponse<ClaimHistoryApiResponse> emptyResponse =
+                    PageApiResponse.of(List.of(), 0, 20, 0);
+
+            given(mapper.toClaimHistoryCriteria(any(), any())).willReturn(null);
+            given(getOrderClaimHistoriesUseCase.execute(any())).willReturn(emptyResult);
+            given(mapper.toClaimHistoryPageResponse(any(ClaimHistoryPageResult.class)))
+                    .willReturn(emptyResponse);
+
+            // when & then
+            mockMvc.perform(
+                            RestDocumentationRequestBuilders.get(
+                                    BASE_URL + OrderAdminEndpoints.HISTORIES, ORDER_ITEM_ID))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.content").isEmpty())
                     .andExpect(jsonPath("$.data.totalElements").value(0));

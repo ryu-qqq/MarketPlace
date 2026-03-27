@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
  * 변환합니다.
  */
 @Component
-@ConditionalOnProperty(prefix = "sellic-commerce", name = "customer-id")
+@ConditionalOnProperty(prefix = "sellic-commerce", name = "base-url")
 public class SellicCommerceOrderMapper {
 
     private static final ZoneId KST = ZoneId.of("Asia/Seoul");

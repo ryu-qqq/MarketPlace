@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
  * <p>셀릭 OpenAPI 스펙에 맞춰 변환합니다.
  */
 @Component
-@ConditionalOnProperty(prefix = "sellic-commerce", name = "customer-id")
+@ConditionalOnProperty(prefix = "sellic-commerce", name = "base-url")
 public class SellicCommerceProductMapper {
 
     /** 셀릭 판매상태: 판매중. */
