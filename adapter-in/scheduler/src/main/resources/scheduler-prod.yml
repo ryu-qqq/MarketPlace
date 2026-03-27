@@ -149,6 +149,31 @@ scheduler:
       batch-size: 200
       max-total: 0
 
+    # 셀릭 주문 폴링 (셀릭 API → luxurydb 저장 + Outbox 생성)
+    sellic-order-issuing:
+      enabled: true
+      # Prod: 2시간마다
+      cron: "0 0 */2 * * *"
+      timezone: Asia/Seoul
+      batch-size: 300
+      sales-channel-id: 16
+
+    # 레거시 주문 변환 (luxurydb → 내부 Order)
+    legacy-order-conversion:
+      enabled: true
+      # Prod: 5분마다
+      cron: "0 */5 * * * *"
+      timezone: Asia/Seoul
+      batch-size: 100
+
+    # 레거시 주문 변환 타임아웃 복구
+    legacy-order-conversion-timeout:
+      # Prod: 10분마다
+      cron: "0 */10 * * * *"
+      timezone: Asia/Seoul
+      batch-size: 50
+      timeout-seconds: 600
+
     inbound-order-polling:
       entries:
         - sales-channel-id: 1
