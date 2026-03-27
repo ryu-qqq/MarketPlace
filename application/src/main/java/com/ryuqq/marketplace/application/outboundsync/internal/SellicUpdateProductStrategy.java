@@ -1,9 +1,9 @@
 package com.ryuqq.marketplace.application.outboundsync.internal;
 
+import com.ryuqq.marketplace.application.categorymapping.manager.CategoryMappingReadManager;
 import com.ryuqq.marketplace.application.outboundproduct.manager.OutboundProductReadManager;
 import com.ryuqq.marketplace.application.outboundsync.dto.vo.OutboundSyncExecutionContext;
 import com.ryuqq.marketplace.application.outboundsync.dto.vo.OutboundSyncExecutionResult;
-import com.ryuqq.marketplace.application.outboundsync.dto.vo.SalesChannelMappingResult;
 import com.ryuqq.marketplace.application.outboundsync.manager.SalesChannelProductClientManager;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
 import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 /**
  * 셀릭 커머스 상품 수정(UPDATE) 전략.
  *
- * <p>OutboundProduct에서 externalProductId 조회 → 최신 상품 데이터 조회 → 매핑 역조회 → PUT API 호출.
+ * <p>셀릭은 카테고리 매핑만 사용하고 브랜드 매핑은 없습니다 (브랜드명을 문자열로 직접 전송).
  */
 @Component
 @ConditionalOnProperty(prefix = "sellic-commerce", name = "base-url")
@@ -30,17 +30,17 @@ public class SellicUpdateProductStrategy implements OutboundSyncExecutionStrateg
 
     private final OutboundProductReadManager outboundProductReadManager;
     private final ProductGroupReadFacade productGroupReadFacade;
-    private final OutboundMappingResolver mappingResolver;
+    private final CategoryMappingReadManager categoryMappingReadManager;
     private final SalesChannelProductClientManager productClientManager;
 
     public SellicUpdateProductStrategy(
             OutboundProductReadManager outboundProductReadManager,
             ProductGroupReadFacade productGroupReadFacade,
-            OutboundMappingResolver mappingResolver,
+            CategoryMappingReadManager categoryMappingReadManager,
             SalesChannelProductClientManager productClientManager) {
         this.outboundProductReadManager = outboundProductReadManager;
         this.productGroupReadFacade = productGroupReadFacade;
-        this.mappingResolver = mappingResolver;
+        this.categoryMappingReadManager = categoryMappingReadManager;
         this.productClientManager = productClientManager;
     }
 
@@ -66,19 +66,17 @@ public class SellicUpdateProductStrategy implements OutboundSyncExecutionStrateg
             ProductGroupDetailBundle bundle =
                     productGroupReadFacade.getDetailBundle(productGroupId);
 
-            ProductGroupSyncData syncData = ProductGroupSyncData.from(bundle);
+            Long externalCategoryId =
+                    categoryMappingReadManager.getSalesChannelCategoryId(
+                            salesChannelId, bundle.queryResult().categoryId());
 
-            SalesChannelMappingResult mapping =
-                    mappingResolver.resolve(
-                            salesChannelId,
-                            bundle.queryResult().categoryId(),
-                            bundle.queryResult().brandId());
+            ProductGroupSyncData syncData = ProductGroupSyncData.from(bundle);
 
             productClientManager.updateProduct(
                     SELLIC_CHANNEL_CODE,
                     syncData,
-                    Long.parseLong(mapping.externalCategoryCode()),
-                    Long.parseLong(mapping.externalBrandCode()),
+                    externalCategoryId,
+                    0L,
                     outboundProduct.externalProductId(),
                     context.sellerSalesChannel(),
                     context.changedAreas());

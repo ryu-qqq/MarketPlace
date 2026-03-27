@@ -196,6 +196,13 @@ data "aws_ssm_parameter" "openai_api_key" {
 }
 
 # ========================================
+# SQS Access Policy
+# ========================================
+data "aws_ssm_parameter" "sqs_access_policy_arn" {
+  name = "/${var.project_name}/${var.environment}/sqs/access-policy-arn"
+}
+
+# ========================================
 # Naver Commerce Configuration
 # ========================================
 data "aws_ssm_parameter" "naver_commerce_client_id" {
@@ -230,6 +237,9 @@ locals {
 
   # Sentry Configuration
   sentry_dsn = data.aws_ssm_parameter.sentry_dsn.value
+
+  # SQS Access Policy ARN (Worker와 동일한 managed policy 사용)
+  sqs_access_policy_arn = nonsensitive(data.aws_ssm_parameter.sqs_access_policy_arn.value)
 
   # OutboundSync SQS Queue URL
   sqs_outbound_sync_queue_url = data.aws_ssm_parameter.sqs_outbound_sync_queue_url.value

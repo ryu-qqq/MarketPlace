@@ -10,6 +10,7 @@ import com.ryuqq.marketplace.application.legacyconversion.manager.LegacyOrderIdM
 import com.ryuqq.marketplace.application.legacyconversion.manager.LegacyProductIdMappingReadManager;
 import com.ryuqq.marketplace.application.legacyconversion.manager.LegacySellerIdMappingReadManager;
 import com.ryuqq.marketplace.domain.legacyconversion.aggregate.LegacyOrderConversionOutbox;
+import com.ryuqq.marketplace.domain.legacyconversion.aggregate.LegacyOrderIdMapping;
 import com.ryuqq.marketplace.domain.legacyconversion.aggregate.LegacyProductIdMapping;
 import java.time.Instant;
 import java.util.Optional;
@@ -45,6 +46,7 @@ public class LegacyOrderConversionCoordinator {
     private final LegacyOrderIdMappingReadManager mappingReadManager;
     private final LegacyProductIdMappingReadManager productIdMappingReadManager;
     private final LegacySellerIdMappingReadManager sellerIdMappingReadManager;
+    private final LegacyOrderStatusSyncCoordinator statusSyncCoordinator;
 
     public LegacyOrderConversionCoordinator(
             LegacyOrderCompositeReadManager compositeReadManager,
@@ -55,7 +57,8 @@ public class LegacyOrderConversionCoordinator {
             LegacyOrderConversionOutboxCommandManager outboxCommandManager,
             LegacyOrderIdMappingReadManager mappingReadManager,
             LegacyProductIdMappingReadManager productIdMappingReadManager,
-            LegacySellerIdMappingReadManager sellerIdMappingReadManager) {
+            LegacySellerIdMappingReadManager sellerIdMappingReadManager,
+            LegacyOrderStatusSyncCoordinator statusSyncCoordinator) {
         this.compositeReadManager = compositeReadManager;
         this.channelResolver = channelResolver;
         this.statusMapper = statusMapper;
@@ -65,6 +68,7 @@ public class LegacyOrderConversionCoordinator {
         this.mappingReadManager = mappingReadManager;
         this.productIdMappingReadManager = productIdMappingReadManager;
         this.sellerIdMappingReadManager = sellerIdMappingReadManager;
+        this.statusSyncCoordinator = statusSyncCoordinator;
     }
 
     public void convert(LegacyOrderConversionOutbox outbox) {
@@ -76,10 +80,12 @@ public class LegacyOrderConversionCoordinator {
             outbox.startProcessing(now);
             outboxCommandManager.persist(outbox);
 
-            // 2. 중복 체크
-            if (mappingReadManager.existsByLegacyOrderId(legacyOrderId)) {
-                log.info("이미 이관된 주문, 건너뜀: legacyOrderId={}", legacyOrderId);
-                completeOutbox(outbox, now);
+            // 2. 이미 이관된 주문이면 상태 동기화로 위임
+            Optional<LegacyOrderIdMapping> existingMapping =
+                    mappingReadManager.findByLegacyOrderId(legacyOrderId);
+            if (existingMapping.isPresent()) {
+                log.info("이미 이관된 주문, 상태 동기화 위임: legacyOrderId={}", legacyOrderId);
+                statusSyncCoordinator.sync(existingMapping.get(), outbox);
                 return;
             }
 
