@@ -1,8 +1,8 @@
 package com.ryuqq.marketplace.application.outboundsync.internal;
 
+import com.ryuqq.marketplace.application.categorymapping.manager.CategoryMappingReadManager;
 import com.ryuqq.marketplace.application.outboundsync.dto.vo.OutboundSyncExecutionContext;
 import com.ryuqq.marketplace.application.outboundsync.dto.vo.OutboundSyncExecutionResult;
-
 import com.ryuqq.marketplace.application.outboundsync.manager.SalesChannelProductClientManager;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
 import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 /**
  * 셀릭 커머스 상품 등록(CREATE) 전략.
  *
- * <p>ProductGroupReadFacade로 상품 데이터 조회 → 매핑 역조회 → SalesChannelProductClient로 API 호출.
+ * <p>셀릭은 카테고리 매핑만 사용하고 브랜드 매핑은 없습니다 (브랜드명을 문자열로 직접 전송).
  */
 @Component
 @ConditionalOnProperty(prefix = "sellic-commerce", name = "base-url")
@@ -27,12 +27,15 @@ public class SellicCreateProductStrategy implements OutboundSyncExecutionStrateg
     private static final String SELLIC_CHANNEL_CODE = "SELLIC";
 
     private final ProductGroupReadFacade productGroupReadFacade;
+    private final CategoryMappingReadManager categoryMappingReadManager;
     private final SalesChannelProductClientManager productClientManager;
 
     public SellicCreateProductStrategy(
             ProductGroupReadFacade productGroupReadFacade,
+            CategoryMappingReadManager categoryMappingReadManager,
             SalesChannelProductClientManager productClientManager) {
         this.productGroupReadFacade = productGroupReadFacade;
+        this.categoryMappingReadManager = categoryMappingReadManager;
         this.productClientManager = productClientManager;
     }
 
@@ -50,13 +53,17 @@ public class SellicCreateProductStrategy implements OutboundSyncExecutionStrateg
             ProductGroupDetailBundle bundle =
                     productGroupReadFacade.getDetailBundle(productGroupId);
 
+            Long externalCategoryId =
+                    categoryMappingReadManager.getSalesChannelCategoryId(
+                            salesChannelId, bundle.queryResult().categoryId());
+
             ProductGroupSyncData syncData = ProductGroupSyncData.from(bundle);
 
             String externalProductId =
                     productClientManager.registerProduct(
                             SELLIC_CHANNEL_CODE,
                             syncData,
-                            0L,
+                            externalCategoryId,
                             0L,
                             context.sellerSalesChannel(),
                             context.shop());
