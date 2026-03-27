@@ -253,7 +253,9 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
                 ClaimShipment.forSync(
                         shipmentId,
                         claim.collectDeliveryCompany(),
-                        claim.collectDeliveryCompany(),
+                        claim.collectDeliveryCompanyName() != null
+                                ? claim.collectDeliveryCompanyName()
+                                : claim.collectDeliveryCompany(),
                         claim.collectTrackingNumber(),
                         resolveShippingFeeInfo(claim),
                         now);

@@ -16,7 +16,8 @@ import java.time.Instant;
  * @param externalReasonCode 외부 채널 원본 사유 코드 (예: 네이버 INTENT_CHANGED, BROKEN 등). null 허용.
  * @param requestQuantity 요청 수량
  * @param requestChannel 요청 채널 (BUYER, SELLER 등)
- * @param collectDeliveryCompany 수거 택배사
+ * @param collectDeliveryCompany 수거 택배사 코드
+ * @param collectDeliveryCompanyName 수거 택배사명. null 허용.
  * @param collectTrackingNumber 수거 송장번호
  * @param collectStatus 수거 상태
  * @param reDeliveryCompany 재배송 택배사 (교환)
@@ -43,6 +44,7 @@ public record ExternalClaimPayload(
         Integer requestQuantity,
         String requestChannel,
         String collectDeliveryCompany,
+        String collectDeliveryCompanyName,
         String collectTrackingNumber,
         String collectStatus,
         String reDeliveryCompany,

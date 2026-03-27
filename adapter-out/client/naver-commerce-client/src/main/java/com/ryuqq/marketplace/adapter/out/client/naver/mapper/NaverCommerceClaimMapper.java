@@ -132,6 +132,7 @@ public class NaverCommerceClaimMapper {
                 requestQuantity,
                 requestChannel,
                 collectDeliveryCompany,
+                NaverCourierCodeResolver.toDisplayName(collectDeliveryCompany),
                 collectTrackingNumber,
                 collectStatus,
                 reDeliveryCompany,
