@@ -2,7 +2,7 @@ package com.ryuqq.marketplace.application.outboundsync.internal;
 
 import com.ryuqq.marketplace.application.outboundsync.dto.vo.OutboundSyncExecutionContext;
 import com.ryuqq.marketplace.application.outboundsync.dto.vo.OutboundSyncExecutionResult;
-import com.ryuqq.marketplace.application.outboundsync.dto.vo.SalesChannelMappingResult;
+
 import com.ryuqq.marketplace.application.outboundsync.manager.SalesChannelProductClientManager;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
 import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
@@ -27,15 +27,12 @@ public class SellicCreateProductStrategy implements OutboundSyncExecutionStrateg
     private static final String SELLIC_CHANNEL_CODE = "SELLIC";
 
     private final ProductGroupReadFacade productGroupReadFacade;
-    private final OutboundMappingResolver mappingResolver;
     private final SalesChannelProductClientManager productClientManager;
 
     public SellicCreateProductStrategy(
             ProductGroupReadFacade productGroupReadFacade,
-            OutboundMappingResolver mappingResolver,
             SalesChannelProductClientManager productClientManager) {
         this.productGroupReadFacade = productGroupReadFacade;
-        this.mappingResolver = mappingResolver;
         this.productClientManager = productClientManager;
     }
 
@@ -53,20 +50,14 @@ public class SellicCreateProductStrategy implements OutboundSyncExecutionStrateg
             ProductGroupDetailBundle bundle =
                     productGroupReadFacade.getDetailBundle(productGroupId);
 
-            SalesChannelMappingResult mapping =
-                    mappingResolver.resolve(
-                            salesChannelId,
-                            bundle.queryResult().categoryId(),
-                            bundle.queryResult().brandId());
-
             ProductGroupSyncData syncData = ProductGroupSyncData.from(bundle);
 
             String externalProductId =
                     productClientManager.registerProduct(
                             SELLIC_CHANNEL_CODE,
                             syncData,
-                            Long.parseLong(mapping.externalCategoryCode()),
-                            Long.parseLong(mapping.externalBrandCode()),
+                            0L,
+                            0L,
                             context.sellerSalesChannel(),
                             context.shop());
 

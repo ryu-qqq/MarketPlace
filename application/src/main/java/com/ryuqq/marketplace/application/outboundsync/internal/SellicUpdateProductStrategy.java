@@ -3,7 +3,7 @@ package com.ryuqq.marketplace.application.outboundsync.internal;
 import com.ryuqq.marketplace.application.outboundproduct.manager.OutboundProductReadManager;
 import com.ryuqq.marketplace.application.outboundsync.dto.vo.OutboundSyncExecutionContext;
 import com.ryuqq.marketplace.application.outboundsync.dto.vo.OutboundSyncExecutionResult;
-import com.ryuqq.marketplace.application.outboundsync.dto.vo.SalesChannelMappingResult;
+
 import com.ryuqq.marketplace.application.outboundsync.manager.SalesChannelProductClientManager;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailBundle;
 import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupSyncData;
@@ -30,17 +30,14 @@ public class SellicUpdateProductStrategy implements OutboundSyncExecutionStrateg
 
     private final OutboundProductReadManager outboundProductReadManager;
     private final ProductGroupReadFacade productGroupReadFacade;
-    private final OutboundMappingResolver mappingResolver;
     private final SalesChannelProductClientManager productClientManager;
 
     public SellicUpdateProductStrategy(
             OutboundProductReadManager outboundProductReadManager,
             ProductGroupReadFacade productGroupReadFacade,
-            OutboundMappingResolver mappingResolver,
             SalesChannelProductClientManager productClientManager) {
         this.outboundProductReadManager = outboundProductReadManager;
         this.productGroupReadFacade = productGroupReadFacade;
-        this.mappingResolver = mappingResolver;
         this.productClientManager = productClientManager;
     }
 
@@ -68,17 +65,11 @@ public class SellicUpdateProductStrategy implements OutboundSyncExecutionStrateg
 
             ProductGroupSyncData syncData = ProductGroupSyncData.from(bundle);
 
-            SalesChannelMappingResult mapping =
-                    mappingResolver.resolve(
-                            salesChannelId,
-                            bundle.queryResult().categoryId(),
-                            bundle.queryResult().brandId());
-
             productClientManager.updateProduct(
                     SELLIC_CHANNEL_CODE,
                     syncData,
-                    Long.parseLong(mapping.externalCategoryCode()),
-                    Long.parseLong(mapping.externalBrandCode()),
+                    0L,
+                    0L,
                     outboundProduct.externalProductId(),
                     context.sellerSalesChannel(),
                     context.changedAreas());
