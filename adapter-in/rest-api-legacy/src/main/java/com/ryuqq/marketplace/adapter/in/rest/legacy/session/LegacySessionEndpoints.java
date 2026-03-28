@@ -5,7 +5,7 @@ public final class LegacySessionEndpoints {
 
     private LegacySessionEndpoints() {}
 
-    private static final String BASE = "/api/v1/legacy";
+    private static final String BASE = "/api/v1";
 
     public static final String IMAGE = BASE + "/image";
     public static final String IMAGE_PRESIGNED = IMAGE + "/presigned";

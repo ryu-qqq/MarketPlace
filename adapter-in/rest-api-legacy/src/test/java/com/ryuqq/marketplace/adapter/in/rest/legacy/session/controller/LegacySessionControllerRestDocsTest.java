@@ -41,7 +41,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @DisplayName("LegacySessionController REST Docs 테스트")
 class LegacySessionControllerRestDocsTest {
 
-    private static final String BASE_URL = "/api/v1/legacy/image/presigned";
+    private static final String BASE_URL = "/api/v1/image/presigned";
 
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;

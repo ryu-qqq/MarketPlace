@@ -23,4 +23,4 @@ ALTER TABLE product_group_images AUTO_INCREMENT = 100000001;
 ALTER TABLE product_option_mappings AUTO_INCREMENT = 100000001;
 ALTER TABLE seller_option_groups AUTO_INCREMENT = 10000001;
 ALTER TABLE seller_option_values AUTO_INCREMENT = 100000001;
-ALTER TABLE product_group_prices AUTO_INCREMENT = 10000001;
+-- product_group_prices: 아직 테이블 미생성 — 생성 후 별도 처리

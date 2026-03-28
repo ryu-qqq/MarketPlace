@@ -13,7 +13,7 @@ import org.springframework.http.HttpStatus;
 /**
  * 레거시 이미지 업로드 세션(Presigned URL) API E2E 테스트.
  *
- * <p>테스트 대상: POST /api/v1/legacy/image/presigned - Presigned URL 발급
+ * <p>테스트 대상: POST /api/v1/image/presigned - Presigned URL 발급
  *
  * <p>인증 필요 엔드포인트. LegacyGetPresignedUrlUseCase는 StubExternalClientConfig에서 stub으로 등록되며, stub
  * Presigned URL을 반환합니다.
@@ -27,10 +27,10 @@ import org.springframework.http.HttpStatus;
 @DisplayName("레거시 이미지 업로드 세션 API E2E 테스트")
 class LegacySessionE2ETest extends LegacyE2ETestBase {
 
-    private static final String PRESIGNED_URL = "/api/v1/legacy/image/presigned";
+    private static final String PRESIGNED_URL = "/api/v1/image/presigned";
 
     @Nested
-    @DisplayName("POST /api/v1/legacy/image/presigned - Presigned URL 발급")
+    @DisplayName("POST /api/v1/image/presigned - Presigned URL 발급")
     class GetPresignedUrlTest {
 
         @Test
@@ -123,7 +123,7 @@ class LegacySessionE2ETest extends LegacyE2ETestBase {
     }
 
     @Nested
-    @DisplayName("POST /api/v1/legacy/image/presigned - 인증 실패 시나리오")
+    @DisplayName("POST /api/v1/image/presigned - 인증 실패 시나리오")
     class GetPresignedUrlAuthTest {
 
         @Test
