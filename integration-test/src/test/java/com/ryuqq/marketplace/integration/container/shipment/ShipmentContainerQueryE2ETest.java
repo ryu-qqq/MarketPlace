@@ -76,7 +76,7 @@ class ShipmentContainerQueryE2ETest extends ContainerE2ETestBase {
         OrderJpaEntity order = OrderJpaEntityFixtures.orderedEntity(orderId);
         orderRepository.save(order);
 
-        OrderItemJpaEntity orderItem = createOrderItem(null, orderId);
+        OrderItemJpaEntity orderItem = createOrderItem(System.nanoTime(), orderId);
         OrderItemJpaEntity savedOrderItem = orderItemRepository.save(orderItem);
         Long orderItemId = savedOrderItem.getId();
 
@@ -402,7 +402,7 @@ class ShipmentContainerQueryE2ETest extends ContainerE2ETestBase {
             String paymentId = UUID.randomUUID().toString();
 
             orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
-            OrderItemJpaEntity savedItem = orderItemRepository.save(createOrderItem(null, orderId));
+            OrderItemJpaEntity savedItem = orderItemRepository.save(createOrderItem(System.nanoTime(), orderId));
             Long orderItemId = savedItem.getId();
             paymentRepository.save(PaymentJpaEntityFixtures.completedEntity(paymentId, orderId));
 

@@ -192,7 +192,7 @@ class ShipmentCommandE2ETest extends E2ETestBase {
                     .body(
                             Map.of(
                                     "orderIds",
-                                    List.of(itemId1, "01940001-0000-7000-8000-000000000999")))
+                                    List.of(itemId1, 999999999L)))
                     .when()
                     .post(CONFIRM_BATCH_URL)
                     .then()

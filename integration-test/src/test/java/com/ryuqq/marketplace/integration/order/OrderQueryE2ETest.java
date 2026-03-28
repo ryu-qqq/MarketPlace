@@ -318,7 +318,7 @@ class OrderQueryE2ETest extends E2ETestBase {
             // when & then
             given().spec(givenWithPermission("order:read"))
                     .when()
-                    .get(ORDER_DETAIL_URL, "01940001-0000-7000-8000-000000000999")
+                    .get(ORDER_DETAIL_URL, "999999999")
                     .then()
                     .statusCode(HttpStatus.NOT_FOUND.value());
         }
