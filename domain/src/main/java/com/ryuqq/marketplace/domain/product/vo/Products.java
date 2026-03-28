@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.domain.product.vo;
 
 import com.ryuqq.marketplace.domain.product.aggregate.Product;
+import com.ryuqq.marketplace.domain.product.aggregate.ProductOptionMapping;
 import com.ryuqq.marketplace.domain.product.exception.ProductNotFoundException;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import java.util.ArrayList;
@@ -70,6 +71,18 @@ public class Products {
                         entry.stockQuantity(),
                         entry.sortOrder(),
                         updateData.updatedAt());
+
+                if (!entry.resolvedOptionValueIds().isEmpty()) {
+                    List<ProductOptionMapping> newMappings =
+                            entry.resolvedOptionValueIds().stream()
+                                    .map(
+                                            valueId ->
+                                                    ProductOptionMapping.forNew(
+                                                            existing.id(), valueId))
+                                    .toList();
+                    existing.replaceOptionMappings(newMappings, updateData.updatedAt());
+                }
+
                 retained.add(existing);
                 matchedIds.add(entry.productId());
             } else {

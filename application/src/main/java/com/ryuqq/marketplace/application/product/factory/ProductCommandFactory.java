@@ -108,10 +108,7 @@ public class ProductCommandFactory {
                         .map(
                                 entry -> {
                                     List<SellerOptionValueId> resolvedIds =
-                                            entry.productId() == null
-                                                    ? resolveOptionIds(
-                                                            entry.selectedOptions(), nameMap)
-                                                    : List.of();
+                                            resolveOptionIds(entry.selectedOptions(), nameMap);
                                     SkuCode skuCode =
                                             entry.skuCode() != null && !entry.skuCode().isBlank()
                                                     ? SkuCode.of(entry.skuCode())

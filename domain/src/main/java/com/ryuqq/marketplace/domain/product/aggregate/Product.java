@@ -172,6 +172,21 @@ public class Product {
     }
 
     /**
+     * 옵션 매핑을 새 값으로 교체합니다.
+     *
+     * <p>기존 매핑을 soft delete 후 새 매핑으로 교체합니다. 옵션 그룹 diff로 기존 값이 삭제되고 새 값이
+     * 생성된 경우, retained Product의 매핑을 새 값으로 재연결하기 위해 사용합니다.
+     *
+     * @param newMappings 새 옵션 매핑 목록
+     * @param now 변경 시각
+     */
+    public void replaceOptionMappings(List<ProductOptionMapping> newMappings, Instant now) {
+        optionMappings.forEach(m -> m.delete(now));
+        optionMappings.addAll(newMappings);
+        this.updatedAt = now;
+    }
+
+    /**
      * 가격 수정.
      *
      * <p>salePrice는 currentPrice와 동일하게, discountRate는 자동 계산합니다.

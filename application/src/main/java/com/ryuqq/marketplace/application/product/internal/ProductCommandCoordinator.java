@@ -115,6 +115,9 @@ public class ProductCommandCoordinator {
         for (Product removed : diff.removed()) {
             optionMappingCommandManager.persistAll(removed.optionMappings());
         }
+        for (Product retained : diff.retained()) {
+            optionMappingCommandManager.persistAll(retained.optionMappings());
+        }
         return register(diff.added());
     }
 }
