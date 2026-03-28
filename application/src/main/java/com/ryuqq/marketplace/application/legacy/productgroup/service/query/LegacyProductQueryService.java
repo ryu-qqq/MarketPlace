@@ -1,34 +1,40 @@
 package com.ryuqq.marketplace.application.legacy.productgroup.service.query;
 
-import com.ryuqq.marketplace.application.legacy.productgroup.internal.LegacyProductGroupReadFacade;
+import com.ryuqq.marketplace.application.legacy.productcontext.factory.LegacyProductIdResolveFactory;
 import com.ryuqq.marketplace.application.legacy.productgroup.port.in.query.LegacyProductQueryUseCase;
-import com.ryuqq.marketplace.application.legacy.shared.assembler.LegacyProductGroupAssembler;
-import com.ryuqq.marketplace.application.legacy.shared.dto.composite.LegacyProductGroupDetailBundle;
+import com.ryuqq.marketplace.application.legacy.shared.assembler.LegacyProductGroupFromMarketAssembler;
 import com.ryuqq.marketplace.application.legacy.shared.dto.result.LegacyProductGroupDetailResult;
+import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeResult;
+import com.ryuqq.marketplace.application.productgroup.port.in.query.GetProductGroupUseCase;
+import com.ryuqq.marketplace.domain.legacyconversion.vo.ResolvedLegacyProductIds;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 레거시 상품 조회 서비스.
  *
- * <p>세토프 PK로 세토프 DB에서 직접 상품 상세를 조회합니다.
+ * <p>레거시 PK를 market PK로 resolve 후, 표준 GetProductGroupUseCase로 market 스키마에서 조회합니다.
  */
 @Service
 public class LegacyProductQueryService implements LegacyProductQueryUseCase {
 
-    private final LegacyProductGroupReadFacade readFacade;
-    private final LegacyProductGroupAssembler assembler;
+    private final LegacyProductIdResolveFactory resolveFactory;
+    private final GetProductGroupUseCase getProductGroupUseCase;
+    private final LegacyProductGroupFromMarketAssembler assembler;
 
     public LegacyProductQueryService(
-            LegacyProductGroupReadFacade readFacade, LegacyProductGroupAssembler assembler) {
-        this.readFacade = readFacade;
+            LegacyProductIdResolveFactory resolveFactory,
+            GetProductGroupUseCase getProductGroupUseCase,
+            LegacyProductGroupFromMarketAssembler assembler) {
+        this.resolveFactory = resolveFactory;
+        this.getProductGroupUseCase = getProductGroupUseCase;
         this.assembler = assembler;
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public LegacyProductGroupDetailResult execute(long setofProductGroupId) {
-        LegacyProductGroupDetailBundle bundle = readFacade.getDetail(setofProductGroupId);
-        return assembler.toDetailResult(bundle);
+    public LegacyProductGroupDetailResult execute(long productGroupId) {
+        ResolvedLegacyProductIds resolved = resolveFactory.resolve(productGroupId);
+        ProductGroupDetailCompositeResult composite =
+                getProductGroupUseCase.execute(resolved.resolvedProductGroupId().value());
+        return assembler.toDetailResult(composite, resolved);
     }
 }

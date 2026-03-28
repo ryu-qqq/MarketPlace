@@ -1,7 +1,13 @@
 package com.ryuqq.marketplace.application.legacy.productgroup.factory;
 
+import com.ryuqq.marketplace.application.common.dto.query.CommonSearchParams;
 import com.ryuqq.marketplace.application.legacy.productgroup.dto.query.LegacyProductGroupSearchParams;
+import com.ryuqq.marketplace.application.productgroup.dto.query.ProductGroupSearchParams;
 import com.ryuqq.marketplace.domain.legacy.productgroup.query.LegacyProductGroupSearchCriteria;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.stereotype.Component;
 
 /**
@@ -36,5 +42,57 @@ public class LegacyProductGroupQueryFactory {
                 params.endDate(),
                 params.page(),
                 params.size());
+    }
+
+    /**
+     * 레거시 검색 파라미터를 표준 ProductGroupSearchParams로 변환합니다 (market 스키마 조회용).
+     *
+     * @param params 레거시 검색 파라미터
+     * @return 표준 검색 파라미터
+     */
+    public ProductGroupSearchParams toStandardSearchParams(
+            LegacyProductGroupSearchParams params) {
+        List<String> statuses = resolveStatuses(params.soldOutYn(), params.displayYn());
+        List<Long> sellerIds = params.sellerId() != null ? List.of(params.sellerId()) : List.of();
+        List<Long> brandIds = params.brandId() != null ? List.of(params.brandId()) : List.of();
+        List<Long> categoryIds = params.categoryIds() != null ? params.categoryIds() : List.of();
+
+        CommonSearchParams commonParams =
+                CommonSearchParams.of(
+                        false,
+                        toLocalDate(params.startDate()),
+                        toLocalDate(params.endDate()),
+                        "createdAt",
+                        "DESC",
+                        params.page(),
+                        params.size());
+
+        return ProductGroupSearchParams.of(
+                statuses,
+                sellerIds,
+                brandIds,
+                categoryIds,
+                List.of(),
+                params.searchKeyword(),
+                params.searchWord(),
+                commonParams);
+    }
+
+    private List<String> resolveStatuses(String soldOutYn, String displayYn) {
+        List<String> statuses = new ArrayList<>();
+        if ("Y".equals(soldOutYn)) {
+            statuses.add("SOLD_OUT");
+        }
+        if ("N".equals(displayYn)) {
+            statuses.add("INACTIVE");
+        }
+        if ("Y".equals(displayYn)) {
+            statuses.add("ACTIVE");
+        }
+        return statuses;
+    }
+
+    private LocalDate toLocalDate(LocalDateTime dateTime) {
+        return dateTime != null ? dateTime.toLocalDate() : null;
     }
 }
