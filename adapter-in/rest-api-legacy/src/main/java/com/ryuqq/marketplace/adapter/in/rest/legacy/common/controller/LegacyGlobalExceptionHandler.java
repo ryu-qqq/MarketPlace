@@ -2,7 +2,6 @@ package com.ryuqq.marketplace.adapter.in.rest.legacy.common.controller;
 
 import com.ryuqq.authhub.sdk.exception.AuthHubException;
 import com.ryuqq.marketplace.adapter.in.rest.common.error.ErrorMapperRegistry;
-import com.ryuqq.marketplace.adapter.in.rest.legacy.common.dto.LegacyApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.common.dto.LegacyErrorResponse;
 import com.ryuqq.marketplace.domain.common.exception.DomainException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -189,18 +188,13 @@ public class LegacyGlobalExceptionHandler {
 
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<LegacyErrorResponse> handleNullPointer(NullPointerException ex) {
-        String stackTrace =
-                java.util.Arrays.stream(ex.getStackTrace())
-                        .limit(10)
-                        .map(StackTraceElement::toString)
-                        .collect(Collectors.joining(" "));
-        log.error("Legacy NullPointerException: {}", stackTrace, ex);
-        return ResponseEntity.badRequest()
+        log.error("Legacy NullPointerException", ex);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(
                         LegacyErrorResponse.of(
-                                HttpStatus.BAD_REQUEST.value(),
+                                HttpStatus.INTERNAL_SERVER_ERROR.value(),
                                 "서버 내부 오류가 발생했습니다.",
-                                "NullPointerException"));
+                                "INTERNAL_ERROR"));
     }
 
     @ExceptionHandler(AccessDeniedException.class)
@@ -229,7 +223,7 @@ public class LegacyGlobalExceptionHandler {
     }
 
     @ExceptionHandler(DomainException.class)
-    public ResponseEntity<?> handleDomainException(
+    public ResponseEntity<LegacyErrorResponse> handleDomainException(
             DomainException ex, HttpServletRequest req, Locale locale) {
         var mapped =
                 errorMapperRegistry
@@ -237,15 +231,17 @@ public class LegacyGlobalExceptionHandler {
                         .orElseGet(() -> errorMapperRegistry.defaultMapping(ex));
         HttpStatus status = mapped.status();
         String detail = Optional.ofNullable(mapped.detail()).orElse("요청 처리에 실패했습니다.");
-        log.warn(
-                "Legacy domain exception: code={}, status={}, message={}",
-                ex.code(),
-                status.value(),
-                detail);
 
-        if (status == HttpStatus.NOT_FOUND) {
-            return ResponseEntity.ok(LegacyApiResponse.dataNotFoundWithErrorMessage(detail));
+        if (status.is5xxServerError()) {
+            log.error("Legacy domain exception: code={}, status={}, message={}",
+                    ex.code(), status.value(), detail, ex);
+        } else if (status == HttpStatus.NOT_FOUND) {
+            log.debug("Legacy domain not found: code={}, message={}", ex.code(), detail);
+        } else {
+            log.warn("Legacy domain exception: code={}, status={}, message={}",
+                    ex.code(), status.value(), detail);
         }
+
         return ResponseEntity.status(status)
                 .body(LegacyErrorResponse.of(status.value(), detail, ex.code()));
     }
