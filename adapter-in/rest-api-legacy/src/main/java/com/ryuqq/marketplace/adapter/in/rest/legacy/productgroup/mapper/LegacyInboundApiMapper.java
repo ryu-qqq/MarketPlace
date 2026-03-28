@@ -23,9 +23,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class LegacyInboundApiMapper {
 
+    private final com.ryuqq.marketplace.adapter.in.rest.legacy.product.validator.LegacyOptionValidator optionValidator;
+
+    public LegacyInboundApiMapper(
+            com.ryuqq.marketplace.adapter.in.rest.legacy.product.validator.LegacyOptionValidator optionValidator) {
+        this.optionValidator = optionValidator;
+    }
+
     public LegacyRegisterProductGroupCommand toCommand(LegacyCreateProductGroupRequest request) {
         String optionType = request.optionType().trim().toUpperCase();
-        validateOptionDetails(optionType, request.productOptions());
+        optionValidator.validateForRegister(optionType, request.productOptions());
 
         return new LegacyRegisterProductGroupCommand(
                 request.sellerId(),
@@ -46,26 +53,6 @@ public class LegacyInboundApiMapper {
                 toImageCommands(request.productImageList()),
                 request.detailDescription(),
                 toOptionCommands(request.productOptions()));
-    }
-
-    private void validateOptionDetails(
-            String optionType, List<LegacyCreateOptionRequest> productOptions) {
-        int expectedSize =
-                switch (optionType) {
-                    case "SINGLE" -> 0;
-                    case "OPTION_ONE" -> 1;
-                    case "OPTION_TWO" -> 2;
-                    default ->
-                            throw new IllegalArgumentException("지원하지 않는 옵션 타입입니다: " + optionType);
-                };
-
-        for (LegacyCreateOptionRequest option : productOptions) {
-            if (option.options().size() != expectedSize) {
-                throw new IllegalArgumentException(
-                        "옵션 타입 %s에 대한 옵션 항목 수가 올바르지 않습니다. 기대: %d, 실제: %d"
-                                .formatted(optionType, expectedSize, option.options().size()));
-            }
-        }
     }
 
     private NoticeCommand toNoticeCommand(LegacyCreateProductNoticeRequest notice) {

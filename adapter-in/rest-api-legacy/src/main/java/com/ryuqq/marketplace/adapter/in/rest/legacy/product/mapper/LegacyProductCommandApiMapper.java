@@ -29,9 +29,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class LegacyProductCommandApiMapper {
 
+    private final com.ryuqq.marketplace.adapter.in.rest.legacy.product.validator.LegacyOptionValidator optionValidator;
+
+    public LegacyProductCommandApiMapper(
+            com.ryuqq.marketplace.adapter.in.rest.legacy.product.validator.LegacyOptionValidator optionValidator) {
+        this.optionValidator = optionValidator;
+    }
+
     /** LegacyCreateOptionRequest 목록 → UpdateProductsCommand. */
     public UpdateProductsCommand toUpdateProductsCommand(
             long productGroupId, List<LegacyCreateOptionRequest> request) {
+        optionValidator.validateForUpdate(request);
         List<UpdateProductsCommand.ProductData> products =
                 request.stream()
                         .map(
@@ -162,4 +170,5 @@ public class LegacyProductCommandApiMapper {
                                         m.optionValue()))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
+
 }

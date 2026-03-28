@@ -56,16 +56,19 @@ public class LegacyProductGroupCommandApiMapper {
     private final LegacyImageCommandApiMapper legacyImageCommandApiMapper;
     private final LegacyDescriptionCommandApiMapper legacyDescriptionCommandApiMapper;
     private final LegacyOptionCommandApiMapper legacyOptionCommandApiMapper;
+    private final com.ryuqq.marketplace.adapter.in.rest.legacy.product.validator.LegacyOptionValidator optionValidator;
 
     public LegacyProductGroupCommandApiMapper(
             LegacyNoticeCategoryResolver legacyNoticeCategoryResolver,
             LegacyImageCommandApiMapper legacyImageCommandApiMapper,
             LegacyDescriptionCommandApiMapper legacyDescriptionCommandApiMapper,
-            LegacyOptionCommandApiMapper legacyOptionCommandApiMapper) {
+            LegacyOptionCommandApiMapper legacyOptionCommandApiMapper,
+            com.ryuqq.marketplace.adapter.in.rest.legacy.product.validator.LegacyOptionValidator optionValidator) {
         this.legacyNoticeCategoryResolver = legacyNoticeCategoryResolver;
         this.legacyImageCommandApiMapper = legacyImageCommandApiMapper;
         this.legacyDescriptionCommandApiMapper = legacyDescriptionCommandApiMapper;
         this.legacyOptionCommandApiMapper = legacyOptionCommandApiMapper;
+        this.optionValidator = optionValidator;
     }
 
     /** LegacyCreateProductGroupRequest → ResolveLegacyProductContextCommand. */
@@ -212,6 +215,9 @@ public class LegacyProductGroupCommandApiMapper {
      */
     public RegisterProductGroupCommand toRegisterCommand(
             LegacyCreateProductGroupRequest request, LegacyProductContext context) {
+
+        optionValidator.validateForRegister(
+                request.optionType().trim().toUpperCase(), request.productOptions());
 
         List<RegisterProductGroupCommand.ImageCommand> images =
                 IntStream.range(0, request.productImageList().size())
