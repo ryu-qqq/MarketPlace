@@ -1,35 +1,40 @@
 package com.ryuqq.marketplace.application.legacy.productgroup.service.command;
 
+import com.ryuqq.marketplace.application.legacy.product.internal.LegacyProductBulkCommandCoordinator;
+import com.ryuqq.marketplace.application.legacy.productcontext.factory.LegacyProductIdResolveFactory;
 import com.ryuqq.marketplace.application.legacy.productgroup.dto.command.LegacyMarkOutOfStockCommand;
-import com.ryuqq.marketplace.application.legacy.productgroup.internal.LegacyProductGroupCommandCoordinator;
 import com.ryuqq.marketplace.application.legacy.productgroup.port.in.command.LegacyProductMarkOutOfStockUseCase;
 import com.ryuqq.marketplace.application.legacy.productgroup.port.in.query.LegacyProductQueryUseCase;
 import com.ryuqq.marketplace.application.legacy.shared.dto.result.LegacyProductGroupDetailResult;
-import com.ryuqq.marketplace.application.legacyconversion.manager.LegacyConversionOutboxCommandManager;
-import java.time.Instant;
+import com.ryuqq.marketplace.domain.legacyconversion.vo.ResolvedLegacyProductIds;
 import org.springframework.stereotype.Service;
 
-/** 레거시 상품 품절 처리 서비스. */
+/**
+ * 레거시 품절 처리 서비스.
+ *
+ * <p>해당 상품그룹의 모든 Product(SKU)를 SOLD_OUT + 재고 0으로 변경합니다.
+ */
 @Service
 public class LegacyProductMarkOutOfStockService implements LegacyProductMarkOutOfStockUseCase {
 
-    private final LegacyProductGroupCommandCoordinator productGroupCommandCoordinator;
+    private final LegacyProductIdResolveFactory resolveFactory;
+    private final LegacyProductBulkCommandCoordinator bulkCommandCoordinator;
     private final LegacyProductQueryUseCase legacyProductQueryUseCase;
-    private final LegacyConversionOutboxCommandManager conversionOutboxCommandManager;
 
     public LegacyProductMarkOutOfStockService(
-            LegacyProductGroupCommandCoordinator productGroupCommandCoordinator,
-            LegacyProductQueryUseCase legacyProductQueryUseCase,
-            LegacyConversionOutboxCommandManager conversionOutboxCommandManager) {
-        this.productGroupCommandCoordinator = productGroupCommandCoordinator;
+            LegacyProductIdResolveFactory resolveFactory,
+            LegacyProductBulkCommandCoordinator bulkCommandCoordinator,
+            LegacyProductQueryUseCase legacyProductQueryUseCase) {
+        this.resolveFactory = resolveFactory;
+        this.bulkCommandCoordinator = bulkCommandCoordinator;
         this.legacyProductQueryUseCase = legacyProductQueryUseCase;
-        this.conversionOutboxCommandManager = conversionOutboxCommandManager;
     }
 
     @Override
     public LegacyProductGroupDetailResult execute(LegacyMarkOutOfStockCommand command) {
-        productGroupCommandCoordinator.markSoldOut(command.productGroupId());
-        conversionOutboxCommandManager.createIfNoPending(command.productGroupId(), Instant.now());
+        ResolvedLegacyProductIds resolved = resolveFactory.resolve(command.productGroupId());
+        bulkCommandCoordinator.markSoldOutAll(
+                resolved.resolvedProductGroupId(), resolveFactory.now());
         return legacyProductQueryUseCase.execute(command.productGroupId());
     }
 }

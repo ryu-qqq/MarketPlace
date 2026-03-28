@@ -1,51 +1,45 @@
 package com.ryuqq.marketplace.application.legacy.productgroup.service.command;
 
-import com.ryuqq.marketplace.application.legacy.product.manager.LegacyProductCommandManager;
-import com.ryuqq.marketplace.application.legacy.product.manager.LegacyProductReadManager;
+import com.ryuqq.marketplace.application.legacy.product.internal.LegacyProductBulkCommandCoordinator;
 import com.ryuqq.marketplace.application.legacy.product.port.in.command.LegacyProductUpdateStockUseCase;
-import com.ryuqq.marketplace.application.legacyconversion.manager.LegacyConversionOutboxCommandManager;
+import com.ryuqq.marketplace.application.legacy.productcontext.factory.LegacyProductIdResolveFactory;
 import com.ryuqq.marketplace.application.product.dto.command.UpdateProductStockCommand;
-import com.ryuqq.marketplace.domain.product.aggregate.Product;
-import java.time.Instant;
+import com.ryuqq.marketplace.domain.legacyconversion.vo.ResolvedLegacyProductIds;
+import com.ryuqq.marketplace.domain.product.id.ProductId;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
-/** 레거시 상품 재고 수정 서비스. */
+/**
+ * 레거시 상품 재고 수정 서비스.
+ *
+ * <p>레거시 productId를 market PK로 변환 후, Coordinator에서 재고를 수정합니다.
+ */
 @Service
 public class LegacyProductUpdateStockService implements LegacyProductUpdateStockUseCase {
 
-    private final LegacyProductReadManager productReadManager;
-    private final LegacyProductCommandManager productCommandManager;
-    private final LegacyConversionOutboxCommandManager conversionOutboxCommandManager;
+    private final LegacyProductIdResolveFactory resolveFactory;
+    private final LegacyProductBulkCommandCoordinator bulkCommandCoordinator;
 
     public LegacyProductUpdateStockService(
-            LegacyProductReadManager productReadManager,
-            LegacyProductCommandManager productCommandManager,
-            LegacyConversionOutboxCommandManager conversionOutboxCommandManager) {
-        this.productReadManager = productReadManager;
-        this.productCommandManager = productCommandManager;
-        this.conversionOutboxCommandManager = conversionOutboxCommandManager;
+            LegacyProductIdResolveFactory resolveFactory,
+            LegacyProductBulkCommandCoordinator bulkCommandCoordinator) {
+        this.resolveFactory = resolveFactory;
+        this.bulkCommandCoordinator = bulkCommandCoordinator;
     }
 
     @Override
     public void execute(long productGroupId, List<UpdateProductStockCommand> commands) {
-        Instant now = Instant.now();
+        ResolvedLegacyProductIds resolved = resolveFactory.resolve(productGroupId);
 
-        List<Product> products = productReadManager.findByProductGroupId(productGroupId);
-        Map<Long, Product> productById =
-                products.stream().collect(Collectors.toMap(p -> p.idValue(), Function.identity()));
-
+        Map<ProductId, Integer> stockByProductId = new LinkedHashMap<>();
         for (UpdateProductStockCommand command : commands) {
-            Product product = productById.get(command.productId());
-            if (product != null) {
-                product.updateStock(command.stockQuantity(), now);
-                productCommandManager.persist(product);
-            }
+            ProductId resolvedProductId = resolved.resolveProductId(command.productId());
+            stockByProductId.put(resolvedProductId, command.stockQuantity());
         }
 
-        conversionOutboxCommandManager.createIfNoPending(productGroupId, now);
+        bulkCommandCoordinator.updateStockByProductIds(
+                resolved.resolvedProductGroupId(), stockByProductId, resolveFactory.now());
     }
 }

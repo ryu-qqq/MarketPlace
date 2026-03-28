@@ -52,7 +52,38 @@ public class LegacyProductCommandApiMapper {
                                                         .toList()))
                         .toList();
 
-        return new UpdateProductsCommand(productGroupId, List.of(), products);
+        List<UpdateProductsCommand.OptionGroupData> optionGroups =
+                buildOptionGroupsFromRequest(request);
+
+        return new UpdateProductsCommand(productGroupId, optionGroups, products);
+    }
+
+    private List<UpdateProductsCommand.OptionGroupData> buildOptionGroupsFromRequest(
+            List<LegacyCreateOptionRequest> request) {
+        java.util.LinkedHashMap<String, java.util.LinkedHashSet<String>> groupToValues =
+                new java.util.LinkedHashMap<>();
+
+        for (LegacyCreateOptionRequest opt : request) {
+            for (LegacyCreateOptionRequest.OptionDetail detail : opt.options()) {
+                groupToValues
+                        .computeIfAbsent(detail.optionName(), k -> new java.util.LinkedHashSet<>())
+                        .add(detail.optionValue());
+            }
+        }
+
+        List<UpdateProductsCommand.OptionGroupData> groups = new java.util.ArrayList<>();
+        for (var entry : groupToValues.entrySet()) {
+            List<String> valueList = new java.util.ArrayList<>(entry.getValue());
+            List<UpdateProductsCommand.OptionValueData> values = new java.util.ArrayList<>();
+            for (int i = 0; i < valueList.size(); i++) {
+                values.add(
+                        new UpdateProductsCommand.OptionValueData(null, valueList.get(i), null, i));
+            }
+            groups.add(
+                    new UpdateProductsCommand.OptionGroupData(
+                            null, entry.getKey(), null, "PREDEFINED", values));
+        }
+        return groups;
     }
 
     /** LegacyUpdateProductStockRequest 목록 → UpdateProductStockCommand 목록. */

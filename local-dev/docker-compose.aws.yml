@@ -91,6 +91,76 @@ services:
       - redis
     restart: unless-stopped
 
+  legacy-api:
+    build:
+      context: ..
+      dockerfile: bootstrap/bootstrap-legacy-api/Dockerfile
+    container_name: marketplace-legacy-api
+    env_file:
+      - .env.aws.stage
+    environment:
+      SPRING_PROFILES_ACTIVE: stage
+      SERVER_PORT: 8081
+      JAVA_OPTS: "-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0 -Dpersistence.legacy.enabled=true"
+
+      # Database (Stage RDS via SSM Port Forwarding - localhost:13308)
+      DB_HOST: host.docker.internal
+      DB_PORT: 13308
+      # DB_NAME, DB_USERNAME, DB_PASSWORD -> .env.aws.stage
+
+      # Legacy Database (same RDS, different schema)
+      LEGACY_DB_NAME: "${LEGACY_DB_NAME}"
+      LEGACY_DB_USERNAME: "${LEGACY_DB_USERNAME}"
+      LEGACY_DB_PASSWORD: "${LEGACY_DB_PASSWORD}"
+      LEGACY_DB_ENABLED: "true"
+
+      # Redis (local container)
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ""
+      REDIS_SSL_ENABLED: "false"
+
+      # AuthHub Client
+      AUTHHUB_BASE_URL: "http://authhub-web-api-stage.connectly.local"
+      AUTHHUB_SERVICE_TOKEN: "${AUTHHUB_SERVICE_TOKEN}"
+      SECURITY_SERVICE_TOKEN_SECRET: "${AUTHHUB_SERVICE_TOKEN}"
+
+      # FileFlow Client
+      FILEFLOW_BASE_URL: "http://fileflow-web-api-stage.connectly.local"
+      FILEFLOW_SERVICE_TOKEN: "${FILEFLOW_SERVICE_TOKEN}"
+
+      # Legacy Auth JWT
+      LEGACY_TOKEN_SECRET: "${LEGACY_TOKEN_SECRET}"
+
+      # SQS Queue URLs (dummy for local)
+      SQS_QUEUES_INTELLIGENCE_ORCHESTRATION: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-orchestration"
+      SQS_QUEUES_INTELLIGENCE_DESCRIPTION_ANALYSIS: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-description"
+      SQS_QUEUES_INTELLIGENCE_OPTION_ANALYSIS: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-option"
+      SQS_QUEUES_INTELLIGENCE_NOTICE_ANALYSIS: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-notice"
+      SQS_QUEUES_INTELLIGENCE_AGGREGATION: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-aggregation"
+      SQS_QUEUES_OUTBOUND_SYNC: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-outbound-sync"
+      SQS_QUEUES_CANCEL_OUTBOX: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-cancel-outbox"
+      SQS_QUEUES_REFUND_OUTBOX: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-refund-outbox"
+      SQS_QUEUES_EXCHANGE_OUTBOX: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-exchange-outbox"
+      SQS_QUEUES_SHIPMENT_OUTBOX: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-shipment-outbox"
+
+      # OpenTelemetry disabled (local)
+      OTEL_JAVAAGENT_ENABLED: "false"
+
+      # Flyway disabled (stage DB schema already up-to-date)
+      SPRING_FLYWAY_ENABLED: "false"
+
+      # Hibernate validation 스킵 (Stage DB 스키마 마이그레이션 간극)
+      SPRING_JPA_HIBERNATE_DDL_AUTO: "none"
+
+    ports:
+      - "9083:8081"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - redis
+    restart: unless-stopped
+
   scheduler:
     build:
       context: ..

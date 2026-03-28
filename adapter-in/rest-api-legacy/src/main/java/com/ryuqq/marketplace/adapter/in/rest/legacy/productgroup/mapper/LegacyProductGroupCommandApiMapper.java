@@ -157,40 +157,27 @@ public class LegacyProductGroupCommandApiMapper {
      */
     public UpdateProductNoticeCommand toNoticeCommand(
             long productGroupId, LegacyCreateProductNoticeRequest request) {
-        long noticeCategoryId;
-        NoticeCategory noticeCategory;
-        if (productGroupId == 0L) {
-            noticeCategoryId = 0L;
-            noticeCategory = null;
-        } else {
-            // TODO: productGroupId → categoryId 매핑 후 resolve 필요
-            noticeCategory = legacyNoticeCategoryResolver.resolve(productGroupId);
-            noticeCategoryId = noticeCategory.id().value();
-        }
+        Map<String, Long> fieldCodeToId =
+                com.ryuqq.marketplace.domain.legacy.notice.vo.LegacyNoticeFieldMapping
+                        .FIELD_CODE_TO_ID;
+        long noticeCategoryId =
+                com.ryuqq.marketplace.domain.legacy.notice.vo.LegacyNoticeFieldMapping
+                        .LEGACY_NOTICE_CATEGORY_ID;
 
         if (request == null) {
             return new UpdateProductNoticeCommand(productGroupId, noticeCategoryId, List.of());
         }
 
-        if (noticeCategory == null) {
-            return new UpdateProductNoticeCommand(productGroupId, noticeCategoryId, List.of());
-        }
-
-        Map<String, Long> fieldCodeToId =
-                noticeCategory.fields().stream()
-                        .collect(
-                                Collectors.toMap(
-                                        NoticeField::fieldCodeValue, NoticeField::idValue));
-
         List<UpdateProductNoticeCommand.NoticeEntryCommand> entries = new ArrayList<>();
         addNoticeEntry(entries, fieldCodeToId, "material", request.material());
         addNoticeEntry(entries, fieldCodeToId, "color", request.color());
         addNoticeEntry(entries, fieldCodeToId, "size", request.size());
-        addNoticeEntry(entries, fieldCodeToId, "manufacturer", request.maker());
-        addNoticeEntry(entries, fieldCodeToId, "made_in", request.origin());
-        addNoticeEntry(entries, fieldCodeToId, "wash_care", request.washingMethod());
-        addNoticeEntry(entries, fieldCodeToId, "release_date", request.yearMonth());
-        addNoticeEntry(entries, fieldCodeToId, "quality_assurance", request.assuranceStandard());
+        addNoticeEntry(entries, fieldCodeToId, "maker", request.maker());
+        addNoticeEntry(entries, fieldCodeToId, "origin", request.origin());
+        addNoticeEntry(entries, fieldCodeToId, "washingMethod", request.washingMethod());
+        addNoticeEntry(entries, fieldCodeToId, "yearMonth", request.yearMonth());
+        addNoticeEntry(entries, fieldCodeToId, "assuranceStandard", request.assuranceStandard());
+        addNoticeEntry(entries, fieldCodeToId, "asPhone", request.asPhone());
 
         return new UpdateProductNoticeCommand(productGroupId, noticeCategoryId, entries);
     }
@@ -268,12 +255,20 @@ public class LegacyProductGroupCommandApiMapper {
                 context.shippingPolicyId(),
                 context.refundPolicyId(),
                 request.productGroupName(),
-                request.optionType(),
+                convertLegacyOptionType(request.optionType()),
                 images,
                 optionGroups,
                 products,
                 description,
                 notice);
+    }
+
+    /** 레거시 옵션 타입(OPTION_ONE, OPTION_TWO, SINGLE) → 표준 옵션 타입(SINGLE, COMBINATION, NONE) 변환. */
+    private String convertLegacyOptionType(String legacyOptionType) {
+        return com.ryuqq.marketplace.domain.legacy.productgroup.vo.OptionType.valueOf(
+                        legacyOptionType.trim().toUpperCase())
+                .toInternalOptionType()
+                .name();
     }
 
     private List<RegisterProductGroupCommand.OptionGroupCommand> buildOptionGroups(
@@ -307,24 +302,25 @@ public class LegacyProductGroupCommandApiMapper {
     private RegisterProductGroupCommand.NoticeCommand toRegisterNoticeCommand(
             LegacyCreateProductNoticeRequest request, NoticeCategory noticeCategory) {
         Map<String, Long> fieldCodeToId =
-                noticeCategory.fields().stream()
-                        .collect(
-                                Collectors.toMap(
-                                        NoticeField::fieldCodeValue, NoticeField::idValue));
+                com.ryuqq.marketplace.domain.legacy.notice.vo.LegacyNoticeFieldMapping
+                        .FIELD_CODE_TO_ID;
+        long noticeCategoryId =
+                com.ryuqq.marketplace.domain.legacy.notice.vo.LegacyNoticeFieldMapping
+                        .LEGACY_NOTICE_CATEGORY_ID;
 
         List<RegisterProductGroupCommand.NoticeEntryCommand> entries = new ArrayList<>();
         addRegisterNoticeEntry(entries, fieldCodeToId, "material", request.material());
         addRegisterNoticeEntry(entries, fieldCodeToId, "color", request.color());
         addRegisterNoticeEntry(entries, fieldCodeToId, "size", request.size());
-        addRegisterNoticeEntry(entries, fieldCodeToId, "manufacturer", request.maker());
-        addRegisterNoticeEntry(entries, fieldCodeToId, "made_in", request.origin());
-        addRegisterNoticeEntry(entries, fieldCodeToId, "wash_care", request.washingMethod());
-        addRegisterNoticeEntry(entries, fieldCodeToId, "release_date", request.yearMonth());
+        addRegisterNoticeEntry(entries, fieldCodeToId, "maker", request.maker());
+        addRegisterNoticeEntry(entries, fieldCodeToId, "origin", request.origin());
+        addRegisterNoticeEntry(entries, fieldCodeToId, "washingMethod", request.washingMethod());
+        addRegisterNoticeEntry(entries, fieldCodeToId, "yearMonth", request.yearMonth());
         addRegisterNoticeEntry(
-                entries, fieldCodeToId, "quality_assurance", request.assuranceStandard());
-        addRegisterNoticeEntry(entries, fieldCodeToId, "cs_info", request.asPhone());
+                entries, fieldCodeToId, "assuranceStandard", request.assuranceStandard());
+        addRegisterNoticeEntry(entries, fieldCodeToId, "asPhone", request.asPhone());
 
-        return new RegisterProductGroupCommand.NoticeCommand(noticeCategory.idValue(), entries);
+        return new RegisterProductGroupCommand.NoticeCommand(noticeCategoryId, entries);
     }
 
     /** LegacyUpdateProductGroupRequest → ResolveLegacyProductContextCommand (수정용). */
@@ -458,24 +454,25 @@ public class LegacyProductGroupCommandApiMapper {
     private UpdateProductGroupFullCommand.NoticeCommand toUpdateNoticeCommand(
             LegacyCreateProductNoticeRequest request, NoticeCategory noticeCategory) {
         Map<String, Long> fieldCodeToId =
-                noticeCategory.fields().stream()
-                        .collect(
-                                Collectors.toMap(
-                                        NoticeField::fieldCodeValue, NoticeField::idValue));
+                com.ryuqq.marketplace.domain.legacy.notice.vo.LegacyNoticeFieldMapping
+                        .FIELD_CODE_TO_ID;
+        long noticeCategoryId =
+                com.ryuqq.marketplace.domain.legacy.notice.vo.LegacyNoticeFieldMapping
+                        .LEGACY_NOTICE_CATEGORY_ID;
 
         List<UpdateProductGroupFullCommand.NoticeEntryCommand> entries = new ArrayList<>();
         addUpdateNoticeEntry(entries, fieldCodeToId, "material", request.material());
         addUpdateNoticeEntry(entries, fieldCodeToId, "color", request.color());
         addUpdateNoticeEntry(entries, fieldCodeToId, "size", request.size());
-        addUpdateNoticeEntry(entries, fieldCodeToId, "manufacturer", request.maker());
-        addUpdateNoticeEntry(entries, fieldCodeToId, "made_in", request.origin());
-        addUpdateNoticeEntry(entries, fieldCodeToId, "wash_care", request.washingMethod());
-        addUpdateNoticeEntry(entries, fieldCodeToId, "release_date", request.yearMonth());
+        addUpdateNoticeEntry(entries, fieldCodeToId, "maker", request.maker());
+        addUpdateNoticeEntry(entries, fieldCodeToId, "origin", request.origin());
+        addUpdateNoticeEntry(entries, fieldCodeToId, "washingMethod", request.washingMethod());
+        addUpdateNoticeEntry(entries, fieldCodeToId, "yearMonth", request.yearMonth());
         addUpdateNoticeEntry(
-                entries, fieldCodeToId, "quality_assurance", request.assuranceStandard());
-        addUpdateNoticeEntry(entries, fieldCodeToId, "cs_info", request.asPhone());
+                entries, fieldCodeToId, "assuranceStandard", request.assuranceStandard());
+        addUpdateNoticeEntry(entries, fieldCodeToId, "asPhone", request.asPhone());
 
-        return new UpdateProductGroupFullCommand.NoticeCommand(noticeCategory.idValue(), entries);
+        return new UpdateProductGroupFullCommand.NoticeCommand(noticeCategoryId, entries);
     }
 
     // ===== Private helpers =====
