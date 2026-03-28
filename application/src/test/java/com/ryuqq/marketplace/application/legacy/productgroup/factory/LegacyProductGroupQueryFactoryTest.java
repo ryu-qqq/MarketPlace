@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.ryuqq.marketplace.application.legacy.productgroup.LegacyProductGroupQueryFixtures;
 import com.ryuqq.marketplace.application.legacy.productgroup.dto.query.LegacyProductGroupSearchParams;
+import com.ryuqq.marketplace.application.productgroup.dto.query.ProductGroupSearchParams;
 import com.ryuqq.marketplace.domain.legacy.productgroup.query.LegacyProductGroupSearchCriteria;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -154,6 +155,134 @@ class LegacyProductGroupQueryFactoryTest {
             // then
             assertThat(criteria.page()).isEqualTo(2);
             assertThat(criteria.size()).isEqualTo(50);
+        }
+    }
+
+    @Nested
+    @DisplayName("toStandardSearchParams() - 레거시 파라미터 → 표준 ProductGroupSearchParams 변환")
+    class ToStandardSearchParamsTest {
+
+        @Test
+        @DisplayName("기본 파라미터를 표준 SearchParams로 변환한다")
+        void toStandardSearchParams_DefaultParams_ReturnsStandardParams() {
+            // given
+            LegacyProductGroupSearchParams params = LegacyProductGroupQueryFixtures.searchParams();
+
+            // when
+            ProductGroupSearchParams result = sut.toStandardSearchParams(params);
+
+            // then
+            assertThat(result).isNotNull();
+            assertThat(result.statuses()).isEmpty();
+            assertThat(result.sellerIds()).isEmpty();
+            assertThat(result.brandIds()).isEmpty();
+        }
+
+        @Test
+        @DisplayName("displayYn=Y이면 statuses에 ACTIVE가 포함된다")
+        void toStandardSearchParams_DisplayYnY_HasActiveStatus() {
+            // given
+            LegacyProductGroupSearchParams params =
+                    LegacyProductGroupQueryFixtures.searchParamsWithDisplayFilter("Y");
+
+            // when
+            ProductGroupSearchParams result = sut.toStandardSearchParams(params);
+
+            // then
+            assertThat(result.statuses()).contains("ACTIVE");
+        }
+
+        @Test
+        @DisplayName("displayYn=N이면 statuses에 INACTIVE가 포함된다")
+        void toStandardSearchParams_DisplayYnN_HasInactiveStatus() {
+            // given
+            LegacyProductGroupSearchParams params =
+                    LegacyProductGroupQueryFixtures.searchParamsWithDisplayFilter("N");
+
+            // when
+            ProductGroupSearchParams result = sut.toStandardSearchParams(params);
+
+            // then
+            assertThat(result.statuses()).contains("INACTIVE");
+        }
+
+        @Test
+        @DisplayName("sellerId가 있으면 sellerIds에 포함된다")
+        void toStandardSearchParams_WithSellerId_HasSellerIds() {
+            // given
+            Long sellerId = 1L;
+            LegacyProductGroupSearchParams params =
+                    LegacyProductGroupQueryFixtures.searchParamsWithSeller(sellerId);
+
+            // when
+            ProductGroupSearchParams result = sut.toStandardSearchParams(params);
+
+            // then
+            assertThat(result.sellerIds()).containsExactly(sellerId);
+        }
+
+        @Test
+        @DisplayName("sellerId가 null이면 sellerIds는 비어 있다")
+        void toStandardSearchParams_NullSellerId_EmptySellerIds() {
+            // given
+            LegacyProductGroupSearchParams params = LegacyProductGroupQueryFixtures.searchParams();
+
+            // when
+            ProductGroupSearchParams result = sut.toStandardSearchParams(params);
+
+            // then
+            assertThat(result.sellerIds()).isEmpty();
+        }
+
+        @Test
+        @DisplayName("카테고리 ID 목록이 표준 SearchParams에 반영된다")
+        void toStandardSearchParams_WithCategoryIds_ReflectsInResult() {
+            // given
+            List<Long> categoryIds = List.of(200L, 201L);
+            LegacyProductGroupSearchParams params =
+                    LegacyProductGroupQueryFixtures.searchParamsWithCategory(200L)
+                            .withCategoryIds(categoryIds);
+
+            // when
+            ProductGroupSearchParams result = sut.toStandardSearchParams(params);
+
+            // then
+            assertThat(result.categoryIds()).containsExactlyInAnyOrderElementsOf(categoryIds);
+        }
+
+        @Test
+        @DisplayName("검색 키워드/검색어가 표준 SearchParams에 반영된다")
+        void toStandardSearchParams_WithSearchWord_ReflectsInResult() {
+            // given
+            String searchKeyword = "productGroupName";
+            String searchWord = "테스트";
+            LegacyProductGroupSearchParams params =
+                    LegacyProductGroupQueryFixtures.searchParamsWithSearchWord(
+                            searchKeyword, searchWord);
+
+            // when
+            ProductGroupSearchParams result = sut.toStandardSearchParams(params);
+
+            // then
+            assertThat(result.searchField()).isEqualTo(searchKeyword);
+            assertThat(result.searchWord()).isEqualTo(searchWord);
+        }
+
+        @Test
+        @DisplayName("페이지/사이즈 파라미터가 표준 SearchParams에 반영된다")
+        void toStandardSearchParams_WithCustomPage_ReflectsPageInResult() {
+            // given
+            int page = 2;
+            int size = 10;
+            LegacyProductGroupSearchParams params =
+                    LegacyProductGroupQueryFixtures.searchParams(page, size);
+
+            // when
+            ProductGroupSearchParams result = sut.toStandardSearchParams(params);
+
+            // then
+            assertThat(result.page()).isEqualTo(page);
+            assertThat(result.size()).isEqualTo(size);
         }
     }
 }
