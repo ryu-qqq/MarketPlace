@@ -77,12 +77,12 @@ public class ExchangeCommandFactory {
     }
 
     /** 교환 요청 시 OrderItem 상태 전환에 필요한 시간 컨텍스트. */
-    public StatusChangeContext<OrderItemId> createRequestOrderItemContext(String orderItemId) {
+    public StatusChangeContext<OrderItemId> createRequestOrderItemContext(Long orderItemId) {
         return new StatusChangeContext<>(OrderItemId.of(orderItemId), timeProvider.now());
     }
 
     /** 교환 완료 시 OrderItem 상태 전환에 필요한 시간 컨텍스트. */
-    public StatusChangeContext<OrderItemId> createCompleteOrderItemContext(String orderItemId) {
+    public StatusChangeContext<OrderItemId> createCompleteOrderItemContext(Long orderItemId) {
         return new StatusChangeContext<>(OrderItemId.of(orderItemId), timeProvider.now());
     }
 

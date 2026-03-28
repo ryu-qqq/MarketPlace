@@ -30,7 +30,7 @@ public final class SettlementApiFixtures {
     public static final String DEFAULT_SETTLEMENT_ID = "01940001-0000-7000-8000-000000000001";
     public static final String DEFAULT_HOLD_REASON = "추가 확인이 필요합니다";
     public static final long DEFAULT_SELLER_ID = 100L;
-    public static final String DEFAULT_ORDER_ITEM_ID = "oi-test-001";
+    public static final Long DEFAULT_ORDER_ITEM_ID = 1001L;
     public static final int DEFAULT_SALES_AMOUNT = 50000;
     public static final int DEFAULT_COMMISSION_AMOUNT = 5000;
     public static final int DEFAULT_COMMISSION_RATE = 1000;
@@ -86,7 +86,7 @@ public final class SettlementApiFixtures {
         return new SettlementListItemApiResponse(
                 DEFAULT_SETTLEMENT_ID,
                 "PENDING",
-                DEFAULT_ORDER_ITEM_ID,
+                String.valueOf(DEFAULT_ORDER_ITEM_ID),
                 "",
                 DEFAULT_SELLER_ID,
                 amounts,
@@ -110,7 +110,7 @@ public final class SettlementApiFixtures {
         return new SettlementListItemApiResponse(
                 DEFAULT_SETTLEMENT_ID,
                 "HOLD",
-                DEFAULT_ORDER_ITEM_ID,
+                String.valueOf(DEFAULT_ORDER_ITEM_ID),
                 "",
                 DEFAULT_SELLER_ID,
                 amounts,
@@ -132,7 +132,7 @@ public final class SettlementApiFixtures {
         return new SettlementListItemApiResponse(
                 DEFAULT_SETTLEMENT_ID,
                 "COMPLETED",
-                DEFAULT_ORDER_ITEM_ID,
+                String.valueOf(DEFAULT_ORDER_ITEM_ID),
                 "",
                 DEFAULT_SELLER_ID,
                 amounts,

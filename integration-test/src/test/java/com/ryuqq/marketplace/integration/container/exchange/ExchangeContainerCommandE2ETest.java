@@ -109,7 +109,7 @@ class ExchangeContainerCommandE2ETest extends ContainerE2ETestBase {
             String orderId = "order-exchange-req-001";
             orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
             OrderItemJpaEntity item = OrderItemJpaEntityFixtures.itemWithPrice(orderId, 30000, 1);
-            String orderItemId = orderItemRepository.save(item).getId();
+            Long orderItemId = orderItemRepository.save(item).getId();
 
             // when
             givenSuperAdmin()
@@ -141,7 +141,7 @@ class ExchangeContainerCommandE2ETest extends ContainerE2ETestBase {
         @DisplayName("[C3] 권한 없는 사용자가 교환 요청 시 403")
         void requestBatch_noPermission_forbidden() {
             givenAuthenticatedUser()
-                    .body(Map.of("items", List.of(createExchangeRequestItem("dummy-id"))))
+                    .body(Map.of("items", List.of(createExchangeRequestItem(9999L))))
                     .when()
                     .post(REQUEST_BATCH)
                     .then()
@@ -425,7 +425,7 @@ class ExchangeContainerCommandE2ETest extends ContainerE2ETestBase {
     private String seedExchangeRequest(String orderId) {
         orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
         OrderItemJpaEntity item = OrderItemJpaEntityFixtures.itemWithPrice(orderId, 30000, 1);
-        String orderItemId = orderItemRepository.save(item).getId();
+        Long orderItemId = orderItemRepository.save(item).getId();
 
         givenSuperAdmin()
                 .body(Map.of("items", List.of(createExchangeRequestItem(orderItemId))))
@@ -442,7 +442,7 @@ class ExchangeContainerCommandE2ETest extends ContainerE2ETestBase {
                 .getId();
     }
 
-    private Map<String, Object> createExchangeRequestItem(String orderItemId) {
+    private Map<String, Object> createExchangeRequestItem(Long orderItemId) {
         return Map.ofEntries(
                 Map.entry("orderId", orderItemId),
                 Map.entry("exchangeQty", 1),

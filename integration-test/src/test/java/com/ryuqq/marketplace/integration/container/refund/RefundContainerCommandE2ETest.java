@@ -94,7 +94,7 @@ class RefundContainerCommandE2ETest extends ContainerE2ETestBase {
             String orderId = "order-refund-req-001";
             orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
             OrderItemJpaEntity item = OrderItemJpaEntityFixtures.itemWithPrice(orderId, 10000, 2);
-            String orderItemId = orderItemRepository.save(item).getId();
+            Long orderItemId = orderItemRepository.save(item).getId();
 
             // when
             givenSuperAdmin()
@@ -168,7 +168,7 @@ class RefundContainerCommandE2ETest extends ContainerE2ETestBase {
             String orderId = "order-refund-approve-001";
             orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
             OrderItemJpaEntity item = OrderItemJpaEntityFixtures.itemWithPrice(orderId, 10000, 1);
-            String orderItemId = orderItemRepository.save(item).getId();
+            Long orderItemId = orderItemRepository.save(item).getId();
 
             // 환불 요청
             givenSuperAdmin()
@@ -229,7 +229,7 @@ class RefundContainerCommandE2ETest extends ContainerE2ETestBase {
             String orderId = "order-refund-reject-001";
             orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
             OrderItemJpaEntity item = OrderItemJpaEntityFixtures.itemWithPrice(orderId, 10000, 1);
-            String orderItemId = orderItemRepository.save(item).getId();
+            Long orderItemId = orderItemRepository.save(item).getId();
 
             givenSuperAdmin()
                     .body(
@@ -289,7 +289,7 @@ class RefundContainerCommandE2ETest extends ContainerE2ETestBase {
             String orderId = "order-refund-hold-001";
             orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
             OrderItemJpaEntity item = OrderItemJpaEntityFixtures.itemWithPrice(orderId, 10000, 1);
-            String orderItemId = orderItemRepository.save(item).getId();
+            Long orderItemId = orderItemRepository.save(item).getId();
 
             givenSuperAdmin()
                     .body(
@@ -337,7 +337,7 @@ class RefundContainerCommandE2ETest extends ContainerE2ETestBase {
             String orderId = "order-refund-unhold-001";
             orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
             OrderItemJpaEntity item = OrderItemJpaEntityFixtures.itemWithPrice(orderId, 10000, 1);
-            String orderItemId = orderItemRepository.save(item).getId();
+            Long orderItemId = orderItemRepository.save(item).getId();
 
             givenSuperAdmin()
                     .body(
@@ -407,7 +407,7 @@ class RefundContainerCommandE2ETest extends ContainerE2ETestBase {
             String orderId = "order-refund-memo-001";
             orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
             OrderItemJpaEntity item = OrderItemJpaEntityFixtures.itemWithPrice(orderId, 10000, 1);
-            String orderItemId = orderItemRepository.save(item).getId();
+            Long orderItemId = orderItemRepository.save(item).getId();
 
             givenSuperAdmin()
                     .body(

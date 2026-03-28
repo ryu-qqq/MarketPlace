@@ -45,8 +45,8 @@ class ConfirmShipmentBatchServiceTest {
     @DisplayName("execute() - 발주확인 일괄 처리")
     class ExecuteTest {
 
-        private static final String ORDER_ITEM_ID_1 = "01940001-0000-7000-8000-000000000001";
-        private static final String ORDER_ITEM_ID_2 = "01940001-0000-7000-8000-000000000002";
+        private static final String ORDER_ITEM_ID_1 = "1001";
+        private static final String ORDER_ITEM_ID_2 = "1002";
 
         @Test
         @DisplayName("모든 항목이 성공하면 전체 성공 결과를 반환한다")

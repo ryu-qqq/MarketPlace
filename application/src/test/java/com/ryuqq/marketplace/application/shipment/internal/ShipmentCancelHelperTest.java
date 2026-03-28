@@ -28,7 +28,7 @@ class ShipmentCancelHelperTest {
 
     @Mock private ShipmentReadManager shipmentReadManager;
 
-    private static final String ORDER_ITEM_ID_1 = "01940001-0000-7000-8000-000000000001";
+    private static final Long ORDER_ITEM_ID_1 = 1001L;
     private static final Instant NOW = Instant.parse("2026-02-18T10:00:00Z");
 
     @Nested
@@ -106,8 +106,8 @@ class ShipmentCancelHelperTest {
         @DisplayName("혼합 상태의 배송 중 PREPARING 상태만 취소 목록에 포함된다")
         void cancelPreparingShipments_MixedStatusShipments_ReturnsOnlyPreparing() {
             // given
-            OrderItemId orderItemId1 = OrderItemId.of("01940001-0000-7000-8000-000000000001");
-            OrderItemId orderItemId2 = OrderItemId.of("01940001-0000-7000-8000-000000000002");
+            OrderItemId orderItemId1 = OrderItemId.of(1001L);
+            OrderItemId orderItemId2 = OrderItemId.of(1002L);
             List<OrderItemId> orderItemIds = List.of(orderItemId1, orderItemId2);
 
             Shipment preparingShipment = ShipmentFixtures.preparingShipment();

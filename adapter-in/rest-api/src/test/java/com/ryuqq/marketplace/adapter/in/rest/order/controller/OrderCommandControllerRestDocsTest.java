@@ -44,7 +44,7 @@ import org.springframework.test.web.servlet.MockMvc;
 class OrderCommandControllerRestDocsTest {
 
     private static final String ORDERS_URL = OrderAdminEndpoints.ORDERS;
-    private static final String ORDER_ITEM_ID = OrderApiFixtures.DEFAULT_ORDER_ITEM_ID;
+    private static final String ORDER_ITEM_ID = OrderApiFixtures.DEFAULT_ORDER_ITEM_ID_STR;
 
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;

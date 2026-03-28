@@ -35,11 +35,11 @@ public class RefundConditionBuilder {
         return sellerId != null ? refundClaim.sellerId.eq(sellerId) : null;
     }
 
-    public BooleanExpression orderItemIdEq(String orderItemId) {
+    public BooleanExpression orderItemIdEq(Long orderItemId) {
         return refundClaim.orderItemId.eq(orderItemId);
     }
 
-    public BooleanExpression orderItemIdIn(List<String> orderItemIds) {
+    public BooleanExpression orderItemIdIn(List<Long> orderItemIds) {
         return orderItemIds != null && !orderItemIds.isEmpty()
                 ? refundClaim.orderItemId.in(orderItemIds)
                 : null;

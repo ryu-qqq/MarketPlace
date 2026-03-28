@@ -17,7 +17,7 @@ public class OrderCommandApiMapper {
         return new AddClaimHistoryMemoCommand(
                 ClaimType.ORDER,
                 orderItemId,
-                orderItemId,
+                Long.parseLong(orderItemId),
                 request.message(),
                 String.valueOf(actor.actorId()),
                 actor.username());

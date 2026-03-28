@@ -14,6 +14,7 @@ import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import com.ryuqq.marketplace.domain.shipment.aggregate.Shipment;
 import com.ryuqq.marketplace.domain.shipment.query.ShipmentSearchCriteria;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.stereotype.Service;
@@ -43,7 +44,7 @@ public class GetShipmentListService implements GetShipmentListUseCase {
         ShipmentSearchCriteria criteria = queryFactory.createCriteria(params);
 
         // OrderItem 기준 조회 — shipment 없는 신규 주문도 포함
-        List<String> orderItemIds = readManager.findFulfillmentOrderItemIds(criteria);
+        List<Long> orderItemIds = readManager.findFulfillmentOrderItemIds(criteria);
         long totalElements = readManager.countFulfillment(criteria);
 
         if (orderItemIds.isEmpty()) {
@@ -54,11 +55,11 @@ public class GetShipmentListService implements GetShipmentListUseCase {
                     totalElements);
         }
 
-        Map<String, OrderItemResult> itemMap = orderReadManager.findOrderItemsByIds(orderItemIds);
+        Map<Long, OrderItemResult> itemMap = orderReadManager.findOrderItemsByIds(orderItemIds);
 
         // OrderItem별 Shipment 조회 (없으면 null)
         List<OrderItemId> itemIdList = orderItemIds.stream().map(OrderItemId::of).toList();
-        Map<String, Shipment> shipmentMap = new java.util.HashMap<>();
+        Map<Long, Shipment> shipmentMap = new HashMap<>();
         for (Shipment s : readManager.findByOrderItemIds(itemIdList)) {
             shipmentMap.put(s.orderItemIdValue(), s);
         }
@@ -68,7 +69,7 @@ public class GetShipmentListService implements GetShipmentListUseCase {
         Map<String, OrderListResult> orderMap = orderReadManager.findOrdersByIds(orderIds);
 
         List<ShipmentListResult> results = new ArrayList<>();
-        for (String orderItemId : orderItemIds) {
+        for (Long orderItemId : orderItemIds) {
             OrderItemResult item = itemMap.get(orderItemId);
             if (item == null) {
                 continue;

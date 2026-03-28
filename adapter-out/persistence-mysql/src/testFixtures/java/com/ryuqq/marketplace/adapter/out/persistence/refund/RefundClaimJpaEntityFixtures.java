@@ -17,7 +17,7 @@ public final class RefundClaimJpaEntityFixtures {
     // ===== 기본 상수 =====
     public static final String DEFAULT_ID = "01900000-0000-7000-0000-000000000101";
     public static final String DEFAULT_CLAIM_NUMBER = "REF-20260319-0001";
-    public static final String DEFAULT_ORDER_ITEM_ID = "01900000-0000-7000-0000-000000000010";
+    public static final Long DEFAULT_ORDER_ITEM_ID = 1001L;
     public static final long DEFAULT_SELLER_ID = 10L;
     public static final int DEFAULT_REFUND_QTY = 1;
     public static final String DEFAULT_STATUS_REQUESTED = "REQUESTED";
@@ -96,8 +96,7 @@ public final class RefundClaimJpaEntityFixtures {
     }
 
     /** REQUESTED 상태 Entity 생성 (ID + orderItemId + sellerId 지정). */
-    public static RefundClaimJpaEntity requestedEntity(
-            String id, String orderItemId, long sellerId) {
+    public static RefundClaimJpaEntity requestedEntity(String id, Long orderItemId, long sellerId) {
         Instant now = Instant.now();
         return RefundClaimJpaEntity.create(
                 id,

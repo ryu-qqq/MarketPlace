@@ -64,8 +64,8 @@ class ExecuteRefundOutboxServiceTest {
 
             when(outboxReadManager.getById(outboxId)).thenReturn(outbox).thenReturn(freshOutbox);
             given(outbox.idValue()).willReturn(outboxId);
-            given(outbox.orderItemIdValue()).willReturn("OI-1");
-            given(mappingReadManager.findByOrderItemId("OI-1")).willReturn(mapping);
+            given(outbox.orderItemIdValue()).willReturn(1001L);
+            given(mappingReadManager.findByOrderItemId(1001L)).willReturn(mapping);
             given(mapping.salesChannelId()).willReturn(100L);
             given(shopReadManager.findActiveBySalesChannelId(100L)).willReturn(List.of(shop));
             given(claimSyncStrategy.execute(outbox, shop)).willReturn(OutboxSyncResult.success());
@@ -96,8 +96,8 @@ class ExecuteRefundOutboxServiceTest {
 
             when(outboxReadManager.getById(outboxId)).thenReturn(outbox).thenReturn(freshOutbox);
             given(outbox.idValue()).willReturn(outboxId);
-            given(outbox.orderItemIdValue()).willReturn("OI-2");
-            given(mappingReadManager.findByOrderItemId("OI-2")).willReturn(mapping);
+            given(outbox.orderItemIdValue()).willReturn(1002L);
+            given(mappingReadManager.findByOrderItemId(1002L)).willReturn(mapping);
             given(mapping.salesChannelId()).willReturn(100L);
             given(shopReadManager.findActiveBySalesChannelId(100L)).willReturn(List.of(shop));
             given(claimSyncStrategy.execute(outbox, shop)).willReturn(failureResult);
@@ -129,8 +129,8 @@ class ExecuteRefundOutboxServiceTest {
 
             when(outboxReadManager.getById(outboxId)).thenReturn(outbox).thenReturn(freshOutbox);
             given(outbox.idValue()).willReturn(outboxId);
-            given(outbox.orderItemIdValue()).willReturn("OI-3");
-            given(mappingReadManager.findByOrderItemId("OI-3")).willReturn(mapping);
+            given(outbox.orderItemIdValue()).willReturn(1003L);
+            given(mappingReadManager.findByOrderItemId(1003L)).willReturn(mapping);
             given(mapping.salesChannelId()).willReturn(100L);
             given(shopReadManager.findActiveBySalesChannelId(100L)).willReturn(List.of(shop));
             given(claimSyncStrategy.execute(outbox, shop))
@@ -161,8 +161,8 @@ class ExecuteRefundOutboxServiceTest {
 
             when(outboxReadManager.getById(outboxId)).thenReturn(outbox).thenReturn(freshOutbox);
             given(outbox.idValue()).willReturn(outboxId);
-            given(outbox.orderItemIdValue()).willReturn("OI-4");
-            given(mappingReadManager.findByOrderItemId("OI-4")).willReturn(mapping);
+            given(outbox.orderItemIdValue()).willReturn(1004L);
+            given(mappingReadManager.findByOrderItemId(1004L)).willReturn(mapping);
             given(mapping.salesChannelId()).willReturn(100L);
             given(shopReadManager.findActiveBySalesChannelId(100L)).willReturn(List.of(shop));
             willThrow(new RuntimeException("예기치 않은 오류"))

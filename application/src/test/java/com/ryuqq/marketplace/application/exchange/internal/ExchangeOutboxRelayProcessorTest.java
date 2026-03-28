@@ -49,7 +49,7 @@ class ExchangeOutboxRelayProcessorTest {
             Instant now = Instant.now();
             ExchangeOutbox outbox = Mockito.mock(ExchangeOutbox.class);
             given(outbox.idValue()).willReturn(outboxId);
-            given(outbox.orderItemIdValue()).willReturn("01900000-0000-7000-0000-000000000010");
+            given(outbox.orderItemIdValue()).willReturn(1001L);
             given(outbox.outboxType()).willReturn(ExchangeOutboxType.COLLECT);
             given(objectMapper.writeValueAsString(Mockito.any())).willReturn("{\"outboxId\":1}");
             given(commandFactory.createOutboxChangeContext(outboxId))
@@ -75,7 +75,7 @@ class ExchangeOutboxRelayProcessorTest {
             ExchangeOutbox outbox = Mockito.mock(ExchangeOutbox.class);
             ExchangeOutbox freshOutbox = Mockito.mock(ExchangeOutbox.class);
             given(outbox.idValue()).willReturn(outboxId);
-            given(outbox.orderItemIdValue()).willReturn("01900000-0000-7000-0000-000000000010");
+            given(outbox.orderItemIdValue()).willReturn(1001L);
             given(outbox.outboxType()).willReturn(ExchangeOutboxType.COLLECT);
             given(objectMapper.writeValueAsString(Mockito.any())).willReturn("{\"outboxId\":1}");
             given(commandFactory.createOutboxChangeContext(outboxId))
@@ -108,7 +108,7 @@ class ExchangeOutboxRelayProcessorTest {
             ExchangeOutbox outbox = Mockito.mock(ExchangeOutbox.class);
             ExchangeOutbox freshOutbox = Mockito.mock(ExchangeOutbox.class);
             given(outbox.idValue()).willReturn(outboxId);
-            given(outbox.orderItemIdValue()).willReturn("01900000-0000-7000-0000-000000000010");
+            given(outbox.orderItemIdValue()).willReturn(1001L);
             given(commandFactory.createOutboxChangeContext(outboxId))
                     .willReturn(new StatusChangeContext<>(outboxId, now))
                     .willReturn(new StatusChangeContext<>(outboxId, failNow));

@@ -19,8 +19,8 @@ public class ShipmentJpaEntity extends SoftDeletableEntity {
     @Column(name = "shipment_number", nullable = false, length = 50)
     private String shipmentNumber;
 
-    @Column(name = "order_item_id", nullable = false, length = 36)
-    private String orderItemId;
+    @Column(name = "order_item_id", nullable = false)
+    private Long orderItemId;
 
     @Column(name = "status", nullable = false, length = 20)
     private String status;
@@ -53,7 +53,7 @@ public class ShipmentJpaEntity extends SoftDeletableEntity {
     private ShipmentJpaEntity(
             String id,
             String shipmentNumber,
-            String orderItemId,
+            Long orderItemId,
             String status,
             String shipmentMethodType,
             String courierCode,
@@ -82,7 +82,7 @@ public class ShipmentJpaEntity extends SoftDeletableEntity {
     public static ShipmentJpaEntity create(
             String id,
             String shipmentNumber,
-            String orderItemId,
+            Long orderItemId,
             String status,
             String shipmentMethodType,
             String courierCode,
@@ -119,7 +119,7 @@ public class ShipmentJpaEntity extends SoftDeletableEntity {
         return shipmentNumber;
     }
 
-    public String getOrderItemId() {
+    public Long getOrderItemId() {
         return orderItemId;
     }
 

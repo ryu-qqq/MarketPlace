@@ -130,7 +130,7 @@ public class NaverRefundClaimSyncStrategy implements RefundClaimSyncStrategy {
         return OutboxSyncResult.success();
     }
 
-    private String resolveExternalProductOrderId(String orderItemId) {
+    private String resolveExternalProductOrderId(Long orderItemId) {
         return mappingQueryPort
                 .findByOrderItemId(orderItemId)
                 .map(m -> m.externalProductOrderId())

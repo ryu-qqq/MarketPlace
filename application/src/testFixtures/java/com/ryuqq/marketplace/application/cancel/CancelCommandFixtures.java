@@ -24,7 +24,7 @@ public final class CancelCommandFixtures {
 
     // ===== 기본 상수 =====
     private static final String DEFAULT_CANCEL_ID = "01900000-0000-7000-8000-000000000001";
-    private static final String DEFAULT_ORDER_ITEM_ID = "01940001-0000-7000-8000-000000000001";
+    private static final Long DEFAULT_ORDER_ITEM_ID = 1001L;
     private static final String DEFAULT_PROCESSED_BY = "admin@marketplace.com";
     private static final String DEFAULT_REQUESTED_BY = "buyer@marketplace.com";
     private static final long DEFAULT_SELLER_ID = 10L;
@@ -79,7 +79,7 @@ public final class CancelCommandFixtures {
                 DEFAULT_ORDER_ITEM_ID, 2, CancelReasonType.OUT_OF_STOCK, "재고 부족으로 취소합니다.");
     }
 
-    public static SellerCancelItem sellerCancelItem(String orderItemId, int cancelQty) {
+    public static SellerCancelItem sellerCancelItem(Long orderItemId, int cancelQty) {
         return new SellerCancelItem(orderItemId, cancelQty, CancelReasonType.CHANGE_OF_MIND, null);
     }
 

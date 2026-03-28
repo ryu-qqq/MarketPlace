@@ -152,7 +152,7 @@ class CancelReadManagerTest {
         @DisplayName("OrderItemId로 Cancel을 반환한다")
         void findByOrderItemId_ExistingOrderItemId_ReturnsCancel() {
             // given
-            OrderItemId orderItemId = OrderItemId.of("01940001-0000-7000-8000-000000000001");
+            OrderItemId orderItemId = OrderItemId.of(1001L);
             Cancel expected = CancelFixtures.requestedCancel();
 
             given(queryPort.findByOrderItemId(orderItemId)).willReturn(Optional.of(expected));
@@ -169,7 +169,7 @@ class CancelReadManagerTest {
         @DisplayName("OrderItemId에 해당하는 Cancel이 없으면 빈 Optional을 반환한다")
         void findByOrderItemId_NonExistingOrderItemId_ReturnsEmpty() {
             // given
-            OrderItemId orderItemId = OrderItemId.of("00000000-0000-7000-8000-000000000099");
+            OrderItemId orderItemId = OrderItemId.of(9999L);
 
             given(queryPort.findByOrderItemId(orderItemId)).willReturn(Optional.empty());
 

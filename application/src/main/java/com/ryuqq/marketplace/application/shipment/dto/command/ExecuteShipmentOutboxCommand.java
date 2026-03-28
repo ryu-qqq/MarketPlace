@@ -9,10 +9,10 @@ package com.ryuqq.marketplace.application.shipment.dto.command;
  * @param orderItemId 주문상품 ID
  * @param outboxType Outbox 유형
  */
-public record ExecuteShipmentOutboxCommand(Long outboxId, String orderItemId, String outboxType) {
+public record ExecuteShipmentOutboxCommand(Long outboxId, Long orderItemId, String outboxType) {
 
     public static ExecuteShipmentOutboxCommand of(
-            Long outboxId, String orderItemId, String outboxType) {
+            Long outboxId, Long orderItemId, String outboxType) {
         return new ExecuteShipmentOutboxCommand(outboxId, orderItemId, outboxType);
     }
 }

@@ -51,7 +51,8 @@ class OrderItemCommandAdapterTest {
                             entity.getId(), "READY", "CONFIRMED");
 
             given(itemRepository.findById(orderItem.idValue())).willReturn(Optional.empty());
-            given(mapper.toOrderItemEntity(orderItem, orderItem.idValue())).willReturn(entity);
+            given(mapper.toOrderItemEntity(orderItem, String.valueOf(orderItem.idValue())))
+                    .willReturn(entity);
             given(mapper.toOrderItemHistoryEntities(orderItem.histories()))
                     .willReturn(List.of(historyEntity));
 
@@ -114,7 +115,8 @@ class OrderItemCommandAdapterTest {
                     OrderItemHistoryJpaEntityFixtures.creationHistory(orderItem.idValue());
 
             given(itemRepository.findById(orderItem.idValue())).willReturn(Optional.empty());
-            given(mapper.toOrderItemEntity(orderItem, orderItem.idValue())).willReturn(newEntity);
+            given(mapper.toOrderItemEntity(orderItem, String.valueOf(orderItem.idValue())))
+                    .willReturn(newEntity);
             given(mapper.toOrderItemHistoryEntities(orderItem.histories()))
                     .willReturn(List.of(historyEntity));
 

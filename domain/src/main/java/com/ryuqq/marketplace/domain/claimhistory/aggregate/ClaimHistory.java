@@ -12,7 +12,7 @@ public class ClaimHistory {
     private final ClaimHistoryId id;
     private final ClaimType claimType;
     private final String claimId;
-    private final String orderItemId;
+    private final Long orderItemId;
     private final ClaimHistoryType historyType;
     private final String title;
     private final String message;
@@ -23,7 +23,7 @@ public class ClaimHistory {
             ClaimHistoryId id,
             ClaimType claimType,
             String claimId,
-            String orderItemId,
+            Long orderItemId,
             ClaimHistoryType historyType,
             String title,
             String message,
@@ -45,7 +45,7 @@ public class ClaimHistory {
             ClaimHistoryId id,
             ClaimType claimType,
             String claimId,
-            String orderItemId,
+            Long orderItemId,
             String fromStatus,
             String toStatus,
             Actor actor,
@@ -69,7 +69,7 @@ public class ClaimHistory {
             ClaimHistoryId id,
             ClaimType claimType,
             String claimId,
-            String orderItemId,
+            Long orderItemId,
             String fromStatus,
             String toStatus,
             int quantity,
@@ -94,7 +94,7 @@ public class ClaimHistory {
             ClaimHistoryId id,
             ClaimType claimType,
             String claimId,
-            String orderItemId,
+            Long orderItemId,
             String message,
             Actor actor,
             Instant now) {
@@ -115,7 +115,7 @@ public class ClaimHistory {
             ClaimHistoryId id,
             ClaimType claimType,
             String claimId,
-            String orderItemId,
+            Long orderItemId,
             ClaimHistoryType historyType,
             String title,
             String message,
@@ -156,7 +156,7 @@ public class ClaimHistory {
         return claimId;
     }
 
-    public String orderItemId() {
+    public Long orderItemId() {
         return orderItemId;
     }
 

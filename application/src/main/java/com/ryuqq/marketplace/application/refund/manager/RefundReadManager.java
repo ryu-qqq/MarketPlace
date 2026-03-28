@@ -43,12 +43,12 @@ public class RefundReadManager {
     }
 
     @Transactional(readOnly = true)
-    public Optional<RefundClaim> findByOrderItemId(String orderItemId) {
+    public Optional<RefundClaim> findByOrderItemId(Long orderItemId) {
         return queryPort.findByOrderItemId(orderItemId);
     }
 
     @Transactional(readOnly = true)
-    public List<RefundClaim> findAllByOrderItemId(String orderItemId) {
+    public List<RefundClaim> findAllByOrderItemId(Long orderItemId) {
         return queryPort.findAllByOrderItemId(orderItemId);
     }
 

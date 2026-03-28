@@ -22,7 +22,7 @@ public final class RefundQueryFixtures {
     private RefundQueryFixtures() {}
 
     private static final String DEFAULT_REFUND_CLAIM_ID = "01900000-0000-7000-8000-000000000010";
-    private static final String DEFAULT_ORDER_ITEM_ID = "01940001-0000-7000-8000-000000000001";
+    private static final Long DEFAULT_ORDER_ITEM_ID = 1001L;
 
     // ===== RefundSearchParams Fixtures =====
 

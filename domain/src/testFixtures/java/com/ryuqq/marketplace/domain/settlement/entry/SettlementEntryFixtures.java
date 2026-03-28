@@ -15,7 +15,7 @@ public final class SettlementEntryFixtures {
     private SettlementEntryFixtures() {}
 
     public static final long DEFAULT_SELLER_ID = 100L;
-    public static final String DEFAULT_ORDER_ITEM_ID = "oi-test-001";
+    public static final long DEFAULT_ORDER_ITEM_ID = 1001L;
     public static final int DEFAULT_SALES_AMOUNT = 50000;
     public static final int DEFAULT_COMMISSION_RATE = 1000; // 10%
 
@@ -23,7 +23,7 @@ public final class SettlementEntryFixtures {
         return salesEntry(DEFAULT_SELLER_ID, DEFAULT_ORDER_ITEM_ID);
     }
 
-    public static SettlementEntry salesEntry(long sellerId, String orderItemId) {
+    public static SettlementEntry salesEntry(long sellerId, long orderItemId) {
         Instant now = Instant.now();
         EntryAmounts amounts =
                 EntryAmounts.calculate(Money.of(DEFAULT_SALES_AMOUNT), DEFAULT_COMMISSION_RATE);
@@ -43,7 +43,7 @@ public final class SettlementEntryFixtures {
     }
 
     public static SettlementEntry cancelReversalEntry(
-            long sellerId, String orderItemId, String cancelId) {
+            long sellerId, long orderItemId, String cancelId) {
         Instant now = Instant.now();
         EntryAmounts amounts =
                 EntryAmounts.calculate(Money.of(DEFAULT_SALES_AMOUNT), DEFAULT_COMMISSION_RATE);

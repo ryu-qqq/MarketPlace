@@ -137,7 +137,7 @@ class CancelApiMapperTest {
 
             // then
             SellerCancelBatchCommand.SellerCancelItem firstItem = command.items().get(0);
-            assertThat(firstItem.orderItemId()).isEqualTo("01940001-0000-7000-8000-000000000001");
+            assertThat(firstItem.orderItemId()).isEqualTo(1001L);
             assertThat(firstItem.cancelQty()).isEqualTo(1);
             assertThat(firstItem.reasonType().name())
                     .isEqualTo(CancelApiFixtures.DEFAULT_REASON_TYPE);
@@ -149,7 +149,7 @@ class CancelApiMapperTest {
         void toSellerCancelBatchCommand_NullReasonDetail_UsesMemo() {
             // given
             List<SellerCancelItemApiRequest> items =
-                    List.of(new SellerCancelItemApiRequest("order-1", 1));
+                    List.of(new SellerCancelItemApiRequest("1001", 1));
             CancelReasonApiRequest reason = new CancelReasonApiRequest("OUT_OF_STOCK", null);
             SellerCancelBatchApiRequest request =
                     new SellerCancelBatchApiRequest(items, reason, "메모로 대체");
@@ -167,7 +167,7 @@ class CancelApiMapperTest {
         void toSellerCancelBatchCommand_ReasonDetailPresent_TakesPrecedence() {
             // given
             List<SellerCancelItemApiRequest> items =
-                    List.of(new SellerCancelItemApiRequest("order-1", 1));
+                    List.of(new SellerCancelItemApiRequest("1001", 1));
             CancelReasonApiRequest reason = new CancelReasonApiRequest("OUT_OF_STOCK", "상세 사유");
             SellerCancelBatchApiRequest request =
                     new SellerCancelBatchApiRequest(items, reason, "메모 내용");
@@ -185,7 +185,7 @@ class CancelApiMapperTest {
         void toSellerCancelBatchCommand_BothNull_ReasonDetailIsNull() {
             // given
             List<SellerCancelItemApiRequest> items =
-                    List.of(new SellerCancelItemApiRequest("order-1", 1));
+                    List.of(new SellerCancelItemApiRequest("1001", 1));
             CancelReasonApiRequest reason = new CancelReasonApiRequest("OUT_OF_STOCK", null);
             SellerCancelBatchApiRequest request =
                     new SellerCancelBatchApiRequest(items, reason, null);
@@ -204,9 +204,9 @@ class CancelApiMapperTest {
             // given
             List<SellerCancelItemApiRequest> items =
                     List.of(
-                            new SellerCancelItemApiRequest("order-1", 1),
-                            new SellerCancelItemApiRequest("order-2", 2),
-                            new SellerCancelItemApiRequest("order-3", 3));
+                            new SellerCancelItemApiRequest("1001", 1),
+                            new SellerCancelItemApiRequest("1002", 2),
+                            new SellerCancelItemApiRequest("1003", 3));
             CancelReasonApiRequest reason =
                     new CancelReasonApiRequest("PRODUCT_DISCONTINUED", "단종 상품");
             SellerCancelBatchApiRequest request =
@@ -291,7 +291,7 @@ class CancelApiMapperTest {
             AddClaimHistoryMemoCommand command =
                     mapper.toAddMemoCommand(
                             cancelId,
-                            "order-item-001",
+                            1001L,
                             request,
                             new MarketAccessChecker.ActorInfo(actorId, actorName));
 
@@ -342,7 +342,7 @@ class CancelApiMapperTest {
             assertThat(response).isNotNull();
             assertThat(response.cancelId()).isEqualTo(CancelApiFixtures.DEFAULT_CANCEL_ID);
             assertThat(response.cancelNumber()).isEqualTo(CancelApiFixtures.DEFAULT_CANCEL_NUMBER);
-            assertThat(response.orderId()).isEqualTo(CancelApiFixtures.DEFAULT_ORDER_ITEM_ID);
+            assertThat(response.orderId()).isEqualTo(CancelApiFixtures.DEFAULT_ORDER_ITEM_ID_STR);
             assertThat(response.cancelQty()).isEqualTo(1);
             assertThat(response.cancelType()).isEqualTo(CancelApiFixtures.DEFAULT_CANCEL_TYPE);
             assertThat(response.cancelStatus()).isEqualTo(CancelApiFixtures.DEFAULT_CANCEL_STATUS);
@@ -443,7 +443,7 @@ class CancelApiMapperTest {
                     .isEqualTo(CancelApiFixtures.DEFAULT_CANCEL_ID);
             assertThat(response.cancelInfo().cancelNumber())
                     .isEqualTo(CancelApiFixtures.DEFAULT_CANCEL_NUMBER);
-            assertThat(response.orderId()).isEqualTo(CancelApiFixtures.DEFAULT_ORDER_ITEM_ID);
+            assertThat(response.orderId()).isEqualTo(CancelApiFixtures.DEFAULT_ORDER_ITEM_ID_STR);
             assertThat(response.cancelInfo().type())
                     .isEqualTo(CancelApiFixtures.DEFAULT_CANCEL_TYPE);
         }
@@ -591,10 +591,7 @@ class CancelApiMapperTest {
         @DisplayName("전체 성공 배치 결과를 올바르게 변환한다")
         void toBatchResultResponse_AllSuccess_ReturnsAllSuccessResponse() {
             // given
-            List<String> ids =
-                    List.of(
-                            "01940001-0000-7000-8000-000000000001",
-                            "01940001-0000-7000-8000-000000000002");
+            List<String> ids = List.of("1001", "1002");
             BatchProcessingResult<String> result = CancelApiFixtures.batchSuccessResult(ids);
 
             // when

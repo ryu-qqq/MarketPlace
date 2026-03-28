@@ -29,7 +29,7 @@ public class OrderSettlementProcessor {
     }
 
     /** 판매 Entry를 생성하고 저장한다. 실패해도 주문 처리를 막지 않는다. */
-    public void createSalesEntry(String orderItemId, long sellerId, int salesAmount) {
+    public void createSalesEntry(Long orderItemId, long sellerId, int salesAmount) {
         try {
             CreateSalesEntryCommand command =
                     new CreateSalesEntryCommand(orderItemId, sellerId, salesAmount, 0);

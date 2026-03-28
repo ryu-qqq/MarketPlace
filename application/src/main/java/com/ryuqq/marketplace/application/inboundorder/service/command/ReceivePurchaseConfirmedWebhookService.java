@@ -63,7 +63,7 @@ public class ReceivePurchaseConfirmedWebhookService
         List<String> confirmableIds =
                 orderItems.stream()
                         .filter(OrderItem::isConfirmable)
-                        .map(item -> item.id().value())
+                        .map(item -> String.valueOf(item.id().value()))
                         .toList();
 
         if (confirmableIds.isEmpty()) {

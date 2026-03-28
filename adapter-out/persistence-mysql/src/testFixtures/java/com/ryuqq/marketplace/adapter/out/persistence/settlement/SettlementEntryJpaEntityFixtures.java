@@ -12,7 +12,7 @@ public final class SettlementEntryJpaEntityFixtures {
     public static final String DEFAULT_ID = "01900000-0000-7000-9000-000000000001";
     public static final String DEFAULT_SETTLEMENT_ID = "01900000-0000-7000-8000-000000000001";
     public static final long DEFAULT_SELLER_ID = 1L;
-    public static final String DEFAULT_ORDER_ITEM_ID = "oi-test-fixture-001";
+    public static final Long DEFAULT_ORDER_ITEM_ID = 1001L;
     public static final String DEFAULT_CLAIM_ID = "cancel-fixture-001";
     public static final String DEFAULT_ENTRY_TYPE_SALES = "SALES";
     public static final String DEFAULT_ENTRY_TYPE_CANCEL = "CANCEL";
@@ -162,7 +162,7 @@ public final class SettlementEntryJpaEntityFixtures {
 
     /** 특정 orderItemId를 가진 PENDING Entity 생성. */
     public static SettlementEntryJpaEntity pendingEntityWithOrderItemId(
-            String id, String orderItemId) {
+            String id, Long orderItemId) {
         Instant now = Instant.now();
         return SettlementEntryJpaEntity.create(
                 id,

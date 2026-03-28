@@ -255,7 +255,7 @@ class SettlementEntryQueryAdapterTest {
         @DisplayName("orderItemId로 조회 시 SettlementEntry 목록을 반환합니다")
         void findByOrderItemId_WithExistingOrderItemId_ReturnsEntryList() {
             // given
-            String orderItemId = SettlementEntryJpaEntityFixtures.DEFAULT_ORDER_ITEM_ID;
+            Long orderItemId = SettlementEntryJpaEntityFixtures.DEFAULT_ORDER_ITEM_ID;
 
             SettlementEntryJpaEntity entity =
                     SettlementEntryJpaEntityFixtures.pendingEntityWithOrderItemId(
@@ -277,7 +277,7 @@ class SettlementEntryQueryAdapterTest {
         @DisplayName("존재하지 않는 orderItemId로 조회 시 빈 리스트를 반환합니다")
         void findByOrderItemId_WithNonExistingOrderItemId_ReturnsEmptyList() {
             // given
-            String orderItemId = "oi-not-exist-999";
+            Long orderItemId = 99999L;
 
             given(repository.findByOrderItemId(orderItemId)).willReturn(List.of());
 
@@ -292,7 +292,7 @@ class SettlementEntryQueryAdapterTest {
         @DisplayName("같은 orderItemId로 여러 Entry(매출+역분개)가 조회될 수 있습니다")
         void findByOrderItemId_WithMultipleEntries_ReturnsAllEntries() {
             // given
-            String orderItemId = SettlementEntryJpaEntityFixtures.DEFAULT_ORDER_ITEM_ID;
+            Long orderItemId = SettlementEntryJpaEntityFixtures.DEFAULT_ORDER_ITEM_ID;
 
             SettlementEntryJpaEntity salesEntity =
                     SettlementEntryJpaEntityFixtures.pendingEntityWithOrderItemId(
@@ -320,7 +320,7 @@ class SettlementEntryQueryAdapterTest {
         @DisplayName("findByOrderItemId 호출 시 repository에 orderItemId가 전달됩니다")
         void findByOrderItemId_DelegatesToRepositoryWithOrderItemId() {
             // given
-            String orderItemId = "oi-delegate-test";
+            Long orderItemId = 5001L;
 
             given(repository.findByOrderItemId(orderItemId)).willReturn(List.of());
 

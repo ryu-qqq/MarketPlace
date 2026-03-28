@@ -15,7 +15,7 @@ public final class ExchangeClaimJpaEntityFixtures {
     // ===== 기본 상수 =====
     public static final String DEFAULT_ID = "01900000-0000-7000-0000-000000000001";
     public static final String DEFAULT_CLAIM_NUMBER = "EXC-20260218-0001";
-    public static final String DEFAULT_ORDER_ITEM_ID = "01900000-0000-7000-0000-000000000010";
+    public static final Long DEFAULT_ORDER_ITEM_ID = 1001L;
     public static final long DEFAULT_SELLER_ID = 100L;
     public static final int DEFAULT_EXCHANGE_QTY = 1;
     public static final String DEFAULT_STATUS_REQUESTED = "REQUESTED";
@@ -288,7 +288,7 @@ public final class ExchangeClaimJpaEntityFixtures {
 
     /** 특정 orderItemId를 가진 REQUESTED Entity 생성. */
     public static ExchangeClaimJpaEntity requestedEntityWithOrderItemId(
-            String id, String orderItemId) {
+            String id, Long orderItemId) {
         Instant now = Instant.now();
         return ExchangeClaimJpaEntity.create(
                 id,

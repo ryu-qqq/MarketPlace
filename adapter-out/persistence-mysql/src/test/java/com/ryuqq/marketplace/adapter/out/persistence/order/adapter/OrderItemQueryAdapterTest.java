@@ -58,7 +58,7 @@ class OrderItemQueryAdapterTest {
             String orderId = OrderJpaEntityFixtures.DEFAULT_ID;
             OrderItemJpaEntity entity1 = OrderItemJpaEntityFixtures.defaultItem(orderId);
             OrderItemJpaEntity entity2 = OrderItemJpaEntityFixtures.defaultItem(orderId);
-            List<String> rawIds = List.of(entity1.getId(), entity2.getId());
+            List<Long> rawIds = List.of(entity1.getId(), entity2.getId());
             List<OrderItemId> orderItemIds = rawIds.stream().map(OrderItemId::of).toList();
             OrderItem domain1 = OrderFixtures.reconstitutedOrderItem();
             OrderItem domain2 = OrderFixtures.reconstitutedOrderItem();
@@ -97,8 +97,8 @@ class OrderItemQueryAdapterTest {
             // given
             String orderId = OrderJpaEntityFixtures.DEFAULT_ID;
             OrderItemJpaEntity entity = OrderItemJpaEntityFixtures.defaultItem(orderId);
-            String nonExistingId = "non-existing-id-000";
-            List<String> rawIds = List.of(entity.getId(), nonExistingId);
+            Long nonExistingId = 99999L;
+            List<Long> rawIds = List.of(entity.getId(), nonExistingId);
             List<OrderItemId> orderItemIds = rawIds.stream().map(OrderItemId::of).toList();
             OrderItem domain = OrderFixtures.reconstitutedOrderItem();
 

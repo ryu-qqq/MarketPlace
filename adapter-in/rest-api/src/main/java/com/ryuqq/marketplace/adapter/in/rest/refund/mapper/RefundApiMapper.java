@@ -64,7 +64,7 @@ public class RefundApiMapper {
 
     private RefundRequestItem toRefundRequestItem(RefundRequestItemApiRequest item) {
         return new RefundRequestItem(
-                item.orderId(), // V4 간극: orderId = 내부 orderItemId
+                Long.parseLong(item.orderId()), // V4 간극: orderId = 내부 orderItemId
                 item.refundQty(),
                 RefundReasonType.valueOf(item.reasonType()),
                 item.reasonDetail());
@@ -88,7 +88,7 @@ public class RefundApiMapper {
 
     public AddClaimHistoryMemoCommand toAddMemoCommand(
             String refundClaimId,
-            String orderItemId,
+            Long orderItemId,
             AddClaimHistoryMemoApiRequest request,
             MarketAccessChecker.ActorInfo actor) {
         return new AddClaimHistoryMemoCommand(
@@ -120,7 +120,7 @@ public class RefundApiMapper {
 
     public PageApiResponse<ClaimListItemApiResponseV4> toPageResponseV4(
             RefundPageResult result, ClaimOrderEnricher enricher) {
-        List<String> orderItemIds =
+        List<Long> orderItemIds =
                 result.refunds().stream().map(RefundListResult::orderItemId).toList();
         ClaimOrderEnricher.OrderContext ctx = enricher.loadOrderContext(orderItemIds);
 
@@ -135,7 +135,7 @@ public class RefundApiMapper {
 
     private ClaimListItemApiResponseV4 toListResponseV4(
             RefundListResult r, ClaimOrderEnricher enricher, ClaimOrderEnricher.OrderContext ctx) {
-        String itemId = r.orderItemId();
+        Long itemId = r.orderItemId();
         return new ClaimListItemApiResponseV4(
                 enricher.toOrderProductV4(itemId, ctx),
                 enricher.toClaimInfoV4(
@@ -186,7 +186,9 @@ public class RefundApiMapper {
         return new RefundListApiResponse(
                 nullToEmpty(result.refundClaimId()),
                 nullToEmpty(result.claimNumber()),
-                nullToEmpty(result.orderItemId()), // V4 간극: orderId = orderItemId
+                result.orderItemId() != null
+                        ? String.valueOf(result.orderItemId())
+                        : "", // V4 간극: orderId = orderItemId
                 result.refundQty(),
                 nullToEmpty(result.refundStatus()),
                 nullToEmpty(result.reasonType()),
@@ -284,7 +286,7 @@ public class RefundApiMapper {
                 orderProduct != null ? List.of(orderProduct) : List.of();
 
         return new RefundDetailApiResponse(
-                nullToEmpty(result.orderItemId()), // V4 간극
+                result.orderItemId() != null ? String.valueOf(result.orderItemId()) : "", // V4 간극
                 orderProducts,
                 claimInfo,
                 buyerInfo,

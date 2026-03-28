@@ -86,7 +86,7 @@ public class ExecuteExchangeOutboxService implements ExecuteExchangeOutboxUseCas
         }
     }
 
-    private Shop resolveShop(String orderItemId) {
+    private Shop resolveShop(Long orderItemId) {
         ExternalOrderItemMapping mapping = mappingReadManager.findByOrderItemId(orderItemId);
         if (mapping == null) {
             throw new IllegalStateException("외부 주문 매핑을 찾을 수 없습니다: orderItemId=" + orderItemId);

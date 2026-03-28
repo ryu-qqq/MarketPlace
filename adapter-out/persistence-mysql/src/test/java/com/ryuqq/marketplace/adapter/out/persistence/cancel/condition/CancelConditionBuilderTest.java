@@ -158,7 +158,7 @@ class CancelConditionBuilderTest {
         @DisplayName("유효한 orderItemId 입력 시 BooleanExpression을 반환합니다")
         void orderItemIdEq_WithValidOrderItemId_ReturnsBooleanExpression() {
             // given
-            String orderItemId = "01900000-0000-7000-0000-000000000010";
+            Long orderItemId = 1001L;
 
             // when
             BooleanExpression result = conditionBuilder.orderItemIdEq(orderItemId);
@@ -180,7 +180,7 @@ class CancelConditionBuilderTest {
         @DisplayName("비어 있지 않은 orderItemId 목록 입력 시 BooleanExpression을 반환합니다")
         void orderItemIdIn_WithNonEmptyIds_ReturnsBooleanExpression() {
             // given
-            List<String> ids = List.of("item-001", "item-002");
+            List<Long> ids = List.of(1001L, 2001L);
 
             // when
             BooleanExpression result = conditionBuilder.orderItemIdIn(ids);

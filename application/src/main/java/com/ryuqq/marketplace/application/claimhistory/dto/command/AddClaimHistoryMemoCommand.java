@@ -6,7 +6,7 @@ import com.ryuqq.marketplace.domain.claimhistory.vo.ClaimType;
 public record AddClaimHistoryMemoCommand(
         ClaimType claimType,
         String claimId,
-        String orderItemId,
+        Long orderItemId,
         String message,
         String actorId,
         String actorName) {}

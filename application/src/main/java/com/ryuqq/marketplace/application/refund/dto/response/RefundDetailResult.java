@@ -8,7 +8,7 @@ import java.util.List;
 public record RefundDetailResult(
         String refundClaimId,
         String claimNumber,
-        String orderItemId,
+        Long orderItemId,
         int refundQty,
         String refundStatus,
         String reasonType,

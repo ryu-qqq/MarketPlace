@@ -85,7 +85,7 @@ public class OrderQueryDslRepository {
 
     /** 주문상품 ID 목록으로 OrderItemHistory 일괄 조회. */
     public List<OrderItemHistoryJpaEntity> findItemHistoriesByOrderItemIds(
-            List<String> orderItemIds) {
+            List<Long> orderItemIds) {
         if (orderItemIds == null || orderItemIds.isEmpty()) {
             return List.of();
         }

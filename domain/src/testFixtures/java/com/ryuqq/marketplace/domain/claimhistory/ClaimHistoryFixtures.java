@@ -20,7 +20,7 @@ public final class ClaimHistoryFixtures {
 
     private ClaimHistoryFixtures() {}
 
-    public static final String DEFAULT_ORDER_ITEM_ID = "order-item-001";
+    public static final long DEFAULT_ORDER_ITEM_ID = 1001L;
 
     // ===== ClaimHistoryId Fixtures =====
 

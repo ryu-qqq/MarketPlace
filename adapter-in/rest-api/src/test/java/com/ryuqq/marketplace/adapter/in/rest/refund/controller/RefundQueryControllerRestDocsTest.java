@@ -535,7 +535,7 @@ class RefundQueryControllerRestDocsTest {
         @DisplayName("환불 상세 조회 성공 - 보류 상태")
         void getDetail_HoldStatus_Success() throws Exception {
             // given
-            String holdRefundClaimId = "01940001-0000-7000-8000-000000000099";
+            String holdRefundClaimId = "9999";
             RefundDetailApiResponse.HoldInfoApiResponse holdInfo =
                     new RefundDetailApiResponse.HoldInfoApiResponse(
                             "추가 확인 필요", RefundApiFixtures.DEFAULT_FORMATTED_TIME);
@@ -555,7 +555,7 @@ class RefundQueryControllerRestDocsTest {
                             null);
             RefundDetailApiResponse holdDetailResponse =
                     new RefundDetailApiResponse(
-                            RefundApiFixtures.DEFAULT_ORDER_ITEM_ID,
+                            RefundApiFixtures.DEFAULT_ORDER_ITEM_ID_STR,
                             java.util.List.of(),
                             holdClaimInfo,
                             null,

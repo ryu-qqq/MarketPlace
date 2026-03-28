@@ -78,7 +78,7 @@ public class OrderCompositionQueryAdapter implements OrderCompositionQueryPort {
     }
 
     @Override
-    public Map<String, List<OrderCancelResult>> findCancelsByItemIds(List<String> orderItemIds) {
+    public Map<Long, List<OrderCancelResult>> findCancelsByItemIds(List<Long> orderItemIds) {
         if (orderItemIds == null || orderItemIds.isEmpty()) {
             return Map.of();
         }
@@ -88,7 +88,7 @@ public class OrderCompositionQueryAdapter implements OrderCompositionQueryPort {
     }
 
     @Override
-    public Map<String, List<OrderClaimResult>> findClaimsByItemIds(List<String> orderItemIds) {
+    public Map<Long, List<OrderClaimResult>> findClaimsByItemIds(List<Long> orderItemIds) {
         if (orderItemIds == null || orderItemIds.isEmpty()) {
             return Map.of();
         }
@@ -98,7 +98,7 @@ public class OrderCompositionQueryAdapter implements OrderCompositionQueryPort {
     }
 
     @Override
-    public Map<String, OrderItemResult> findOrderItemsByIds(List<String> orderItemIds) {
+    public Map<Long, OrderItemResult> findOrderItemsByIds(List<Long> orderItemIds) {
         if (orderItemIds == null || orderItemIds.isEmpty()) {
             return Map.of();
         }
@@ -110,21 +110,21 @@ public class OrderCompositionQueryAdapter implements OrderCompositionQueryPort {
     // ==================== V5 상품주문 상세 ====================
 
     @Override
-    public Optional<ProductOrderDetailData> findProductOrderDetail(String orderItemId) {
+    public Optional<ProductOrderDetailData> findProductOrderDetail(Long orderItemId) {
         return compositeRepository
                 .findProductOrderDetail(orderItemId)
                 .map(compositeMapper::toDetailData);
     }
 
     @Override
-    public List<OrderCancelResult> findCancelsByOrderItemId(String orderItemId) {
+    public List<OrderCancelResult> findCancelsByOrderItemId(Long orderItemId) {
         return compositeRepository.findCancelsByOrderItemId(orderItemId).stream()
                 .map(compositeMapper::toCancelResult)
                 .toList();
     }
 
     @Override
-    public List<OrderClaimResult> findClaimsByOrderItemId(String orderItemId) {
+    public List<OrderClaimResult> findClaimsByOrderItemId(Long orderItemId) {
         return compositeRepository.findClaimsByOrderItemId(orderItemId).stream()
                 .map(compositeMapper::toClaimResult)
                 .toList();

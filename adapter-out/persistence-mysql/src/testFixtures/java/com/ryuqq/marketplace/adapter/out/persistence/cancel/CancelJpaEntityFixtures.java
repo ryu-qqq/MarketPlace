@@ -18,7 +18,7 @@ public final class CancelJpaEntityFixtures {
     // ===== 기본 상수 =====
     public static final String DEFAULT_ID = "01900000-0000-7000-0000-000000000001";
     public static final String DEFAULT_CANCEL_NUMBER = "CAN-20260319-0001";
-    public static final String DEFAULT_ORDER_ITEM_ID = "01900000-0000-7000-0000-000000000010";
+    public static final Long DEFAULT_ORDER_ITEM_ID = 1001L;
     public static final long DEFAULT_SELLER_ID = 10L;
     public static final int DEFAULT_CANCEL_QTY = 1;
     public static final String DEFAULT_CANCEL_TYPE_BUYER = "BUYER_CANCEL";
@@ -35,7 +35,7 @@ public final class CancelJpaEntityFixtures {
 
     /** BUYER_CANCEL / REQUESTED 상태 Entity 생성. */
     public static CancelJpaEntity requestedEntity(
-            String cancelId, String orderItemId, long sellerId) {
+            String cancelId, Long orderItemId, long sellerId) {
         Instant now = Instant.now();
         return CancelJpaEntity.create(
                 cancelId,
@@ -62,8 +62,7 @@ public final class CancelJpaEntityFixtures {
     }
 
     /** SELLER_CANCEL / APPROVED 상태 Entity 생성. */
-    public static CancelJpaEntity approvedEntity(
-            String cancelId, String orderItemId, long sellerId) {
+    public static CancelJpaEntity approvedEntity(String cancelId, Long orderItemId, long sellerId) {
         Instant now = Instant.now();
         return CancelJpaEntity.create(
                 cancelId,
@@ -90,8 +89,7 @@ public final class CancelJpaEntityFixtures {
     }
 
     /** BUYER_CANCEL / REJECTED 상태 Entity 생성. */
-    public static CancelJpaEntity rejectedEntity(
-            String cancelId, String orderItemId, long sellerId) {
+    public static CancelJpaEntity rejectedEntity(String cancelId, Long orderItemId, long sellerId) {
         Instant now = Instant.now();
         return CancelJpaEntity.create(
                 cancelId,
@@ -119,7 +117,7 @@ public final class CancelJpaEntityFixtures {
 
     /** 상태를 직접 지정하는 범용 Entity 생성. */
     public static CancelJpaEntity entityWithStatus(
-            String cancelId, String orderItemId, String status) {
+            String cancelId, Long orderItemId, String status) {
         Instant now = Instant.now();
         return CancelJpaEntity.create(
                 cancelId,
@@ -149,7 +147,7 @@ public final class CancelJpaEntityFixtures {
     public static CancelJpaEntity approvedEntityWithQty(
             String cancelId,
             String cancelNumber,
-            String orderItemId,
+            Long orderItemId,
             long sellerId,
             int cancelQty,
             Integer refundAmount) {
@@ -180,7 +178,7 @@ public final class CancelJpaEntityFixtures {
 
     /** cancelNumber를 지정하는 REQUESTED Entity 생성 (unique 제약 회피용). */
     public static CancelJpaEntity requestedEntityWithNumber(
-            String cancelId, String cancelNumber, String orderItemId, long sellerId) {
+            String cancelId, String cancelNumber, Long orderItemId, long sellerId) {
         Instant now = Instant.now();
         return CancelJpaEntity.create(
                 cancelId,

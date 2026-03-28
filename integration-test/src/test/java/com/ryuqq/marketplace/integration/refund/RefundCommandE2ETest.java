@@ -88,14 +88,14 @@ class RefundCommandE2ETest extends E2ETestBase {
      *
      * @return 저장된 OrderItem의 ID
      */
-    private String seedOrderItem(String orderId) {
+    private Long seedOrderItem(String orderId) {
         OrderJpaEntity order = OrderJpaEntityFixtures.orderedEntity(orderId);
         orderRepository.save(order);
         OrderItemJpaEntity item = OrderItemJpaEntityFixtures.defaultItem(orderId);
         return orderItemRepository.save(item).getId();
     }
 
-    private Map<String, Object> refundRequestItem(String orderItemId, int qty, String reasonType) {
+    private Map<String, Object> refundRequestItem(Long orderItemId, int qty, String reasonType) {
         Map<String, Object> item = new HashMap<>();
         // V4 간극: orderId 필드 = 내부 orderItemId
         item.put("orderId", orderItemId);
@@ -105,7 +105,7 @@ class RefundCommandE2ETest extends E2ETestBase {
     }
 
     private Map<String, Object> refundRequestItemWithDetail(
-            String orderItemId, int qty, String reasonType, String reasonDetail) {
+            Long orderItemId, int qty, String reasonType, String reasonDetail) {
         Map<String, Object> item = refundRequestItem(orderItemId, qty, reasonType);
         item.put("reasonDetail", reasonDetail);
         return item;
@@ -122,7 +122,7 @@ class RefundCommandE2ETest extends E2ETestBase {
         @DisplayName("[CMD-01] 환불 요청 배치 성공 - 단건")
         void requestBatch_SingleItem_SuccessfullyCreated() {
             // Seed: READY 상태 OrderItem 1건
-            String orderItemId = seedOrderItem("order-req-001");
+            Long orderItemId = seedOrderItem("order-req-001");
 
             Response response =
                     given().spec(givenSuperAdmin())
@@ -155,8 +155,8 @@ class RefundCommandE2ETest extends E2ETestBase {
         @DisplayName("[CMD-02] 환불 요청 배치 성공 - 다건")
         void requestBatch_MultipleItems_AllCreated() {
             // Seed: OrderItem 2건
-            String orderItemId1 = seedOrderItem("order-req-002");
-            String orderItemId2 = seedOrderItem("order-req-003");
+            Long orderItemId1 = seedOrderItem("order-req-002");
+            Long orderItemId2 = seedOrderItem("order-req-003");
 
             given().spec(givenSuperAdmin())
                     .body(
@@ -181,7 +181,7 @@ class RefundCommandE2ETest extends E2ETestBase {
         @Tag("P1")
         @DisplayName("[CMD-03] 환불 요청 - reasonDetail 없이 요청 (optional 필드)")
         void requestBatch_WithoutReasonDetail_Succeeds() {
-            String orderItemId = seedOrderItem("order-req-004");
+            Long orderItemId = seedOrderItem("order-req-004");
 
             given().spec(givenSuperAdmin())
                     .body(
@@ -275,12 +275,8 @@ class RefundCommandE2ETest extends E2ETestBase {
             // Seed: REQUESTED 상태 RefundClaim 2건 직접 시딩 (서로 다른 orderItemId)
             String id1 = "ref-approve-01";
             String id2 = "ref-approve-02";
-            refundClaimRepository.save(
-                    RefundClaimJpaEntityFixtures.requestedEntity(
-                            id1, "01900000-0000-7000-0000-000000000011", 10L));
-            refundClaimRepository.save(
-                    RefundClaimJpaEntityFixtures.requestedEntity(
-                            id2, "01900000-0000-7000-0000-000000000012", 10L));
+            refundClaimRepository.save(RefundClaimJpaEntityFixtures.requestedEntity(id1, 11L, 10L));
+            refundClaimRepository.save(RefundClaimJpaEntityFixtures.requestedEntity(id2, 12L, 10L));
 
             given().spec(givenSuperAdmin())
                     .body(Map.of("refundClaimIds", List.of(id1, id2)))
@@ -386,12 +382,8 @@ class RefundCommandE2ETest extends E2ETestBase {
             // Seed: holdReason=null 상태 REQUESTED RefundClaim 2건 (서로 다른 orderItemId)
             String id1 = "ref-hold-01";
             String id2 = "ref-hold-02";
-            refundClaimRepository.save(
-                    RefundClaimJpaEntityFixtures.requestedEntity(
-                            id1, "01900000-0000-7000-0000-000000000011", 10L));
-            refundClaimRepository.save(
-                    RefundClaimJpaEntityFixtures.requestedEntity(
-                            id2, "01900000-0000-7000-0000-000000000012", 10L));
+            refundClaimRepository.save(RefundClaimJpaEntityFixtures.requestedEntity(id1, 11L, 10L));
+            refundClaimRepository.save(RefundClaimJpaEntityFixtures.requestedEntity(id2, 12L, 10L));
 
             given().spec(givenSuperAdmin())
                     .body(

@@ -104,7 +104,7 @@ class ShipmentQueryDslRepositoryTest {
         @Test
         @DisplayName("미삭제 Entity는 orderItemId로 조회됩니다")
         void findByOrderItemId_WithNotDeleted_ReturnsEntity() {
-            String orderItemId = "01940001-0000-7000-8000-000000000002";
+            Long orderItemId = 1002L;
             ShipmentJpaEntity saved =
                     persist(
                             ShipmentJpaEntityFixtures.readyEntityWithOrderItemId(
@@ -130,8 +130,7 @@ class ShipmentQueryDslRepositoryTest {
         @Test
         @DisplayName("존재하지 않는 orderItemId 조회 시 빈 Optional을 반환합니다")
         void findByOrderItemId_WithNonExistent_ReturnsEmpty() {
-            Optional<ShipmentJpaEntity> result =
-                    repository().findByOrderItemId("01940001-0000-7000-8000-000000000999");
+            Optional<ShipmentJpaEntity> result = repository().findByOrderItemId(9999L);
 
             assertThat(result).isEmpty();
         }

@@ -41,7 +41,7 @@ public final class ShipmentOutboxFixtures {
 
     public static ShipmentOutboxIdempotencyKey defaultIdempotencyKey() {
         return ShipmentOutboxIdempotencyKey.generate(
-                ShipmentFixtures.defaultOrderItemId().value(),
+                String.valueOf(ShipmentFixtures.defaultOrderItemId().value()),
                 ShipmentOutboxType.SHIP,
                 Instant.ofEpochMilli(1700000000000L));
     }

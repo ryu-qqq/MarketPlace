@@ -31,7 +31,7 @@ public class ShipmentCommandApiMapper {
 
     public ShipSingleCommand toShipSingleCommand(String orderItemId, ShipSingleApiRequest request) {
         return new ShipSingleCommand(
-                orderItemId,
+                Long.parseLong(orderItemId),
                 request.trackingNumber(),
                 request.courierCode(),
                 request.courierName(),

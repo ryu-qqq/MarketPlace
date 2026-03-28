@@ -22,11 +22,11 @@ public class ShipmentConditionBuilder {
         return id != null ? shipment.id.eq(id) : null;
     }
 
-    public BooleanExpression orderItemIdEq(String orderItemId) {
+    public BooleanExpression orderItemIdEq(Long orderItemId) {
         return orderItemId != null ? shipment.orderItemId.eq(orderItemId) : null;
     }
 
-    public BooleanExpression orderItemIdIn(List<String> orderItemIds) {
+    public BooleanExpression orderItemIdIn(List<Long> orderItemIds) {
         return orderItemIds != null && !orderItemIds.isEmpty()
                 ? shipment.orderItemId.in(orderItemIds)
                 : null;
@@ -50,11 +50,15 @@ public class ShipmentConditionBuilder {
         }
         return switch (criteria.searchField()) {
             case ORDER_ID -> {
-                String orderItemId =
+                String searchWordTrimmed =
                         criteria.searchWord() != null ? criteria.searchWord().trim() : null;
-                yield orderItemId != null && !orderItemId.isBlank()
-                        ? shipment.orderItemId.eq(orderItemId)
-                        : null;
+                try {
+                    Long orderItemIdLong =
+                            searchWordTrimmed != null ? Long.parseLong(searchWordTrimmed) : null;
+                    yield orderItemIdLong != null ? shipment.orderItemId.eq(orderItemIdLong) : null;
+                } catch (NumberFormatException e) {
+                    yield null;
+                }
             }
             case TRACKING_NUMBER -> shipment.trackingNumber.like(word);
             case CUSTOMER_NAME ->

@@ -88,9 +88,9 @@ class OrderQueryE2ETest extends E2ETestBase {
      * @param orderId 주문 ID
      * @param paymentId 결제 ID
      * @param paymentNumber 결제 번호 (PAY-YYYYMMDD-XXXX 형식)
-     * @return 저장된 orderItemId (UUIDv7 String)
+     * @return 저장된 orderItemId (Long)
      */
-    private String saveOrderWithPaymentDirect(
+    private Long saveOrderWithPaymentDirect(
             String orderId, String paymentId, String paymentNumber) {
         orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
         paymentRepository.save(
@@ -164,8 +164,7 @@ class OrderQueryE2ETest extends E2ETestBase {
             // given: Order + Payment + OrderItem 1건 저장, orderItemId 캡처
             String orderId = "01944b2a-1234-7fff-8888-abcdef010108";
             String paymentId = "01944b2a-aaaa-7fff-9999-000000010108";
-            String orderItemId =
-                    saveOrderWithPaymentDirect(orderId, paymentId, "PAY-20260101-0108");
+            Long orderItemId = saveOrderWithPaymentDirect(orderId, paymentId, "PAY-20260101-0108");
 
             // when & then: V4 간극 검증 - 응답의 orderId == 저장된 orderItemId
             given().spec(givenWithPermission("order:read"))
@@ -173,10 +172,10 @@ class OrderQueryE2ETest extends E2ETestBase {
                     .get(ORDERS_URL)
                     .then()
                     .statusCode(HttpStatus.OK.value())
-                    .body("data.content[0].orderId", equalTo(orderItemId));
+                    .body("data.content[0].orderId", equalTo(String.valueOf(orderItemId)));
 
             // orderItemId가 orderRepository의 orderId와 다름을 추가 검증
-            assertThat(orderItemId).isNotEqualTo(orderId);
+            assertThat(String.valueOf(orderItemId)).isNotEqualTo(orderId);
         }
 
         @Test
@@ -293,7 +292,7 @@ class OrderQueryE2ETest extends E2ETestBase {
             String orderId = "01944b2a-1234-7fff-8888-abcdef020101";
             String paymentId = "01944b2a-aaaa-7fff-9999-000000020101";
             String paymentNumber = "PAY-20260201-0101";
-            String orderItemId = saveOrderWithPaymentDirect(orderId, paymentId, paymentNumber);
+            Long orderItemId = saveOrderWithPaymentDirect(orderId, paymentId, paymentNumber);
 
             // when & then: V4 간극 - data.orderId == orderItemId
             given().spec(givenWithPermission("order:read"))
@@ -302,7 +301,7 @@ class OrderQueryE2ETest extends E2ETestBase {
                     .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("data", notNullValue())
-                    .body("data.orderId", equalTo(orderItemId))
+                    .body("data.orderId", equalTo(String.valueOf(orderItemId)))
                     .body("data.payment.paymentId", equalTo(paymentId))
                     .body("data.payment.paymentId", matchesPattern(UUID_V7_PATTERN))
                     .body("data.payment.paymentNumber", equalTo(paymentNumber))
@@ -331,8 +330,7 @@ class OrderQueryE2ETest extends E2ETestBase {
             // given
             String orderId = "01944b2a-1234-7fff-8888-abcdef020301";
             String paymentId = "01944b2a-aaaa-7fff-9999-000000020301";
-            String orderItemId =
-                    saveOrderWithPaymentDirect(orderId, paymentId, "PAY-20260201-0301");
+            Long orderItemId = saveOrderWithPaymentDirect(orderId, paymentId, "PAY-20260201-0301");
 
             // when: 응답 body를 String으로 추출하여 legacyOrderId 키 미포함 검증
             Response response =
@@ -354,7 +352,7 @@ class OrderQueryE2ETest extends E2ETestBase {
             orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
             OrderItemJpaEntity savedItem =
                     orderItemRepository.save(OrderItemJpaEntityFixtures.defaultItem(orderId));
-            String orderItemId = savedItem.getId();
+            Long orderItemId = savedItem.getId();
 
             // when & then: 결제가 없을 때 billAmount, paymentAmount는 0 또는 null이 아닌 값
             given().spec(givenWithPermission("order:read"))
@@ -371,7 +369,7 @@ class OrderQueryE2ETest extends E2ETestBase {
         void shouldReturn403WhenUserHasNoPermissionForDetail() {
             // given
             String orderId = "01944b2a-1234-7fff-8888-abcdef020601";
-            String orderItemId =
+            Long orderItemId =
                     saveOrderWithPaymentDirect(
                             orderId, "01944b2a-aaaa-7fff-9999-000000020601", "PAY-20260201-0601");
 
@@ -412,7 +410,7 @@ class OrderQueryE2ETest extends E2ETestBase {
             String orderId = "01944b2a-1234-7fff-8888-abcdef030301";
             String paymentId = "01944b2a-aaaa-7fff-9999-000000030301";
             String paymentNumber = "PAY-20260301-0301";
-            String orderItemId = saveOrderWithPaymentDirect(orderId, paymentId, paymentNumber);
+            Long orderItemId = saveOrderWithPaymentDirect(orderId, paymentId, paymentNumber);
 
             // Step 1: GET /orders → content[0].orderId 추출 (= 내부 orderItemId)
             Response listResponse =
@@ -426,7 +424,7 @@ class OrderQueryE2ETest extends E2ETestBase {
             String extractedOrderId = listResponse.jsonPath().getString("data.content[0].orderId");
 
             // V4 간극 검증: 목록에서 추출한 orderId == 실제 저장된 orderItemId
-            assertThat(extractedOrderId).isEqualTo(orderItemId);
+            assertThat(extractedOrderId).isEqualTo(String.valueOf(orderItemId));
 
             // Step 2: GET /orders/{추출한 orderId} → 상세 조회 일관성 검증
             given().spec(givenWithPermission("order:read"))
@@ -459,7 +457,7 @@ class OrderQueryE2ETest extends E2ETestBase {
             String orderId = "01944b2a-1234-7fff-8888-abcdef030501";
             String paymentId = "01944b2a-aaaa-7fff-9999-000000030501";
             String paymentNumber = "PAY-20260301-0501";
-            String orderItemId = saveOrderWithPaymentDirect(orderId, paymentId, paymentNumber);
+            Long orderItemId = saveOrderWithPaymentDirect(orderId, paymentId, paymentNumber);
 
             // Step 1: 목록 조회 - orderId == orderItemId, orderStatus == "READY"
             given().spec(givenSuperAdmin())
@@ -467,7 +465,7 @@ class OrderQueryE2ETest extends E2ETestBase {
                     .get(ORDERS_URL)
                     .then()
                     .statusCode(HttpStatus.OK.value())
-                    .body("data.content[0].orderId", equalTo(orderItemId))
+                    .body("data.content[0].orderId", equalTo(String.valueOf(orderItemId)))
                     .body("data.content[0].payment.paymentId", equalTo(paymentId))
                     .body("data.content[0].payment.paymentNumber", equalTo(paymentNumber));
 
@@ -478,7 +476,7 @@ class OrderQueryE2ETest extends E2ETestBase {
             detailResponse
                     .then()
                     .statusCode(HttpStatus.OK.value())
-                    .body("data.orderId", equalTo(orderItemId))
+                    .body("data.orderId", equalTo(String.valueOf(orderItemId)))
                     .body("data.payment.paymentId", equalTo(paymentId))
                     .body("data.payment.paymentNumber", equalTo(paymentNumber))
                     // orderHistories는 현재 응답에서 미포함

@@ -19,8 +19,8 @@ public class RefundClaimJpaEntity extends BaseAuditEntity {
     @Column(name = "claim_number", nullable = false, length = 50)
     private String claimNumber;
 
-    @Column(name = "order_item_id", nullable = false, length = 36)
-    private String orderItemId;
+    @Column(name = "order_item_id", nullable = false)
+    private Long orderItemId;
 
     @Column(name = "seller_id", nullable = false)
     private long sellerId;
@@ -86,7 +86,7 @@ public class RefundClaimJpaEntity extends BaseAuditEntity {
     private RefundClaimJpaEntity(
             String id,
             String claimNumber,
-            String orderItemId,
+            Long orderItemId,
             long sellerId,
             int refundQty,
             String refundStatus,
@@ -136,7 +136,7 @@ public class RefundClaimJpaEntity extends BaseAuditEntity {
     public static RefundClaimJpaEntity create(
             String id,
             String claimNumber,
-            String orderItemId,
+            Long orderItemId,
             long sellerId,
             int refundQty,
             String refundStatus,
@@ -193,7 +193,7 @@ public class RefundClaimJpaEntity extends BaseAuditEntity {
         return claimNumber;
     }
 
-    public String getOrderItemId() {
+    public Long getOrderItemId() {
         return orderItemId;
     }
 

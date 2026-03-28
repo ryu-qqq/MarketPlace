@@ -23,7 +23,7 @@ public record ProductOrderListProjectionDto(
         Instant orderCreatedAt,
         Instant orderUpdatedAt,
         // -- order_items 테이블 --
-        String orderItemId,
+        Long orderItemId,
         String orderItemNumber,
         Long productGroupId,
         Long sellerId,

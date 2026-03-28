@@ -120,7 +120,7 @@ class ExchangeQueryAdapterTest {
         @DisplayName("존재하는 orderItemId로 조회 시 Domain을 반환합니다")
         void findByOrderItemId_WithExistingOrderItemId_ReturnsDomain() {
             // given
-            String orderItemId = ExchangeClaimJpaEntityFixtures.DEFAULT_ORDER_ITEM_ID;
+            Long orderItemId = ExchangeClaimJpaEntityFixtures.DEFAULT_ORDER_ITEM_ID;
             ExchangeClaimJpaEntity entity =
                     ExchangeClaimJpaEntityFixtures.requestedEntityWithOrderItemId(
                             ExchangeClaimJpaEntityFixtures.DEFAULT_ID, orderItemId);
@@ -144,7 +144,7 @@ class ExchangeQueryAdapterTest {
         @DisplayName("존재하지 않는 orderItemId로 조회 시 빈 Optional을 반환합니다")
         void findByOrderItemId_WithNonExistingOrderItemId_ReturnsEmpty() {
             // given
-            String orderItemId = "01900000-0000-7000-0000-000000000999";
+            Long orderItemId = 99999L;
             given(repository.findByOrderItemId(orderItemId)).willReturn(Optional.empty());
 
             // when
@@ -168,8 +168,8 @@ class ExchangeQueryAdapterTest {
         @DisplayName("orderItemId 목록으로 복수 Domain을 반환합니다")
         void findByOrderItemIds_WithMultipleIds_ReturnsDomainList() {
             // given
-            String id1 = "01900000-0000-7000-0000-000000000010";
-            String id2 = "01900000-0000-7000-0000-000000000011";
+            Long id1 = 1001L;
+            Long id2 = 2001L;
             List<OrderItemId> orderItemIds = List.of(OrderItemId.of(id1), OrderItemId.of(id2));
 
             ExchangeClaimJpaEntity entity1 =
@@ -197,8 +197,8 @@ class ExchangeQueryAdapterTest {
         @DisplayName("결과가 없으면 빈 리스트를 반환합니다")
         void findByOrderItemIds_WithNoResults_ReturnsEmptyList() {
             // given
-            List<OrderItemId> orderItemIds = List.of(OrderItemId.of("non-existent-id"));
-            given(repository.findByOrderItemIds(List.of("non-existent-id"))).willReturn(List.of());
+            List<OrderItemId> orderItemIds = List.of(OrderItemId.of(99999L));
+            given(repository.findByOrderItemIds(List.of(99999L))).willReturn(List.of());
 
             // when
             List<ExchangeClaim> result = queryAdapter.findByOrderItemIds(orderItemIds);
@@ -374,7 +374,7 @@ class ExchangeQueryAdapterTest {
         @DisplayName("결과가 없으면 빈 리스트를 반환합니다")
         void findByIdIn_WithNoResults_ReturnsEmptyList() {
             // given
-            List<String> ids = List.of("non-existent-id");
+            List<String> ids = List.of("non-exist-id");
             Long sellerId = 100L;
             given(repository.findByIdIn(ids, sellerId)).willReturn(List.of());
 

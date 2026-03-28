@@ -39,7 +39,7 @@ class ShipmentBatchProcessorTest {
     @Mock private ShipmentReadManager readManager;
     @Mock private ShipmentPersistFacade persistFacade;
 
-    private static final String ORDER_ITEM_ID_1 = "01940001-0000-7000-8000-000000000001";
+    private static final Long ORDER_ITEM_ID_1 = 1001L;
 
     @Nested
     @DisplayName("confirmBatch() - 발주확인 일괄 처리")
@@ -131,7 +131,7 @@ class ShipmentBatchProcessorTest {
             ShipBatchItem batchItem =
                     ShipmentCommandFixtures.shipBatchItem(
                             ORDER_ITEM_ID_1, "ORD-20260101-0001-001", "1234567890");
-            Map<String, ShipBatchItem> itemMap = Map.of(ORDER_ITEM_ID_1, batchItem);
+            Map<Long, ShipBatchItem> itemMap = Map.of(ORDER_ITEM_ID_1, batchItem);
 
             Shipment shipment = ShipmentFixtures.preparingShipment();
             given(readManager.findByOrderItemIds(List.of(orderItemId)))
@@ -160,7 +160,7 @@ class ShipmentBatchProcessorTest {
             ShipBatchItem batchItem =
                     ShipmentCommandFixtures.shipBatchItem(
                             ORDER_ITEM_ID_1, "ORD-20260101-0001-001", "1234567890");
-            Map<String, ShipBatchItem> itemMap = Map.of(ORDER_ITEM_ID_1, batchItem);
+            Map<Long, ShipBatchItem> itemMap = Map.of(ORDER_ITEM_ID_1, batchItem);
 
             given(readManager.findByOrderItemIds(List.of(orderItemId))).willReturn(List.of());
 
@@ -188,7 +188,7 @@ class ShipmentBatchProcessorTest {
             ShipBatchItem batchItem =
                     ShipmentCommandFixtures.shipBatchItem(
                             ORDER_ITEM_ID_1, "ORD-20260101-0001-001", "1234567890");
-            Map<String, ShipBatchItem> itemMap = Map.of(ORDER_ITEM_ID_1, batchItem);
+            Map<Long, ShipBatchItem> itemMap = Map.of(ORDER_ITEM_ID_1, batchItem);
 
             Shipment shipment = ShipmentFixtures.readyShipment();
             given(readManager.findByOrderItemIds(List.of(orderItemId)))

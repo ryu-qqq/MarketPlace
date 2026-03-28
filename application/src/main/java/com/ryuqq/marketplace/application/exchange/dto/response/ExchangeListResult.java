@@ -6,7 +6,7 @@ import java.time.Instant;
 public record ExchangeListResult(
         String exchangeClaimId,
         String claimNumber,
-        String orderItemId,
+        Long orderItemId,
         int exchangeQty,
         String exchangeStatus,
         String reasonType,

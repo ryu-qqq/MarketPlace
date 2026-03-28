@@ -23,8 +23,8 @@ public class CancelJpaEntity extends BaseAuditEntity {
     @Column(name = "cancel_number", nullable = false, length = 50, unique = true)
     private String cancelNumber;
 
-    @Column(name = "order_item_id", nullable = false, length = 36)
-    private String orderItemId;
+    @Column(name = "order_item_id", nullable = false)
+    private Long orderItemId;
 
     @Column(name = "seller_id", nullable = false)
     private long sellerId;
@@ -82,7 +82,7 @@ public class CancelJpaEntity extends BaseAuditEntity {
     private CancelJpaEntity(
             String id,
             String cancelNumber,
-            String orderItemId,
+            Long orderItemId,
             long sellerId,
             int cancelQty,
             String cancelType,
@@ -126,7 +126,7 @@ public class CancelJpaEntity extends BaseAuditEntity {
     public static CancelJpaEntity create(
             String id,
             String cancelNumber,
-            String orderItemId,
+            Long orderItemId,
             long sellerId,
             int cancelQty,
             String cancelType,
@@ -177,7 +177,7 @@ public class CancelJpaEntity extends BaseAuditEntity {
         return cancelNumber;
     }
 
-    public String getOrderItemId() {
+    public Long getOrderItemId() {
         return orderItemId;
     }
 

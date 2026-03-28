@@ -462,7 +462,7 @@ public class ExchangeClaimSyncHandler implements ClaimSyncHandler {
 
     /** 클레임 이력을 생성하고 저장한다. 수량 정보를 message에 포함. */
     private void recordHistory(
-            String claimId, String orderItemId, String fromStatus, String toStatus, int qty) {
+            String claimId, Long orderItemId, String fromStatus, String toStatus, int qty) {
         String from = fromStatus != null ? fromStatus : "NEW";
         historyCommandManager.persist(
                 historyFactory.createStatusChangeBySystemWithQty(

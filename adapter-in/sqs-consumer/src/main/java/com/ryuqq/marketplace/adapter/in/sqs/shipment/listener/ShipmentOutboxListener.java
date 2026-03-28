@@ -59,7 +59,9 @@ public class ShipmentOutboxListener {
         try {
             useCase.execute(
                     ExecuteShipmentOutboxCommand.of(
-                            message.outboxId(), message.orderItemId(), message.outboxType()));
+                            message.outboxId(),
+                            Long.parseLong(message.orderItemId()),
+                            message.outboxType()));
             sample.stop(durationTimer);
             successCounter.increment();
         } catch (Exception e) {

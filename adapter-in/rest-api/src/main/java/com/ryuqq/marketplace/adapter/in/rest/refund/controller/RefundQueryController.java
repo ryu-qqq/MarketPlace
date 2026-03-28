@@ -77,7 +77,7 @@ public class RefundQueryController {
     public ResponseEntity<ApiResponse<RefundDetailApiResponse>> getDetail(
             @PathVariable String refundClaimId) {
         RefundDetailResult result = getRefundDetailUseCase.execute(refundClaimId);
-        String itemId = result.orderItemId();
+        Long itemId = result.orderItemId();
         ClaimOrderEnricher.OrderContext ctx = enricher.loadOrderContext(List.of(itemId));
         return ResponseEntity.ok(
                 ApiResponse.of(

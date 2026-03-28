@@ -104,7 +104,7 @@ class ExchangeContainerFlowE2ETest extends ContainerE2ETestBase {
             String orderId = "order-exchange-flow-001";
             orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
             OrderItemJpaEntity item = OrderItemJpaEntityFixtures.itemWithPrice(orderId, 30000, 1);
-            String orderItemId = orderItemRepository.save(item).getId();
+            Long orderItemId = orderItemRepository.save(item).getId();
 
             // step 1: 교환 요청
             givenSuperAdmin()
@@ -168,7 +168,7 @@ class ExchangeContainerFlowE2ETest extends ContainerE2ETestBase {
             String orderId = "order-exchange-reject-flow-001";
             orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
             OrderItemJpaEntity item = OrderItemJpaEntityFixtures.itemWithPrice(orderId, 25000, 1);
-            String orderItemId = orderItemRepository.save(item).getId();
+            Long orderItemId = orderItemRepository.save(item).getId();
 
             // step 1: 교환 요청
             givenSuperAdmin()
@@ -207,7 +207,7 @@ class ExchangeContainerFlowE2ETest extends ContainerE2ETestBase {
             String orderId = "order-exchange-hold-flow-001";
             orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
             OrderItemJpaEntity item = OrderItemJpaEntityFixtures.itemWithPrice(orderId, 20000, 1);
-            String orderItemId = orderItemRepository.save(item).getId();
+            Long orderItemId = orderItemRepository.save(item).getId();
 
             // step 1: 교환 요청
             givenSuperAdmin()
@@ -274,7 +274,7 @@ class ExchangeContainerFlowE2ETest extends ContainerE2ETestBase {
             String orderId = "order-exchange-convert-flow-001";
             orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
             OrderItemJpaEntity item = OrderItemJpaEntityFixtures.itemWithPrice(orderId, 30000, 1);
-            String orderItemId = orderItemRepository.save(item).getId();
+            Long orderItemId = orderItemRepository.save(item).getId();
 
             // step 1: 교환 요청
             givenSuperAdmin()
@@ -313,7 +313,7 @@ class ExchangeContainerFlowE2ETest extends ContainerE2ETestBase {
             String orderId = "order-exchange-memo-flow-001";
             orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
             OrderItemJpaEntity item = OrderItemJpaEntityFixtures.itemWithPrice(orderId, 30000, 1);
-            String orderItemId = orderItemRepository.save(item).getId();
+            Long orderItemId = orderItemRepository.save(item).getId();
 
             // step 1: 교환 요청
             givenSuperAdmin()
@@ -346,7 +346,7 @@ class ExchangeContainerFlowE2ETest extends ContainerE2ETestBase {
 
     // ===== Helper =====
 
-    private Map<String, Object> createExchangeRequestItem(String orderItemId) {
+    private Map<String, Object> createExchangeRequestItem(Long orderItemId) {
         return Map.ofEntries(
                 Map.entry("orderId", orderItemId),
                 Map.entry("exchangeQty", 1),

@@ -19,8 +19,7 @@ import org.junit.jupiter.api.Test;
 class CancelEventsTest {
 
     private static final CancelId CANCEL_ID = CancelFixtures.defaultCancelId();
-    private static final OrderItemId ORDER_ITEM_ID =
-            OrderItemId.of("01940001-0000-7000-8000-000000000001");
+    private static final OrderItemId ORDER_ITEM_ID = OrderItemId.of(1001L);
 
     @Nested
     @DisplayName("CancelCreatedEvent 테스트")

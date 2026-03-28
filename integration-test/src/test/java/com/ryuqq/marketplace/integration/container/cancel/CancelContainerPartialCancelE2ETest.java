@@ -94,7 +94,7 @@ class CancelContainerPartialCancelE2ETest extends ContainerE2ETestBase {
             String orderId = "order-pc1-001";
             orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
             OrderItemJpaEntity item = OrderItemJpaEntityFixtures.itemWithPrice(orderId, 10000, 3);
-            String orderItemId = orderItemRepository.save(item).getId();
+            Long orderItemId = orderItemRepository.save(item).getId();
 
             // when: 2건 판매자 취소
             given().spec(givenSuperAdmin())
@@ -120,7 +120,7 @@ class CancelContainerPartialCancelE2ETest extends ContainerE2ETestBase {
             String orderId = "order-pc2-001";
             orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
             OrderItemJpaEntity item = OrderItemJpaEntityFixtures.itemWithPrice(orderId, 10000, 3);
-            String orderItemId = orderItemRepository.save(item).getId();
+            Long orderItemId = orderItemRepository.save(item).getId();
 
             // 1차 취소 (2건)
             cancelRepository.save(
@@ -154,7 +154,7 @@ class CancelContainerPartialCancelE2ETest extends ContainerE2ETestBase {
             String orderId = "order-pc3-001";
             orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
             OrderItemJpaEntity item = OrderItemJpaEntityFixtures.itemWithPrice(orderId, 10000, 2);
-            String orderItemId = orderItemRepository.save(item).getId();
+            Long orderItemId = orderItemRepository.save(item).getId();
 
             // 전량 취소
             given().spec(givenSuperAdmin())
@@ -193,7 +193,7 @@ class CancelContainerPartialCancelE2ETest extends ContainerE2ETestBase {
             String orderId = "order-pc4-001";
             orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
             OrderItemJpaEntity item = OrderItemJpaEntityFixtures.itemWithPrice(orderId, 10000, 3);
-            String orderItemId = orderItemRepository.save(item).getId();
+            Long orderItemId = orderItemRepository.save(item).getId();
 
             given().spec(givenSuperAdmin())
                     .body(createSellerCancelRequest(orderItemId, 2))
@@ -222,7 +222,7 @@ class CancelContainerPartialCancelE2ETest extends ContainerE2ETestBase {
             String orderId = "order-pc5-001";
             orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
             OrderItemJpaEntity item = OrderItemJpaEntityFixtures.itemWithPrice(orderId, 10000, 3);
-            String orderItemId = orderItemRepository.save(item).getId();
+            Long orderItemId = orderItemRepository.save(item).getId();
 
             given().spec(givenSuperAdmin())
                     .body(createSellerCancelRequest(orderItemId, 2))
@@ -246,7 +246,7 @@ class CancelContainerPartialCancelE2ETest extends ContainerE2ETestBase {
 
     // ===== Helper =====
 
-    private Map<String, Object> createSellerCancelRequest(String orderItemId, int cancelQty) {
+    private Map<String, Object> createSellerCancelRequest(Long orderItemId, int cancelQty) {
         return Map.of(
                 "items",
                 List.of(Map.of("orderId", orderItemId, "cancelQty", cancelQty)),

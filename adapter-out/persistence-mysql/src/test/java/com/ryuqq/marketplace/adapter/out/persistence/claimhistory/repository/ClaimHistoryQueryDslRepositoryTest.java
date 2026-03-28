@@ -272,7 +272,7 @@ class ClaimHistoryQueryDslRepositoryTest {
         @DisplayName("orderItemId가 일치하는 모든 이력을 반환합니다")
         void findByOrderItemId_WithMatchingEntities_ReturnsEntityList() {
             // given
-            String orderItemId = "order-item-find-001";
+            Long orderItemId = 3001L;
             persist(ClaimHistoryJpaEntityFixtures.orderMemoEntity(orderItemId));
             persist(ClaimHistoryJpaEntityFixtures.cancelStatusChangeEntity("cancel-001"));
 
@@ -288,11 +288,10 @@ class ClaimHistoryQueryDslRepositoryTest {
         @DisplayName("orderItemId가 다른 Entity는 조회되지 않습니다")
         void findByOrderItemId_WithDifferentOrderItemId_ReturnsEmpty() {
             // given
-            persist(ClaimHistoryJpaEntityFixtures.orderMemoEntity("other-order-item-001"));
+            persist(ClaimHistoryJpaEntityFixtures.orderMemoEntity(9901L));
 
             // when
-            List<ClaimHistoryJpaEntity> result =
-                    repository().findByOrderItemId("non-existent-order-item");
+            List<ClaimHistoryJpaEntity> result = repository().findByOrderItemId(99999L);
 
             // then
             assertThat(result).isEmpty();
@@ -302,7 +301,7 @@ class ClaimHistoryQueryDslRepositoryTest {
         @DisplayName("여러 claimType의 이력이 같은 orderItemId를 가지면 모두 반환됩니다")
         void findByOrderItemId_WithMultipleClaimTypes_ReturnsAll() {
             // given
-            String orderItemId = "order-item-multi-001";
+            Long orderItemId = 3002L;
             persist(ClaimHistoryJpaEntityFixtures.cancelStatusChangeEntity("cancel-multi-001"));
             persist(ClaimHistoryJpaEntityFixtures.refundStatusChangeEntity("refund-multi-001"));
             persist(ClaimHistoryJpaEntityFixtures.orderMemoEntity(orderItemId));
@@ -318,7 +317,7 @@ class ClaimHistoryQueryDslRepositoryTest {
         @DisplayName("결과는 createdAt 오름차순으로 정렬됩니다")
         void findByOrderItemId_ReturnsOrderedByCreatedAtAsc() {
             // given
-            String orderItemId = "order-item-sort-001";
+            Long orderItemId = 3003L;
             persist(ClaimHistoryJpaEntityFixtures.orderMemoEntity(orderItemId));
             persist(ClaimHistoryJpaEntityFixtures.cancelStatusChangeEntity("cancel-for-sort-001"));
 
@@ -342,9 +341,9 @@ class ClaimHistoryQueryDslRepositoryTest {
         @DisplayName("orderItemId 조건으로 이력을 조회합니다")
         void findByCriteria_WithOrderItemId_ReturnsMatchingEntities() {
             // given
-            String orderItemId = "criteria-order-item-001";
+            Long orderItemId = 4001L;
             persist(ClaimHistoryJpaEntityFixtures.orderMemoEntity(orderItemId));
-            persist(ClaimHistoryJpaEntityFixtures.orderMemoEntity("other-order-item-002"));
+            persist(ClaimHistoryJpaEntityFixtures.orderMemoEntity(9902L));
 
             ClaimHistoryPageCriteria criteria = ClaimHistoryPageCriteria.defaultOf(orderItemId);
 
@@ -360,7 +359,7 @@ class ClaimHistoryQueryDslRepositoryTest {
         @DisplayName("claimType 필터와 함께 조회하면 해당 타입만 반환됩니다")
         void findByCriteria_WithClaimTypeFilter_ReturnsFilteredEntities() {
             // given
-            String orderItemId = ClaimHistoryJpaEntityFixtures.DEFAULT_ORDER_ITEM_ID;
+            Long orderItemId = ClaimHistoryJpaEntityFixtures.DEFAULT_ORDER_ITEM_ID;
             persist(ClaimHistoryJpaEntityFixtures.cancelStatusChangeEntity("criteria-cancel-001"));
             persist(ClaimHistoryJpaEntityFixtures.refundStatusChangeEntity("criteria-refund-001"));
 
@@ -383,7 +382,7 @@ class ClaimHistoryQueryDslRepositoryTest {
         @DisplayName("claimType 필터가 없으면 해당 orderItemId의 모든 이력을 반환합니다")
         void findByCriteria_WithoutClaimTypeFilter_ReturnsAllForOrderItemId() {
             // given
-            String orderItemId = ClaimHistoryJpaEntityFixtures.DEFAULT_ORDER_ITEM_ID;
+            Long orderItemId = ClaimHistoryJpaEntityFixtures.DEFAULT_ORDER_ITEM_ID;
             persist(ClaimHistoryJpaEntityFixtures.cancelStatusChangeEntity("all-cancel-001"));
             persist(ClaimHistoryJpaEntityFixtures.refundStatusChangeEntity("all-refund-001"));
 
@@ -400,8 +399,7 @@ class ClaimHistoryQueryDslRepositoryTest {
         @DisplayName("조건에 맞는 데이터가 없으면 빈 리스트를 반환합니다")
         void findByCriteria_WithNoMatchingData_ReturnsEmpty() {
             // given
-            ClaimHistoryPageCriteria criteria =
-                    ClaimHistoryPageCriteria.defaultOf("non-existent-order-item-999");
+            ClaimHistoryPageCriteria criteria = ClaimHistoryPageCriteria.defaultOf(99999L);
 
             // when
             List<ClaimHistoryJpaEntity> result = repository().findByCriteria(criteria);
@@ -423,7 +421,7 @@ class ClaimHistoryQueryDslRepositoryTest {
         @DisplayName("orderItemId 조건으로 카운트를 반환합니다")
         void countByCriteria_WithOrderItemId_ReturnsCount() {
             // given
-            String orderItemId = ClaimHistoryJpaEntityFixtures.DEFAULT_ORDER_ITEM_ID;
+            Long orderItemId = ClaimHistoryJpaEntityFixtures.DEFAULT_ORDER_ITEM_ID;
             persist(ClaimHistoryJpaEntityFixtures.cancelStatusChangeEntity("count-cancel-001"));
             persist(ClaimHistoryJpaEntityFixtures.refundStatusChangeEntity("count-refund-001"));
 
@@ -440,7 +438,7 @@ class ClaimHistoryQueryDslRepositoryTest {
         @DisplayName("claimType 필터와 함께 카운트하면 해당 타입 수만 반환됩니다")
         void countByCriteria_WithClaimTypeFilter_ReturnsFilteredCount() {
             // given
-            String orderItemId = ClaimHistoryJpaEntityFixtures.DEFAULT_ORDER_ITEM_ID;
+            Long orderItemId = ClaimHistoryJpaEntityFixtures.DEFAULT_ORDER_ITEM_ID;
             persist(
                     ClaimHistoryJpaEntityFixtures.cancelStatusChangeEntity(
                             "count-filter-cancel-001"));
@@ -468,8 +466,7 @@ class ClaimHistoryQueryDslRepositoryTest {
         @DisplayName("조건에 맞는 데이터가 없으면 0을 반환합니다")
         void countByCriteria_WithNoMatchingData_ReturnsZero() {
             // given
-            ClaimHistoryPageCriteria criteria =
-                    ClaimHistoryPageCriteria.defaultOf("non-existent-order-item-count-999");
+            ClaimHistoryPageCriteria criteria = ClaimHistoryPageCriteria.defaultOf(99998L);
 
             // when
             long count = repository().countByCriteria(criteria);

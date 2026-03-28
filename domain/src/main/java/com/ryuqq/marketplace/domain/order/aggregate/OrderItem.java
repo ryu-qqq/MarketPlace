@@ -241,7 +241,7 @@ public class OrderItem {
         return id;
     }
 
-    public String idValue() {
+    public Long idValue() {
         return id.value();
     }
 

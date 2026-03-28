@@ -18,15 +18,14 @@ class OrderItemTest {
     class ForNewTest {
 
         @Test
-        @DisplayName("신규 주문 상품 생성 시 UUIDv7 ID가 설정된다")
-        void forNewOrderItemHasUuidId() {
+        @DisplayName("신규 주문 상품 생성 시 Long ID가 설정된다")
+        void forNewOrderItemHasLongId() {
             // when
             OrderItem item = OrderFixtures.defaultOrderItem();
 
             // then
-            assertThat(item.id().value()).isNotBlank();
-            assertThat(item.id().value())
-                    .matches("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$");
+            assertThat(item.id().value()).isNotNull();
+            assertThat(item.id().value()).isPositive();
         }
 
         @Test
@@ -84,7 +83,7 @@ class OrderItemTest {
 
             // then
             assertThat(item.id()).isEqualTo(OrderFixtures.defaultOrderItemId());
-            assertThat(item.id().value()).isNotBlank();
+            assertThat(item.id().value()).isNotNull();
         }
 
         @Test
@@ -108,8 +107,8 @@ class OrderItemTest {
     class GetterTest {
 
         @Test
-        @DisplayName("idValue()는 ID의 String(UUIDv7) 값을 반환한다")
-        void idValueReturnsString() {
+        @DisplayName("idValue()는 ID의 Long 값을 반환한다")
+        void idValueReturnsLong() {
             // given
             OrderItem item = OrderFixtures.reconstitutedOrderItem();
 
@@ -133,30 +132,20 @@ class OrderItemTest {
     class OrderItemIdTest {
 
         @Test
-        @DisplayName("of()로 유효한 UUIDv7 ID를 생성한다")
+        @DisplayName("of()로 유효한 Long ID를 생성한다")
         void ofCreateValidOrderItemId() {
             // when
-            String uuid = "01940001-0000-7000-8000-000000000001";
-            OrderItemId id = OrderItemId.of(uuid);
+            OrderItemId id = OrderItemId.of(1001L);
 
             // then
-            assertThat(id.value()).isEqualTo(uuid);
+            assertThat(id.value()).isEqualTo(1001L);
         }
 
         @Test
         @DisplayName("of()에 null을 전달하면 예외가 발생한다")
         void ofWithNull_ThrowsException() {
             // when & then
-            assertThatThrownBy(() -> OrderItemId.of(null))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("null");
-        }
-
-        @Test
-        @DisplayName("of()에 빈 문자열을 전달하면 예외가 발생한다")
-        void ofWithBlank_ThrowsException() {
-            // when & then
-            assertThatThrownBy(() -> OrderItemId.of("   "))
+            assertThatThrownBy(() -> OrderItemId.of((Long) null))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("null");
         }

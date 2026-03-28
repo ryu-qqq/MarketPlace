@@ -40,7 +40,8 @@ public final class ShipmentApiFixtures {
     // ===== 상수 =====
     public static final String DEFAULT_SHIPMENT_ID = "SHIP-001";
     public static final String DEFAULT_SHIPMENT_NUMBER = "SN-20250101-001";
-    public static final String DEFAULT_ORDER_ITEM_ID = "01940001-0000-7000-8000-000000000001";
+    public static final long DEFAULT_ORDER_ITEM_ID = 1001L;
+    public static final String DEFAULT_ORDER_ITEM_ID_STR = String.valueOf(DEFAULT_ORDER_ITEM_ID);
     public static final String DEFAULT_ORDER_ID = "ORD-001";
     public static final String DEFAULT_ORDER_NUMBER = "ON-20250101-001";
     public static final String DEFAULT_STATUS = "READY";
@@ -371,7 +372,7 @@ public final class ShipmentApiFixtures {
                         DEFAULT_FORMATTED_TIME,
                         DEFAULT_FORMATTED_TIME),
                 new ProductOrderInfoResponse(
-                        DEFAULT_ORDER_ITEM_ID,
+                        DEFAULT_ORDER_ITEM_ID_STR,
                         100L,
                         200L,
                         "SKU-001",
@@ -434,7 +435,7 @@ public final class ShipmentApiFixtures {
                         DEFAULT_FORMATTED_TIME,
                         DEFAULT_FORMATTED_TIME),
                 new ProductOrderInfoResponse(
-                        DEFAULT_ORDER_ITEM_ID,
+                        DEFAULT_ORDER_ITEM_ID_STR,
                         100L,
                         200L,
                         "SKU-001",

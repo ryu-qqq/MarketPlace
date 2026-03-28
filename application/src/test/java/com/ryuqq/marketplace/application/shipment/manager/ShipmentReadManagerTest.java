@@ -87,7 +87,7 @@ class ShipmentReadManagerTest {
         @DisplayName("존재하지 않는 OrderItemId이면 빈 Optional을 반환한다")
         void findByOrderItemId_NonExisting_ReturnsEmpty() {
             // given
-            OrderItemId orderItemId = OrderItemId.of("00000000-0000-7000-8000-000000000099");
+            OrderItemId orderItemId = OrderItemId.of(9999L);
             given(queryPort.findByOrderItemId(orderItemId)).willReturn(Optional.empty());
 
             // when
@@ -121,7 +121,7 @@ class ShipmentReadManagerTest {
         @DisplayName("존재하지 않는 OrderItemId이면 ShipmentNotFoundException이 발생한다")
         void getByOrderItemId_NonExisting_ThrowsShipmentNotFoundException() {
             // given
-            OrderItemId orderItemId = OrderItemId.of("00000000-0000-7000-8000-000000000099");
+            OrderItemId orderItemId = OrderItemId.of(9999L);
             given(queryPort.findByOrderItemId(orderItemId)).willReturn(Optional.empty());
 
             // when & then
@@ -139,9 +139,7 @@ class ShipmentReadManagerTest {
         void findByOrderItemIds_ValidIds_ReturnsShipmentList() {
             // given
             List<OrderItemId> ids =
-                    List.of(
-                            ShipmentFixtures.defaultOrderItemId(),
-                            OrderItemId.of("01940001-0000-7000-8000-000000000002"));
+                    List.of(ShipmentFixtures.defaultOrderItemId(), OrderItemId.of(1002L));
             List<Shipment> expected = List.of(ShipmentFixtures.preparingShipment());
             given(queryPort.findByOrderItemIds(ids)).willReturn(expected);
 

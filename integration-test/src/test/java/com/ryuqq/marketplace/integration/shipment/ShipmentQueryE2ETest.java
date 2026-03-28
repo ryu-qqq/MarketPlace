@@ -73,7 +73,7 @@ class ShipmentQueryE2ETest extends E2ETestBase {
      * @param orderId 주문 ID
      * @return 저장된 OrderItem의 ID
      */
-    private String seedOrderItem(String orderId) {
+    private Long seedOrderItem(String orderId) {
         orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
         OrderItemJpaEntity savedItem =
                 orderItemRepository.save(OrderItemJpaEntityFixtures.defaultItem(orderId));
@@ -256,7 +256,7 @@ class ShipmentQueryE2ETest extends E2ETestBase {
         @DisplayName("[SHIPMENT-Q05-01] 존재하는 shipmentId로 배송 상세 조회 성공 - HTTP 200")
         void shouldReturnShipmentDetailSuccessfully() {
             // given: Order + OrderItem 시딩 후 해당 orderItemId로 Shipment 생성
-            String orderItemId = seedOrderItem("q05-order-001");
+            Long orderItemId = seedOrderItem("q05-order-001");
             shipmentRepository.save(
                     ShipmentJpaEntityFixtures.readyEntityWithOrderItemId(
                             "q05-ready-001", orderItemId));
@@ -289,7 +289,7 @@ class ShipmentQueryE2ETest extends E2ETestBase {
         @DisplayName("[SHIPMENT-Q05-03] SHIPPED 배송 상세 조회 - 송장 정보 포함 확인")
         void shouldReturnShippedShipmentWithTrackingInfo() {
             // given: Order + OrderItem 시딩 후 해당 orderItemId로 SHIPPED Shipment 생성
-            String orderItemId = seedOrderItem("q05-order-shipped");
+            Long orderItemId = seedOrderItem("q05-order-shipped");
             shipmentRepository.save(
                     ShipmentJpaEntityFixtures.readyEntityWithOrderItemId(
                             "q05-shipped-001", orderItemId));

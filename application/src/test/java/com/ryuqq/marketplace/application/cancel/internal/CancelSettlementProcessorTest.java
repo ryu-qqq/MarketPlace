@@ -37,7 +37,7 @@ class CancelSettlementProcessorTest {
         @DisplayName("정상 호출 시 claimType=CANCEL로 factory + persist가 호출된다")
         void createReversalEntry_Normal_CallsFactoryWithCancelType() {
             // given
-            String orderItemId = "oi-test-001";
+            Long orderItemId = 1001L;
             long sellerId = 100L;
             String cancelId = "cancel-001";
             int refundAmount = 50000;
@@ -60,7 +60,7 @@ class CancelSettlementProcessorTest {
         @DisplayName("factory에서 예외 발생 시 전파하지 않는다")
         void createReversalEntry_FactoryThrows_DoesNotPropagate() {
             // given
-            String orderItemId = "oi-test-001";
+            Long orderItemId = 1001L;
             long sellerId = 100L;
             String cancelId = "cancel-001";
             int refundAmount = 50000;

@@ -35,11 +35,11 @@ public class CancelConditionBuilder {
         return sellerId != null ? cancel.sellerId.eq(sellerId) : null;
     }
 
-    public BooleanExpression orderItemIdEq(String orderItemId) {
+    public BooleanExpression orderItemIdEq(Long orderItemId) {
         return cancel.orderItemId.eq(orderItemId);
     }
 
-    public BooleanExpression orderItemIdIn(List<String> orderItemIds) {
+    public BooleanExpression orderItemIdIn(List<Long> orderItemIds) {
         return orderItemIds != null && !orderItemIds.isEmpty()
                 ? cancel.orderItemId.in(orderItemIds)
                 : null;

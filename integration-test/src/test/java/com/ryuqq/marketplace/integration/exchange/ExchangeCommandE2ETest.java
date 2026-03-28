@@ -98,13 +98,13 @@ class ExchangeCommandE2ETest extends E2ETestBase {
      * @param orderId 주문 ID
      * @return 저장된 OrderItem의 ID (UUID String)
      */
-    private String seedOrderItem(String orderId) {
+    private Long seedOrderItem(String orderId) {
         orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
         var savedItem = orderItemRepository.save(OrderItemJpaEntityFixtures.confirmedItem(orderId));
         return savedItem.getId();
     }
 
-    private Map<String, Object> createRequestExchangeBody(String orderItemId) {
+    private Map<String, Object> createRequestExchangeBody(Long orderItemId) {
         Map<String, Object> item = new HashMap<>();
         item.put("orderId", orderItemId);
         item.put("exchangeQty", 1);
@@ -179,7 +179,7 @@ class ExchangeCommandE2ETest extends E2ETestBase {
         @DisplayName("[C01-1] 유효한 요청으로 교환 생성 성공 - successCount=1, DB에 REQUESTED 상태 저장")
         void requestBatch_validRequest_returnsSuccessAndSavesEntity() {
             // given: ORDERED 상태 OrderItem 저장
-            String orderItemId = seedOrderItem("order-exc-001");
+            Long orderItemId = seedOrderItem("order-exc-001");
 
             Map<String, Object> requestBody = createRequestExchangeBody(orderItemId);
 
@@ -245,7 +245,7 @@ class ExchangeCommandE2ETest extends E2ETestBase {
         @DisplayName("[C01-4] exchangeQty = 0 (비양수) - 400 반환 (@Positive 위반)")
         void requestBatch_zeroExchangeQty_returns400() {
             // given
-            String orderItemId = seedOrderItem("order-exc-qty-001");
+            Long orderItemId = seedOrderItem("order-exc-qty-001");
             Map<String, Object> item = new HashMap<>();
             item.put("orderId", orderItemId);
             item.put("exchangeQty", 0);
@@ -276,7 +276,7 @@ class ExchangeCommandE2ETest extends E2ETestBase {
         @DisplayName("[C02-1] REQUESTED 상태 교환 승인 성공 - status가 COLLECTING으로 변경")
         void approveBatch_requestedStatus_statusBecomesCollecting() {
             // given: REQUESTED 상태 교환 건 + 연관 OrderItem
-            String orderItemId = seedOrderItem("order-approve-001");
+            Long orderItemId = seedOrderItem("order-approve-001");
             exchangeClaimRepository.save(
                     ExchangeClaimJpaEntityFixtures.requestedEntityWithOrderItemId(
                             "approve-001", orderItemId));
@@ -358,7 +358,7 @@ class ExchangeCommandE2ETest extends E2ETestBase {
         @DisplayName("[C03-1] COLLECTING 상태 교환 수거 완료 성공 - status가 COLLECTED로 변경")
         void collectBatch_collectingStatus_statusBecomesCollected() {
             // given: COLLECTING 상태 교환 건 + 연관 OrderItem
-            String orderItemId = seedOrderItem("order-collect-001");
+            Long orderItemId = seedOrderItem("order-collect-001");
             exchangeClaimRepository.save(
                     ExchangeClaimJpaEntityFixtures.entityWithStatus("collect-001", "COLLECTING"));
 
@@ -471,7 +471,7 @@ class ExchangeCommandE2ETest extends E2ETestBase {
         @DisplayName("[C05-1] REQUESTED 상태 교환 거절 성공 - status가 REJECTED로 변경")
         void rejectBatch_requestedStatus_statusBecomesRejected() {
             // given: REQUESTED 상태 교환 건 + 연관 OrderItem
-            String orderItemId = seedOrderItem("order-reject-001");
+            Long orderItemId = seedOrderItem("order-reject-001");
             exchangeClaimRepository.save(
                     ExchangeClaimJpaEntityFixtures.requestedEntityWithOrderItemId(
                             "reject-001", orderItemId));
@@ -677,7 +677,7 @@ class ExchangeCommandE2ETest extends E2ETestBase {
         @DisplayName("[C08-1] REQUESTED 상태 교환 건 환불 전환 성공 - 교환 취소 + 환불 건 생성")
         void convertToRefundBatch_requestedStatus_exchangeCancelledAndRefundCreated() {
             // given: REQUESTED 상태 교환 건 + 연관 OrderItem
-            String orderItemId = seedOrderItem("order-cvt-001");
+            Long orderItemId = seedOrderItem("order-cvt-001");
             exchangeClaimRepository.save(
                     ExchangeClaimJpaEntityFixtures.requestedEntityWithOrderItemId(
                             "cvt-001", orderItemId));

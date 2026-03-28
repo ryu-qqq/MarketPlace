@@ -354,7 +354,7 @@ public class ExchangeClaim {
         return orderItemId;
     }
 
-    public String orderItemIdValue() {
+    public Long orderItemIdValue() {
         return orderItemId.value();
     }
 

@@ -228,7 +228,7 @@ class ClaimHistoryQueryAdapterTest {
         @DisplayName("orderItemId로 이력 목록을 반환합니다")
         void findByOrderItemId_WithValidOrderItemId_ReturnsDomainList() {
             // given
-            String orderItemId = "order-item-001";
+            Long orderItemId = 1001L;
 
             ClaimHistoryJpaEntity entity1 =
                     ClaimHistoryJpaEntityFixtures.cancelStatusChangeEntity("cancel-001");
@@ -255,7 +255,7 @@ class ClaimHistoryQueryAdapterTest {
         @DisplayName("이력이 없으면 빈 리스트를 반환합니다")
         void findByOrderItemId_WithNoResults_ReturnsEmptyList() {
             // given
-            String orderItemId = "non-existent-order-item";
+            Long orderItemId = 99999L;
 
             given(claimHistoryRepository.findByOrderItemId(orderItemId)).willReturn(List.of());
 
@@ -279,8 +279,7 @@ class ClaimHistoryQueryAdapterTest {
         @DisplayName("criteria로 이력 목록을 반환합니다")
         void findByCriteria_WithValidCriteria_ReturnsDomainList() {
             // given
-            ClaimHistoryPageCriteria criteria =
-                    ClaimHistoryPageCriteria.defaultOf("order-item-001");
+            ClaimHistoryPageCriteria criteria = ClaimHistoryPageCriteria.defaultOf(1001L);
 
             ClaimHistoryJpaEntity entity = ClaimHistoryJpaEntityFixtures.defaultEntity();
             ClaimHistory domain = ClaimHistoryFixtures.reconstitutedClaimHistory();
@@ -300,8 +299,7 @@ class ClaimHistoryQueryAdapterTest {
         @DisplayName("조회 결과가 없으면 빈 리스트를 반환합니다")
         void findByCriteria_WithNoResults_ReturnsEmptyList() {
             // given
-            ClaimHistoryPageCriteria criteria =
-                    ClaimHistoryPageCriteria.defaultOf("non-existent-order-item");
+            ClaimHistoryPageCriteria criteria = ClaimHistoryPageCriteria.defaultOf(99999L);
 
             given(claimHistoryRepository.findByCriteria(criteria)).willReturn(List.of());
 
@@ -325,8 +323,7 @@ class ClaimHistoryQueryAdapterTest {
         @DisplayName("criteria에 해당하는 이력 수를 반환합니다")
         void countByCriteria_WithValidCriteria_ReturnsCount() {
             // given
-            ClaimHistoryPageCriteria criteria =
-                    ClaimHistoryPageCriteria.defaultOf("order-item-001");
+            ClaimHistoryPageCriteria criteria = ClaimHistoryPageCriteria.defaultOf(1001L);
 
             given(claimHistoryRepository.countByCriteria(criteria)).willReturn(3L);
 
@@ -342,8 +339,7 @@ class ClaimHistoryQueryAdapterTest {
         @DisplayName("조건에 맞는 데이터가 없으면 0을 반환합니다")
         void countByCriteria_WithNoResults_ReturnsZero() {
             // given
-            ClaimHistoryPageCriteria criteria =
-                    ClaimHistoryPageCriteria.defaultOf("non-existent-order-item");
+            ClaimHistoryPageCriteria criteria = ClaimHistoryPageCriteria.defaultOf(99999L);
 
             given(claimHistoryRepository.countByCriteria(criteria)).willReturn(0L);
 

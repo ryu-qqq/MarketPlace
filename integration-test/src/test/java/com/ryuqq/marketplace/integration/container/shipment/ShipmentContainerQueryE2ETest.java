@@ -71,25 +71,25 @@ class ShipmentContainerQueryE2ETest extends ContainerE2ETestBase {
     /** 주문 + 주문상품 + 배송 데이터 세트를 생성한다. */
     private ShipmentJpaEntity createShipmentWithOrder(String status) {
         String orderId = UUID.randomUUID().toString();
-        String orderItemId = UUID.randomUUID().toString();
         String shipmentId = UUID.randomUUID().toString();
 
         OrderJpaEntity order = OrderJpaEntityFixtures.orderedEntity(orderId);
         orderRepository.save(order);
 
-        OrderItemJpaEntity orderItem = createOrderItem(orderItemId, orderId);
-        orderItemRepository.save(orderItem);
+        OrderItemJpaEntity orderItem = createOrderItem(null, orderId);
+        OrderItemJpaEntity savedOrderItem = orderItemRepository.save(orderItem);
+        Long orderItemId = savedOrderItem.getId();
 
         Instant now = Instant.now();
         ShipmentJpaEntity shipment = createShipmentEntity(shipmentId, orderItemId, status, now);
         return shipmentRepository.save(shipment);
     }
 
-    private OrderItemJpaEntity createOrderItem(String itemId, String orderId) {
+    private OrderItemJpaEntity createOrderItem(Long itemId, String orderId) {
         Instant now = Instant.now();
         return OrderItemJpaEntity.create(
                 itemId,
-                "ORD-" + itemId.substring(0, 8) + "-001",
+                "ORD-" + UUID.randomUUID().toString().substring(0, 8) + "-001",
                 orderId,
                 OrderItemJpaEntityFixtures.DEFAULT_PRODUCT_GROUP_ID,
                 1L,
@@ -126,7 +126,7 @@ class ShipmentContainerQueryE2ETest extends ContainerE2ETestBase {
     }
 
     private ShipmentJpaEntity createShipmentEntity(
-            String id, String orderItemId, String status, Instant now) {
+            String id, Long orderItemId, String status, Instant now) {
         boolean hasTracking = !"READY".equals(status) && !"PREPARING".equals(status);
         Instant confirmedAt = "READY".equals(status) ? null : now.minusSeconds(3600);
         Instant shippedAt = hasTracking ? now.minusSeconds(1800) : null;
@@ -398,12 +398,12 @@ class ShipmentContainerQueryE2ETest extends ContainerE2ETestBase {
         @DisplayName("[Q14] 결제 정보가 있는 주문의 배송 상세 조회 시 payment 필드가 포함된다")
         void getShipmentDetail_WithPayment_ReturnsPaymentInfo() {
             String orderId = UUID.randomUUID().toString();
-            String orderItemId = UUID.randomUUID().toString();
             String shipmentId = UUID.randomUUID().toString();
             String paymentId = UUID.randomUUID().toString();
 
             orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
-            orderItemRepository.save(createOrderItem(orderItemId, orderId));
+            OrderItemJpaEntity savedItem = orderItemRepository.save(createOrderItem(null, orderId));
+            Long orderItemId = savedItem.getId();
             paymentRepository.save(PaymentJpaEntityFixtures.completedEntity(paymentId, orderId));
 
             Instant now = Instant.now();

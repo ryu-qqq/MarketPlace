@@ -13,8 +13,8 @@ import java.time.Instant;
 public class OrderItemJpaEntity extends BaseAuditEntity {
 
     @Id
-    @Column(name = "id", length = 36, nullable = false)
-    private String id;
+    @Column(name = "id", nullable = false)
+    private Long id;
 
     @Column(name = "order_item_number", nullable = false, length = 50)
     private String orderItemNumber;
@@ -118,7 +118,7 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
 
     @SuppressWarnings("PMD.ExcessiveParameterList")
     private OrderItemJpaEntity(
-            String id,
+            Long id,
             String orderItemNumber,
             String orderId,
             long productGroupId,
@@ -191,7 +191,7 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
 
     @SuppressWarnings("PMD.ExcessiveParameterList")
     public static OrderItemJpaEntity create(
-            String id,
+            Long id,
             String orderItemNumber,
             String orderId,
             long productGroupId,
@@ -264,7 +264,7 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
                 updatedAt);
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 

@@ -36,7 +36,7 @@ class OrderSettlementProcessorTest {
         @DisplayName("정상 호출 시 factory.createSalesEntry + persistenceFacade.persist가 호출된다")
         void createSalesEntry_Normal_CallsFactoryAndPersist() {
             // given
-            String orderItemId = "oi-test-001";
+            Long orderItemId = 1001L;
             long sellerId = 100L;
             int salesAmount = 50000;
             SettlementEntry entry = SettlementEntryFixtures.salesEntry();
@@ -55,7 +55,7 @@ class OrderSettlementProcessorTest {
         @DisplayName("factory에서 예외 발생 시 전파하지 않는다")
         void createSalesEntry_FactoryThrows_DoesNotPropagate() {
             // given
-            String orderItemId = "oi-test-001";
+            Long orderItemId = 1001L;
             long sellerId = 100L;
             int salesAmount = 50000;
 

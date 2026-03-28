@@ -53,7 +53,7 @@ public class ExchangeQueryAdapter implements ExchangeQueryPort {
 
     @Override
     public List<ExchangeClaim> findByOrderItemIds(List<OrderItemId> orderItemIds) {
-        List<String> ids = orderItemIds.stream().map(OrderItemId::value).toList();
+        List<Long> ids = orderItemIds.stream().map(OrderItemId::value).toList();
         return repository.findByOrderItemIds(ids).stream().map(this::toDomainWithShipment).toList();
     }
 

@@ -5,22 +5,20 @@ import com.ryuqq.marketplace.domain.common.vo.QueryContext;
 
 /** 클레임 이력 페이지 조회 Criteria. */
 public record ClaimHistoryPageCriteria(
-        String orderItemId, ClaimType claimType, QueryContext<ClaimHistorySortKey> queryContext) {
+        Long orderItemId, ClaimType claimType, QueryContext<ClaimHistorySortKey> queryContext) {
 
     public ClaimHistoryPageCriteria {
-        if (orderItemId == null || orderItemId.isBlank()) {
-            throw new IllegalArgumentException("orderItemId must not be null or blank");
+        if (orderItemId == null) {
+            throw new IllegalArgumentException("orderItemId must not be null");
         }
     }
 
     public static ClaimHistoryPageCriteria of(
-            String orderItemId,
-            ClaimType claimType,
-            QueryContext<ClaimHistorySortKey> queryContext) {
+            Long orderItemId, ClaimType claimType, QueryContext<ClaimHistorySortKey> queryContext) {
         return new ClaimHistoryPageCriteria(orderItemId, claimType, queryContext);
     }
 
-    public static ClaimHistoryPageCriteria defaultOf(String orderItemId) {
+    public static ClaimHistoryPageCriteria defaultOf(Long orderItemId) {
         return new ClaimHistoryPageCriteria(
                 orderItemId, null, QueryContext.defaultOf(ClaimHistorySortKey.defaultKey()));
     }

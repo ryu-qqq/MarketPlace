@@ -41,7 +41,7 @@ public class OrderCompositeConditionBuilder {
     }
 
     /** order_item_histories ↔ order_items 조인 조건 (orderItemId 기준). */
-    public BooleanExpression itemHistoryOrderItemIdEq(String orderItemId) {
+    public BooleanExpression itemHistoryOrderItemIdEq(Long orderItemId) {
         return orderItemHistoryJpaEntity.orderItemId.eq(orderItemId);
     }
 

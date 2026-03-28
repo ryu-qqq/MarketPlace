@@ -44,7 +44,7 @@ public class CancelQueryDslRepository {
         return Optional.ofNullable(entity);
     }
 
-    public Optional<CancelJpaEntity> findByOrderItemId(String orderItemId) {
+    public Optional<CancelJpaEntity> findByOrderItemId(Long orderItemId) {
         CancelJpaEntity entity =
                 queryFactory
                         .selectFrom(cancel)
@@ -53,14 +53,14 @@ public class CancelQueryDslRepository {
         return Optional.ofNullable(entity);
     }
 
-    public List<CancelJpaEntity> findAllByOrderItemId(String orderItemId) {
+    public List<CancelJpaEntity> findAllByOrderItemId(Long orderItemId) {
         return queryFactory
                 .selectFrom(cancel)
                 .where(conditionBuilder.orderItemIdEq(orderItemId))
                 .fetch();
     }
 
-    public List<CancelJpaEntity> findByOrderItemIds(List<String> orderItemIds) {
+    public List<CancelJpaEntity> findByOrderItemIds(List<Long> orderItemIds) {
         return queryFactory
                 .selectFrom(cancel)
                 .where(conditionBuilder.orderItemIdIn(orderItemIds))

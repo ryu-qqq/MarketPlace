@@ -101,7 +101,9 @@ public class OrderQueryApiMapper {
     public OrderListApiResponseV4 toListResponseV4(ProductOrderListResult result) {
         return new OrderListApiResponseV4(
                 nullToEmpty(
-                        result.productOrder() != null ? result.productOrder().orderItemId() : null),
+                        result.productOrder() != null && result.productOrder().orderItemId() != null
+                                ? result.productOrder().orderItemId().toString()
+                                : null),
                 nullToEmpty(
                         result.productOrder() != null
                                 ? result.productOrder().orderItemNumber()
@@ -148,7 +150,9 @@ public class OrderQueryApiMapper {
     public OrderDetailApiResponseV4 toDetailResponseV4(ProductOrderDetailResult result) {
         return new OrderDetailApiResponseV4(
                 nullToEmpty(
-                        result.productOrder() != null ? result.productOrder().orderItemId() : null),
+                        result.productOrder() != null && result.productOrder().orderItemId() != null
+                                ? result.productOrder().orderItemId().toString()
+                                : null),
                 nullToEmpty(
                         result.productOrder() != null
                                 ? result.productOrder().orderItemNumber()
@@ -215,7 +219,7 @@ public class OrderQueryApiMapper {
             return null;
         }
         return new ProductOrderApiResponse(
-                productOrder.orderItemId(),
+                productOrder.orderItemId() != null ? productOrder.orderItemId().toString() : null,
                 productOrder.orderItemNumber(),
                 productOrder.productGroupId(),
                 productOrder.productId(),
@@ -319,7 +323,7 @@ public class OrderQueryApiMapper {
     private CancelInfoApiResponse toCancelInfoApi(OrderCancelResult cancel) {
         return new CancelInfoApiResponse(
                 String.valueOf(cancel.cancelId()),
-                cancel.orderItemId(),
+                cancel.orderItemId() != null ? cancel.orderItemId().toString() : null,
                 cancel.cancelNumber(),
                 cancel.cancelStatus(),
                 cancel.quantity(),
@@ -336,7 +340,7 @@ public class OrderQueryApiMapper {
     private ClaimInfoApiResponse toClaimInfoApi(OrderClaimResult claim) {
         return new ClaimInfoApiResponse(
                 String.valueOf(claim.claimId()),
-                claim.orderItemId(),
+                claim.orderItemId() != null ? claim.orderItemId().toString() : null,
                 claim.claimNumber(),
                 claim.claimType(),
                 claim.claimStatus(),
@@ -393,7 +397,8 @@ public class OrderQueryApiMapper {
                         SortDirection.DESC,
                         PageRequest.of(page, size));
 
-        return ClaimHistoryPageCriteria.of(orderItemId, request.claimType(), queryContext);
+        return ClaimHistoryPageCriteria.of(
+                Long.parseLong(orderItemId), request.claimType(), queryContext);
     }
 
     public PageApiResponse<ClaimHistoryApiResponse> toClaimHistoryPageResponse(

@@ -129,7 +129,7 @@ public class OrderCompositeQueryDslRepository {
     // ===== 상품주문(productOrder) 상세 조회 =====
 
     /** 상품주문 상세 단건 조회 (order_items JOIN orders LEFT JOIN payments + 정산 필드). */
-    public Optional<ProductOrderDetailProjectionDto> findProductOrderDetail(String orderItemId) {
+    public Optional<ProductOrderDetailProjectionDto> findProductOrderDetail(Long orderItemId) {
         ProductOrderDetailProjectionDto result =
                 queryFactory
                         .select(
@@ -202,12 +202,12 @@ public class OrderCompositeQueryDslRepository {
     }
 
     /** 상품주문 단건 취소 목록 조회. */
-    public List<OrderCancelProjectionDto> findCancelsByOrderItemId(String orderItemId) {
+    public List<OrderCancelProjectionDto> findCancelsByOrderItemId(Long orderItemId) {
         return findCancelsByCondition(cancelJpaEntity.orderItemId.eq(orderItemId));
     }
 
     /** 상품주문 단건 클레임 목록 조회 (refund_claims + exchange_claims UNION). */
-    public List<OrderClaimProjectionDto> findClaimsByOrderItemId(String orderItemId) {
+    public List<OrderClaimProjectionDto> findClaimsByOrderItemId(Long orderItemId) {
         List<OrderClaimProjectionDto> refunds =
                 findRefundClaimsByCondition(refundClaimJpaEntity.orderItemId.eq(orderItemId));
         List<OrderClaimProjectionDto> exchanges =
@@ -216,12 +216,12 @@ public class OrderCompositeQueryDslRepository {
     }
 
     /** 주문상품 ID 목록 기반 취소 일괄 조회. */
-    public List<OrderCancelProjectionDto> findCancelsByOrderItemIds(List<String> orderItemIds) {
+    public List<OrderCancelProjectionDto> findCancelsByOrderItemIds(List<Long> orderItemIds) {
         return findCancelsByCondition(cancelJpaEntity.orderItemId.in(orderItemIds));
     }
 
     /** 주문상품 ID 목록 기반 클레임 일괄 조회 (refund_claims + exchange_claims UNION). */
-    public List<OrderClaimProjectionDto> findClaimsByOrderItemIds(List<String> orderItemIds) {
+    public List<OrderClaimProjectionDto> findClaimsByOrderItemIds(List<Long> orderItemIds) {
         List<OrderClaimProjectionDto> refunds =
                 findRefundClaimsByCondition(refundClaimJpaEntity.orderItemId.in(orderItemIds));
         List<OrderClaimProjectionDto> exchanges =
@@ -373,7 +373,7 @@ public class OrderCompositeQueryDslRepository {
     }
 
     /** 주문상품 ID 목록으로 상품주문 일괄 조회 (order_items JOIN orders LEFT JOIN payments). */
-    public List<ProductOrderListProjectionDto> findOrderItemsByIds(List<String> orderItemIds) {
+    public List<ProductOrderListProjectionDto> findOrderItemsByIds(List<Long> orderItemIds) {
         return queryFactory
                 .select(
                         Projections.constructor(
@@ -637,9 +637,8 @@ public class OrderCompositeQueryDslRepository {
 
     /** 주문 클레임 목록 조회 (orderId 기반 — order_items 서브쿼리). */
     public List<OrderClaimProjectionDto> findOrderClaims(String orderId) {
-        com.querydsl.core.types.dsl.StringPath subQuery = orderItemJpaEntity.id;
         var itemIds =
-                JPAExpressions.select(subQuery)
+                JPAExpressions.select(orderItemJpaEntity.id)
                         .from(orderItemJpaEntity)
                         .where(orderItemJpaEntity.orderId.eq(orderId));
         List<OrderClaimProjectionDto> refunds =

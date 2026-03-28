@@ -28,7 +28,7 @@ class SettlementEntryEventsTest {
         @DisplayName("판매 Entry 생성 이벤트를 올바르게 생성한다")
         void createSalesEntryCreatedEvent() {
             Instant now = CommonVoFixtures.now();
-            String orderItemId = "oi-test-001";
+            Long orderItemId = 1001L;
 
             SettlementEntryCreatedEvent event =
                     new SettlementEntryCreatedEvent(
@@ -45,7 +45,7 @@ class SettlementEntryEventsTest {
         @DisplayName("취소 역분개 Entry 생성 이벤트를 올바르게 생성한다")
         void createCancelReversalEntryCreatedEvent() {
             Instant now = CommonVoFixtures.now();
-            String orderItemId = "oi-test-002";
+            Long orderItemId = 1002L;
 
             SettlementEntryCreatedEvent event =
                     new SettlementEntryCreatedEvent(
@@ -62,10 +62,10 @@ class SettlementEntryEventsTest {
 
             SettlementEntryCreatedEvent event1 =
                     new SettlementEntryCreatedEvent(
-                            ENTRY_ID, SELLER_ID, EntryType.SALES, "oi-001", now);
+                            ENTRY_ID, SELLER_ID, EntryType.SALES, 1001L, now);
             SettlementEntryCreatedEvent event2 =
                     new SettlementEntryCreatedEvent(
-                            ENTRY_ID, SELLER_ID, EntryType.SALES, "oi-001", now);
+                            ENTRY_ID, SELLER_ID, EntryType.SALES, 1001L, now);
 
             assertThat(event1).isEqualTo(event2);
             assertThat(event1.hashCode()).isEqualTo(event2.hashCode());

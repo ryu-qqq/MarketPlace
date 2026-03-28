@@ -84,8 +84,7 @@ class GetOrderClaimHistoriesServiceTest {
         @DisplayName("이력이 없으면 빈 결과 목록과 totalCount 0을 반환한다")
         void execute_NoHistories_ReturnsEmptyPageResult() {
             // given
-            ClaimHistoryPageCriteria criteria =
-                    ClaimHistoryPageCriteria.defaultOf("order-item-999");
+            ClaimHistoryPageCriteria criteria = ClaimHistoryPageCriteria.defaultOf(999L);
 
             given(readManager.findByCriteria(criteria)).willReturn(List.of());
             given(readManager.countByCriteria(criteria)).willReturn(0L);

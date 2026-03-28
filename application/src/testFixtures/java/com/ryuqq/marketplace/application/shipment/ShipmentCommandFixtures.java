@@ -17,7 +17,7 @@ public final class ShipmentCommandFixtures {
 
     private ShipmentCommandFixtures() {}
 
-    private static final String DEFAULT_ORDER_ITEM_ID = "01940001-0000-7000-8000-000000000001";
+    private static final Long DEFAULT_ORDER_ITEM_ID = 1001L;
     private static final String DEFAULT_TRACKING_NUMBER = "1234567890";
     private static final String DEFAULT_COURIER_CODE = "CJ";
     private static final String DEFAULT_COURIER_NAME = "CJ대한통운";
@@ -35,10 +35,7 @@ public final class ShipmentCommandFixtures {
 
     public static ConfirmShipmentBatchCommand confirmBatchCommand(int count) {
         List<String> ids =
-                LongStream.rangeClosed(1, count)
-                        .mapToObj(
-                                i -> "01940001-0000-7000-8000-000000000" + String.format("%03d", i))
-                        .toList();
+                LongStream.rangeClosed(1, count).mapToObj(i -> String.valueOf(1000L + i)).toList();
         return new ConfirmShipmentBatchCommand(ids, null);
     }
 
@@ -54,8 +51,7 @@ public final class ShipmentCommandFixtures {
                         .mapToObj(
                                 i ->
                                         new ShipBatchItem(
-                                                "01940001-0000-7000-8000-000000000"
-                                                        + String.format("%03d", i),
+                                                1000L + i,
                                                 "ORD-20260101-" + String.format("%04d", i) + "-001",
                                                 "tracking-" + i,
                                                 DEFAULT_COURIER_CODE,
@@ -65,7 +61,7 @@ public final class ShipmentCommandFixtures {
     }
 
     public static ShipBatchItem shipBatchItem(
-            String orderItemId, String orderItemNumber, String trackingNumber) {
+            Long orderItemId, String orderItemNumber, String trackingNumber) {
         return new ShipBatchItem(
                 orderItemId, orderItemNumber, trackingNumber, DEFAULT_COURIER_CODE, "COURIER");
     }
@@ -81,7 +77,7 @@ public final class ShipmentCommandFixtures {
                 "COURIER");
     }
 
-    public static ShipSingleCommand shipSingleCommand(String orderItemId, String trackingNumber) {
+    public static ShipSingleCommand shipSingleCommand(Long orderItemId, String trackingNumber) {
         return new ShipSingleCommand(
                 orderItemId, trackingNumber, DEFAULT_COURIER_CODE, DEFAULT_COURIER_NAME, "COURIER");
     }

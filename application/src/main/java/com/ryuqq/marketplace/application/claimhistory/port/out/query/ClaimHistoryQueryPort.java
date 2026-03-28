@@ -12,7 +12,7 @@ public interface ClaimHistoryQueryPort {
 
     List<ClaimHistory> findByClaimTypeAndClaimIds(ClaimType claimType, List<String> claimIds);
 
-    List<ClaimHistory> findByOrderItemId(String orderItemId);
+    List<ClaimHistory> findByOrderItemId(Long orderItemId);
 
     List<ClaimHistory> findByCriteria(ClaimHistoryPageCriteria criteria);
 

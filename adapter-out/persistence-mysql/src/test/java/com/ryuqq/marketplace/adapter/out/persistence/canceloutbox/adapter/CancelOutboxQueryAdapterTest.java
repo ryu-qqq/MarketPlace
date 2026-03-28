@@ -114,10 +114,8 @@ class CancelOutboxQueryAdapterTest {
             // given
             Instant beforeTime = Instant.now();
             int batchSize = 100;
-            CancelOutboxJpaEntity entity1 =
-                    CancelOutboxJpaEntityFixtures.pendingEntity(1L, "item-001");
-            CancelOutboxJpaEntity entity2 =
-                    CancelOutboxJpaEntityFixtures.pendingEntity(2L, "item-002");
+            CancelOutboxJpaEntity entity1 = CancelOutboxJpaEntityFixtures.pendingEntity(1L, 1001L);
+            CancelOutboxJpaEntity entity2 = CancelOutboxJpaEntityFixtures.pendingEntity(2L, 1002L);
             CancelOutbox domain1 = CancelFixtures.pendingCancelOutbox();
             CancelOutbox domain2 = CancelFixtures.pendingCancelOutbox();
 

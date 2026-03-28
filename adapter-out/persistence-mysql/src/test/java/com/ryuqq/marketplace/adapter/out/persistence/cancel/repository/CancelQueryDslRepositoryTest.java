@@ -64,7 +64,7 @@ class CancelQueryDslRepositoryTest {
         @DisplayName("동일 orderItemId에 Cancel 2건이 있으면 2건 모두 반환합니다")
         void findAllByOrderItemId_WithTwoCancels_ReturnsBoth() {
             // given
-            String orderItemId = "01900000-0000-7000-0000-000000000010";
+            Long orderItemId = 1001L;
             persist(
                     CancelJpaEntityFixtures.requestedEntityWithNumber(
                             "cancel-id-001", "CAN-001", orderItemId, 10L));
@@ -86,8 +86,8 @@ class CancelQueryDslRepositoryTest {
         @DisplayName("다른 orderItemId의 Cancel은 조회되지 않습니다")
         void findAllByOrderItemId_WithDifferentOrderItemIds_ReturnsOnlyMatching() {
             // given
-            String orderItemIdA = "01900000-0000-7000-0000-000000000011";
-            String orderItemIdB = "01900000-0000-7000-0000-000000000012";
+            Long orderItemIdA = 2001L;
+            Long orderItemIdB = 2002L;
             persist(
                     CancelJpaEntityFixtures.requestedEntityWithNumber(
                             "cancel-id-A", "CAN-A", orderItemIdA, 10L));
@@ -108,7 +108,7 @@ class CancelQueryDslRepositoryTest {
         @DisplayName("해당 orderItemId에 Cancel이 없으면 빈 목록을 반환합니다")
         void findAllByOrderItemId_WithNoCancels_ReturnsEmptyList() {
             // given
-            String orderItemId = "01900000-0000-7000-0000-000000000099";
+            Long orderItemId = 99999L;
 
             // when
             List<CancelJpaEntity> result = repository().findAllByOrderItemId(orderItemId);

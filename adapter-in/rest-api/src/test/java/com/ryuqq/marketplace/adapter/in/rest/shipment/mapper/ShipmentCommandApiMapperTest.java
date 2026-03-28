@@ -55,16 +55,14 @@ class ShipmentCommandApiMapperTest {
         void toConfirmBatchCommand_SingleId_ReturnsCommand() {
             // given
             ConfirmShipmentBatchApiRequest request =
-                    ShipmentApiFixtures.confirmBatchRequest(
-                            List.of("01940001-0000-7000-8000-000000000001"));
+                    ShipmentApiFixtures.confirmBatchRequest(List.of("1001"));
 
             // when
             ConfirmShipmentBatchCommand command = mapper.toConfirmBatchCommand(request, 1L);
 
             // then
             assertThat(command.orderItemIds()).hasSize(1);
-            assertThat(command.orderItemIds())
-                    .containsExactly("01940001-0000-7000-8000-000000000001");
+            assertThat(command.orderItemIds()).containsExactly("1001");
         }
     }
 
@@ -127,7 +125,7 @@ class ShipmentCommandApiMapperTest {
         @DisplayName("orderId와 ShipSingleApiRequest를 ShipSingleCommand로 변환한다")
         void toShipSingleCommand_ConvertsRequest_ReturnsCommand() {
             // given
-            String orderItemId = ShipmentApiFixtures.DEFAULT_ORDER_ITEM_ID;
+            String orderItemId = ShipmentApiFixtures.DEFAULT_ORDER_ITEM_ID_STR;
             ShipSingleApiRequest request = ShipmentApiFixtures.shipSingleRequest();
 
             // when
@@ -147,14 +145,14 @@ class ShipmentCommandApiMapperTest {
         @DisplayName("경로변수 orderItemId가 Command에 올바르게 매핑된다")
         void toShipSingleCommand_OrderItemIdFromPath_MappedCorrectly() {
             // given
-            String orderItemId = "01940001-0000-7000-8000-000000000099";
+            String orderItemId = "9999";
             ShipSingleApiRequest request = ShipmentApiFixtures.shipSingleRequest();
 
             // when
             ShipSingleCommand command = mapper.toShipSingleCommand(orderItemId, request);
 
             // then
-            assertThat(command.orderItemId()).isEqualTo("01940001-0000-7000-8000-000000000099");
+            assertThat(command.orderItemId()).isEqualTo(9999L);
         }
     }
 

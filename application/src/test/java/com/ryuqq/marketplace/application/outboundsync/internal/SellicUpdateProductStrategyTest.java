@@ -19,9 +19,9 @@ import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroup
 import com.ryuqq.marketplace.application.productgroup.internal.ProductGroupReadFacade;
 import com.ryuqq.marketplace.domain.categorymapping.exception.CategoryMappingNotFoundException;
 import com.ryuqq.marketplace.domain.outboundproduct.OutboundProductFixtures;
+import com.ryuqq.marketplace.domain.outboundproduct.aggregate.OutboundProduct;
 import com.ryuqq.marketplace.domain.outboundproduct.exception.OutboundProductErrorCode;
 import com.ryuqq.marketplace.domain.outboundproduct.exception.OutboundProductException;
-import com.ryuqq.marketplace.domain.outboundproduct.aggregate.OutboundProduct;
 import com.ryuqq.marketplace.domain.outboundsync.vo.SyncType;
 import com.ryuqq.marketplace.domain.productgroup.ProductGroupFixtures;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
@@ -100,8 +100,10 @@ class SellicUpdateProductStrategyTest {
             OutboundProduct registeredProduct = OutboundProductFixtures.registeredProduct();
             ProductGroupDetailBundle bundle = defaultDetailBundle();
 
-            given(outboundProductReadManager.getByProductGroupIdAndSalesChannelId(
-                            context.productGroupId(), context.outbox().salesChannelIdValue()))
+            given(
+                            outboundProductReadManager.getByProductGroupIdAndSalesChannelId(
+                                    context.productGroupId(),
+                                    context.outbox().salesChannelIdValue()))
                     .willReturn(registeredProduct);
             given(productGroupReadFacade.getDetailBundle(context.productGroupId()))
                     .willReturn(bundle);
@@ -117,7 +119,8 @@ class SellicUpdateProductStrategyTest {
                     .isEqualTo(OutboundProductFixtures.DEFAULT_EXTERNAL_PRODUCT_ID);
             then(productClientManager)
                     .should()
-                    .updateProduct(eq("SELLIC"), any(), anyLong(), anyLong(), anyString(), any(), any());
+                    .updateProduct(
+                            eq("SELLIC"), any(), anyLong(), anyLong(), anyString(), any(), any());
         }
 
         @Test
@@ -128,8 +131,10 @@ class SellicUpdateProductStrategyTest {
                     OutboundSyncExecutionContextFixtures.sellicUpdateContext();
             OutboundProduct pendingProduct = OutboundProductFixtures.pendingProduct();
 
-            given(outboundProductReadManager.getByProductGroupIdAndSalesChannelId(
-                            context.productGroupId(), context.outbox().salesChannelIdValue()))
+            given(
+                            outboundProductReadManager.getByProductGroupIdAndSalesChannelId(
+                                    context.productGroupId(),
+                                    context.outbox().salesChannelIdValue()))
                     .willReturn(pendingProduct);
 
             // when
@@ -150,8 +155,10 @@ class SellicUpdateProductStrategyTest {
             OutboundSyncExecutionContext context =
                     OutboundSyncExecutionContextFixtures.sellicUpdateContext();
 
-            given(outboundProductReadManager.getByProductGroupIdAndSalesChannelId(
-                            context.productGroupId(), context.outbox().salesChannelIdValue()))
+            given(
+                            outboundProductReadManager.getByProductGroupIdAndSalesChannelId(
+                                    context.productGroupId(),
+                                    context.outbox().salesChannelIdValue()))
                     .willThrow(
                             new OutboundProductException(
                                     OutboundProductErrorCode.OUTBOUND_PRODUCT_NOT_FOUND));
@@ -172,8 +179,10 @@ class SellicUpdateProductStrategyTest {
             OutboundSyncExecutionContext context =
                     OutboundSyncExecutionContextFixtures.sellicUpdateContext();
 
-            given(outboundProductReadManager.getByProductGroupIdAndSalesChannelId(
-                            context.productGroupId(), context.outbox().salesChannelIdValue()))
+            given(
+                            outboundProductReadManager.getByProductGroupIdAndSalesChannelId(
+                                    context.productGroupId(),
+                                    context.outbox().salesChannelIdValue()))
                     .willThrow(new RuntimeException("네트워크 오류"));
 
             // when
@@ -194,8 +203,10 @@ class SellicUpdateProductStrategyTest {
             OutboundProduct registeredProduct = OutboundProductFixtures.registeredProduct();
             ProductGroupDetailBundle bundle = defaultDetailBundle();
 
-            given(outboundProductReadManager.getByProductGroupIdAndSalesChannelId(
-                            context.productGroupId(), context.outbox().salesChannelIdValue()))
+            given(
+                            outboundProductReadManager.getByProductGroupIdAndSalesChannelId(
+                                    context.productGroupId(),
+                                    context.outbox().salesChannelIdValue()))
                     .willReturn(registeredProduct);
             given(productGroupReadFacade.getDetailBundle(context.productGroupId()))
                     .willReturn(bundle);
@@ -214,16 +225,33 @@ class SellicUpdateProductStrategyTest {
     private ProductGroupDetailBundle defaultDetailBundle() {
         ProductGroupDetailCompositeQueryResult queryResult =
                 new ProductGroupDetailCompositeQueryResult(
-                        100L, 1L, "테스트셀러",
-                        OutboundSyncExecutionContextFixtures.DEFAULT_BRAND_ID, "테스트브랜드",
-                        OutboundSyncExecutionContextFixtures.DEFAULT_CATEGORY_ID, "카테고리명",
-                        "상의>긴팔", "1/5", "테스트상품", "SINGLE", "ACTIVE",
-                        Instant.now(), Instant.now(), null, null);
+                        100L,
+                        1L,
+                        "테스트셀러",
+                        OutboundSyncExecutionContextFixtures.DEFAULT_BRAND_ID,
+                        "테스트브랜드",
+                        OutboundSyncExecutionContextFixtures.DEFAULT_CATEGORY_ID,
+                        "카테고리명",
+                        "상의>긴팔",
+                        "1/5",
+                        "테스트상품",
+                        "SINGLE",
+                        "ACTIVE",
+                        Instant.now(),
+                        Instant.now(),
+                        null,
+                        null);
 
         ProductGroup group = ProductGroupFixtures.activeProductGroup();
 
         return new ProductGroupDetailBundle(
-                queryResult, group, List.of(), Optional.empty(),
-                Optional.empty(), Optional.empty(), Optional.empty(), Map.of());
+                queryResult,
+                group,
+                List.of(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Map.of());
     }
 }

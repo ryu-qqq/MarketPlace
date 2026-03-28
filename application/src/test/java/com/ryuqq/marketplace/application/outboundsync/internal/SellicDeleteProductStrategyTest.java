@@ -14,9 +14,9 @@ import com.ryuqq.marketplace.application.outboundsync.dto.vo.OutboundSyncExecuti
 import com.ryuqq.marketplace.application.outboundsync.dto.vo.OutboundSyncExecutionResult;
 import com.ryuqq.marketplace.application.outboundsync.manager.SalesChannelProductClientManager;
 import com.ryuqq.marketplace.domain.outboundproduct.OutboundProductFixtures;
+import com.ryuqq.marketplace.domain.outboundproduct.aggregate.OutboundProduct;
 import com.ryuqq.marketplace.domain.outboundproduct.exception.OutboundProductErrorCode;
 import com.ryuqq.marketplace.domain.outboundproduct.exception.OutboundProductException;
-import com.ryuqq.marketplace.domain.outboundproduct.aggregate.OutboundProduct;
 import com.ryuqq.marketplace.domain.outboundsync.vo.SyncType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -86,8 +86,10 @@ class SellicDeleteProductStrategyTest {
                     OutboundSyncExecutionContextFixtures.sellicDeleteContext();
             OutboundProduct registeredProduct = OutboundProductFixtures.registeredProduct();
 
-            given(outboundProductReadManager.getByProductGroupIdAndSalesChannelId(
-                            context.productGroupId(), context.outbox().salesChannelIdValue()))
+            given(
+                            outboundProductReadManager.getByProductGroupIdAndSalesChannelId(
+                                    context.productGroupId(),
+                                    context.outbox().salesChannelIdValue()))
                     .willReturn(registeredProduct);
             willDoNothing()
                     .given(productClientManager)
@@ -116,8 +118,10 @@ class SellicDeleteProductStrategyTest {
                     OutboundSyncExecutionContextFixtures.sellicDeleteContext();
             OutboundProduct pendingProduct = OutboundProductFixtures.pendingProduct();
 
-            given(outboundProductReadManager.getByProductGroupIdAndSalesChannelId(
-                            context.productGroupId(), context.outbox().salesChannelIdValue()))
+            given(
+                            outboundProductReadManager.getByProductGroupIdAndSalesChannelId(
+                                    context.productGroupId(),
+                                    context.outbox().salesChannelIdValue()))
                     .willReturn(pendingProduct);
 
             // when
@@ -137,8 +141,10 @@ class SellicDeleteProductStrategyTest {
             OutboundSyncExecutionContext context =
                     OutboundSyncExecutionContextFixtures.sellicDeleteContext();
 
-            given(outboundProductReadManager.getByProductGroupIdAndSalesChannelId(
-                            context.productGroupId(), context.outbox().salesChannelIdValue()))
+            given(
+                            outboundProductReadManager.getByProductGroupIdAndSalesChannelId(
+                                    context.productGroupId(),
+                                    context.outbox().salesChannelIdValue()))
                     .willThrow(
                             new OutboundProductException(
                                     OutboundProductErrorCode.OUTBOUND_PRODUCT_NOT_FOUND));
@@ -159,8 +165,10 @@ class SellicDeleteProductStrategyTest {
             OutboundSyncExecutionContext context =
                     OutboundSyncExecutionContextFixtures.sellicDeleteContext();
 
-            given(outboundProductReadManager.getByProductGroupIdAndSalesChannelId(
-                            context.productGroupId(), context.outbox().salesChannelIdValue()))
+            given(
+                            outboundProductReadManager.getByProductGroupIdAndSalesChannelId(
+                                    context.productGroupId(),
+                                    context.outbox().salesChannelIdValue()))
                     .willThrow(new RuntimeException("네트워크 오류"));
 
             // when

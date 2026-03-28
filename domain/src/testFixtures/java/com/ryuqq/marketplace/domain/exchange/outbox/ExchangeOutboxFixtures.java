@@ -40,7 +40,7 @@ public final class ExchangeOutboxFixtures {
 
     public static ExchangeOutboxIdempotencyKey defaultIdempotencyKey() {
         return ExchangeOutboxIdempotencyKey.generate(
-                ExchangeFixtures.defaultOrderItemId().value(),
+                String.valueOf(ExchangeFixtures.defaultOrderItemId().value()),
                 ExchangeOutboxType.COLLECT,
                 Instant.ofEpochMilli(1700000000000L));
     }

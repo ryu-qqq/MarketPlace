@@ -114,7 +114,7 @@ class RefundQueryAdapterTest {
         @DisplayName("존재하는 orderItemId로 조회 시 Domain을 반환합니다")
         void findByOrderItemId_WithExistingOrderItemId_ReturnsDomain() {
             // given
-            String orderItemId = RefundClaimJpaEntityFixtures.DEFAULT_ORDER_ITEM_ID;
+            Long orderItemId = RefundClaimJpaEntityFixtures.DEFAULT_ORDER_ITEM_ID;
             // claimShipmentId가 null인 entity 사용 -> claimShipmentQueryPort 호출 없음
             RefundClaimJpaEntity entity = RefundClaimJpaEntityFixtures.requestedEntity();
             RefundClaim domain = RefundFixtures.requestedRefundClaim();
@@ -134,7 +134,7 @@ class RefundQueryAdapterTest {
         @DisplayName("존재하지 않는 orderItemId로 조회 시 빈 Optional을 반환합니다")
         void findByOrderItemId_WithNonExistingOrderItemId_ReturnsEmpty() {
             // given
-            String orderItemId = "non-existent-id";
+            Long orderItemId = 99999L;
             given(repository.findByOrderItemId(orderItemId)).willReturn(Optional.empty());
 
             // when
@@ -157,9 +157,9 @@ class RefundQueryAdapterTest {
         @DisplayName("orderItemId 목록으로 복수 Domain을 반환합니다")
         void findByOrderItemIds_WithMultipleIds_ReturnsDomainList() {
             // given
-            String id1 = "01900000-0000-7000-0000-000000000010";
-            String id2 = "01900000-0000-7000-0000-000000000011";
-            List<String> orderItemIds = List.of(id1, id2);
+            Long id1 = 1001L;
+            Long id2 = 2001L;
+            List<Long> orderItemIds = List.of(id1, id2);
 
             // claimShipmentId가 null인 entity 사용 -> claimShipmentQueryPort 호출 없음
             RefundClaimJpaEntity entity1 =
@@ -185,7 +185,7 @@ class RefundQueryAdapterTest {
         @DisplayName("결과가 없으면 빈 리스트를 반환합니다")
         void findByOrderItemIds_WithNoResults_ReturnsEmptyList() {
             // given
-            List<String> orderItemIds = List.of("non-existent-id");
+            List<Long> orderItemIds = List.of(99999L);
             given(repository.findByOrderItemIds(orderItemIds)).willReturn(List.of());
 
             // when
@@ -358,7 +358,7 @@ class RefundQueryAdapterTest {
         @DisplayName("결과가 없으면 빈 리스트를 반환합니다")
         void findByIdIn_WithNoResults_ReturnsEmptyList() {
             // given
-            List<String> ids = List.of("non-existent-id");
+            List<String> ids = List.of("non-exist-id");
             Long sellerId = 10L;
             given(repository.findByIdIn(ids, sellerId)).willReturn(List.of());
 

@@ -9,4 +9,4 @@ package com.ryuqq.marketplace.application.settlement.entry.dto.command;
  * @param commissionRate 수수료율 (basis point, 1% = 100)
  */
 public record CreateSalesEntryCommand(
-        String orderItemId, long sellerId, int salesAmount, int commissionRate) {}
+        Long orderItemId, long sellerId, int salesAmount, int commissionRate) {}

@@ -109,7 +109,9 @@ class SellicCreateProductStrategyTest {
             assertThat(result.success()).isTrue();
             assertThat(result.externalProductId()).isEqualTo(externalProductId);
             then(productGroupReadFacade).should().getDetailBundle(context.productGroupId());
-            then(categoryMappingReadManager).should().getSalesChannelCategoryId(anyLong(), anyLong());
+            then(categoryMappingReadManager)
+                    .should()
+                    .getSalesChannelCategoryId(anyLong(), anyLong());
             then(productClientManager)
                     .should()
                     .registerProduct(eq("SELLIC"), any(), anyLong(), anyLong(), any(), any());
@@ -178,16 +180,33 @@ class SellicCreateProductStrategyTest {
     private ProductGroupDetailBundle defaultDetailBundle() {
         ProductGroupDetailCompositeQueryResult queryResult =
                 new ProductGroupDetailCompositeQueryResult(
-                        100L, 1L, "테스트셀러",
-                        OutboundSyncExecutionContextFixtures.DEFAULT_BRAND_ID, "테스트브랜드",
-                        OutboundSyncExecutionContextFixtures.DEFAULT_CATEGORY_ID, "카테고리명",
-                        "상의>긴팔", "1/5", "테스트상품", "SINGLE", "ACTIVE",
-                        Instant.now(), Instant.now(), null, null);
+                        100L,
+                        1L,
+                        "테스트셀러",
+                        OutboundSyncExecutionContextFixtures.DEFAULT_BRAND_ID,
+                        "테스트브랜드",
+                        OutboundSyncExecutionContextFixtures.DEFAULT_CATEGORY_ID,
+                        "카테고리명",
+                        "상의>긴팔",
+                        "1/5",
+                        "테스트상품",
+                        "SINGLE",
+                        "ACTIVE",
+                        Instant.now(),
+                        Instant.now(),
+                        null,
+                        null);
 
         ProductGroup group = ProductGroupFixtures.activeProductGroup();
 
         return new ProductGroupDetailBundle(
-                queryResult, group, List.of(), Optional.empty(),
-                Optional.empty(), Optional.empty(), Optional.empty(), Map.of());
+                queryResult,
+                group,
+                List.of(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Map.of());
     }
 }

@@ -94,11 +94,11 @@ class ShipmentCommandE2ETest extends E2ETestBase {
     /**
      * @return [0]=orderItemId, [1]=orderItemNumber
      */
-    private String[] seedOrderItem(String orderId) {
+    private Object[] seedOrderItem(String orderId) {
         orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
         OrderItemJpaEntity savedItem =
                 orderItemRepository.save(OrderItemJpaEntityFixtures.defaultItem(orderId));
-        return new String[] {savedItem.getId(), savedItem.getOrderItemNumber()};
+        return new Object[] {savedItem.getId(), savedItem.getOrderItemNumber()};
     }
 
     /**
@@ -106,7 +106,7 @@ class ShipmentCommandE2ETest extends E2ETestBase {
      *
      * @param orderItemIds 발주확인할 orderItemId 목록
      */
-    private void confirmBatch(List<String> orderItemIds) {
+    private void confirmBatch(List<Long> orderItemIds) {
         given().spec(givenSuperAdmin())
                 .body(Map.of("orderIds", orderItemIds))
                 .when()
@@ -156,8 +156,8 @@ class ShipmentCommandE2ETest extends E2ETestBase {
         @DisplayName("[SHIPMENT-C01-01] 유효한 orderItemId 2건으로 발주확인 성공 - Shipment 생성 + Outbox 검증")
         void shouldConfirmBatchSuccessfullyAndCreateShipments() {
             // given: READY 상태 OrderItem 2건 저장
-            String itemId1 = seedOrderItem("c01-order-001")[0];
-            String itemId2 = seedOrderItem("c01-order-002")[0];
+            Long itemId1 = (Long) seedOrderItem("c01-order-001")[0];
+            Long itemId2 = (Long) seedOrderItem("c01-order-002")[0];
 
             // when: 발주확인 배치 요청
             given().spec(givenSuperAdmin())
@@ -185,7 +185,7 @@ class ShipmentCommandE2ETest extends E2ETestBase {
         @DisplayName("[SHIPMENT-C01-02] 일부 존재하지 않는 orderItemId 포함 - 존재하는 1건만 처리 (부분 성공)")
         void shouldProcessOnlyExistingOrderItemIds() {
             // given: READY 상태 OrderItem 1건만 저장
-            String itemId1 = seedOrderItem("c01-partial-001")[0];
+            Long itemId1 = (Long) seedOrderItem("c01-partial-001")[0];
 
             // when: 존재하는 1건 + 존재하지 않는 1건으로 요청
             given().spec(givenSuperAdmin())
@@ -270,9 +270,9 @@ class ShipmentCommandE2ETest extends E2ETestBase {
         @DisplayName("[SHIPMENT-C02-01] 발주확인 후 단건 송장등록 배치 성공 - Shipment SHIPPED 상태 검증")
         void shouldShipBatchSuccessfullyAfterConfirm() {
             // given: READY OrderItem 1건 저장 → confirm/batch로 발주확인 완료
-            String[] seed = seedOrderItem("c02-order-001");
-            String itemId = seed[0];
-            String itemNumber = seed[1];
+            Object[] seed = seedOrderItem("c02-order-001");
+            Long itemId = (Long) seed[0];
+            String itemNumber = (String) seed[1];
             confirmBatch(List.of(itemId));
 
             // when: 송장등록 배치
@@ -305,9 +305,9 @@ class ShipmentCommandE2ETest extends E2ETestBase {
         @DisplayName("[SHIPMENT-C02-02] 복수 건 송장등록 배치 성공 - 2건 모두 SHIPPED 전환")
         void shouldShipBatchSuccessfullyForMultipleItems() {
             // given: READY OrderItem 2건 저장 → confirm/batch
-            String[] seed1 = seedOrderItem("c02-multi-001");
-            String[] seed2 = seedOrderItem("c02-multi-002");
-            confirmBatch(List.of(seed1[0], seed2[0]));
+            Object[] seed1 = seedOrderItem("c02-multi-001");
+            Object[] seed2 = seedOrderItem("c02-multi-002");
+            confirmBatch(List.of((Long) seed1[0], (Long) seed2[0]));
 
             // when: 2건 송장등록 배치
             given().spec(givenSuperAdmin())
@@ -315,8 +315,13 @@ class ShipmentCommandE2ETest extends E2ETestBase {
                             Map.of(
                                     "requests",
                                     List.of(
-                                            createShipItem(seed1[1], "TRK-001", "CJ", "CJ대한통운"),
-                                            createShipItem(seed2[1], "TRK-002", "LOTTE", "롯데택배"))))
+                                            createShipItem(
+                                                    (String) seed1[1], "TRK-001", "CJ", "CJ대한통운"),
+                                            createShipItem(
+                                                    (String) seed2[1],
+                                                    "TRK-002",
+                                                    "LOTTE",
+                                                    "롯데택배"))))
                     .when()
                     .post(SHIP_BATCH_URL)
                     .then()
@@ -452,7 +457,7 @@ class ShipmentCommandE2ETest extends E2ETestBase {
         @DisplayName("[SHIPMENT-C03-01] 발주확인 후 단건 송장등록 성공 - Shipment SHIPPED 상태 검증")
         void shouldShipSingleSuccessfullyAfterConfirm() {
             // given: READY OrderItem 1건 → confirm/batch 완료
-            String orderItemId = seedOrderItem("c03-single-001")[0];
+            Long orderItemId = (Long) seedOrderItem("c03-single-001")[0];
             confirmBatch(List.of(orderItemId));
 
             // when: 단건 송장등록
@@ -474,7 +479,7 @@ class ShipmentCommandE2ETest extends E2ETestBase {
         @DisplayName("[SHIPMENT-C03-03] 발주확인 전 단건 송장등록 시도 → 400 또는 404 (Shipment 미존재)")
         void shouldReturn4xxWhenShipmentNotExistsForSingleShip() {
             // given: READY 상태 OrderItem만 존재 (Shipment 없음, confirm 안 함)
-            String[] seed = seedOrderItem("c03-noconfirm-001");
+            Object[] seed = seedOrderItem("c03-noconfirm-001");
 
             // when & then: Shipment가 없으므로 처리 불가
             int statusCode =
@@ -502,8 +507,8 @@ class ShipmentCommandE2ETest extends E2ETestBase {
         @DisplayName("[FLOW-01] 발주확인(배치) → 출고(배치) → 배송목록 조회 정상 플로우")
         void shouldCompleteConfirmThenShipBatchThenListFlow() {
             // given: READY OrderItem 2건 저장
-            String[] seed1 = seedOrderItem("flow01-order-001");
-            String[] seed2 = seedOrderItem("flow01-order-002");
+            Object[] seed1 = seedOrderItem("flow01-order-001");
+            Object[] seed2 = seedOrderItem("flow01-order-002");
 
             // Step 1: 발주확인 배치
             given().spec(givenSuperAdmin())
@@ -525,9 +530,15 @@ class ShipmentCommandE2ETest extends E2ETestBase {
                                     "requests",
                                     List.of(
                                             createShipItem(
-                                                    seed1[1], "TRK-FLOW01-001", "CJ", "CJ대한통운"),
+                                                    (String) seed1[1],
+                                                    "TRK-FLOW01-001",
+                                                    "CJ",
+                                                    "CJ대한통운"),
                                             createShipItem(
-                                                    seed2[1], "TRK-FLOW01-002", "LOTTE", "롯데택배"))))
+                                                    (String) seed2[1],
+                                                    "TRK-FLOW01-002",
+                                                    "LOTTE",
+                                                    "롯데택배"))))
                     .when()
                     .post(SHIP_BATCH_URL)
                     .then()
@@ -559,14 +570,11 @@ class ShipmentCommandE2ETest extends E2ETestBase {
         @DisplayName("[FLOW-04] 배치 처리 - 존재하지 않는 ID 포함 시 존재하는 건만 처리 (skip 방식)")
         void shouldSkipNonExistentOrderItemIdInBatch() {
             // given: READY OrderItem 1건 저장
-            String[] seed1 = seedOrderItem("flow04-order-001");
+            Object[] seed1 = seedOrderItem("flow04-order-001");
 
             // Step 1: 존재하는 1건 + 존재하지 않는 1건으로 발주확인 배치
             given().spec(givenSuperAdmin())
-                    .body(
-                            Map.of(
-                                    "orderIds",
-                                    List.of(seed1[0], "01940001-0000-7000-8000-non-existent-999")))
+                    .body(Map.of("orderIds", List.of(seed1[0], 99999999L)))
                     .when()
                     .post(CONFIRM_BATCH_URL)
                     .then()
@@ -592,8 +600,8 @@ class ShipmentCommandE2ETest extends E2ETestBase {
         @DisplayName("[FLOW-02] 발주확인 → 출고(단건) → 배송상세 조회 플로우")
         void shouldCompleteConfirmThenShipSingleThenDetailFlow() {
             // given: READY OrderItem 1건 저장
-            String[] seed = seedOrderItem("flow02-order-001");
-            String orderItemId = seed[0];
+            Object[] seed = seedOrderItem("flow02-order-001");
+            Long orderItemId = (Long) seed[0];
 
             // Step 1: 발주확인 배치
             given().spec(givenSuperAdmin())

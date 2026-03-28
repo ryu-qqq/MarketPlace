@@ -16,7 +16,7 @@ public final class RefundOutboxJpaEntityFixtures {
 
     // ===== 기본 상수 =====
     public static final Long DEFAULT_ID = 1L;
-    public static final String DEFAULT_ORDER_ITEM_ID = "01900000-0000-7000-0000-000000000020";
+    public static final Long DEFAULT_ORDER_ITEM_ID = 1001L;
     public static final String DEFAULT_OUTBOX_TYPE = "REQUEST";
     public static final String DEFAULT_STATUS_PENDING = "PENDING";
     public static final String DEFAULT_STATUS_PROCESSING = "PROCESSING";

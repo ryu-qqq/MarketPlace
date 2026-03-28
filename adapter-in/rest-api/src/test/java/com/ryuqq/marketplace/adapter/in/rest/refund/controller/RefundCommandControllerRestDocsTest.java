@@ -86,15 +86,9 @@ class RefundCommandControllerRestDocsTest {
             // given
             RequestRefundBatchApiRequest request = RefundApiFixtures.requestBatchRequest();
             BatchProcessingResult<String> batchResult =
-                    RefundApiFixtures.batchSuccessResult(
-                            List.of(
-                                    "01940001-0000-7000-8000-000000000001",
-                                    "01940001-0000-7000-8000-000000000002"));
+                    RefundApiFixtures.batchSuccessResult(List.of("1001", "1002"));
             BatchResultApiResponse response =
-                    RefundApiFixtures.batchAllSuccessApiResponse(
-                            List.of(
-                                    "01940001-0000-7000-8000-000000000001",
-                                    "01940001-0000-7000-8000-000000000002"));
+                    RefundApiFixtures.batchAllSuccessApiResponse(List.of("1001", "1002"));
 
             given(accessChecker.resolveActorInfo())
                     .willReturn(new MarketAccessChecker.ActorInfo(1L, "seller@test.com"));
@@ -211,15 +205,9 @@ class RefundCommandControllerRestDocsTest {
             // given
             ApproveRefundBatchApiRequest request = RefundApiFixtures.approveBatchRequest();
             BatchProcessingResult<String> batchResult =
-                    RefundApiFixtures.batchSuccessResult(
-                            List.of(
-                                    "01940001-0000-7000-8000-000000000001",
-                                    "01940001-0000-7000-8000-000000000002"));
+                    RefundApiFixtures.batchSuccessResult(List.of("1001", "1002"));
             BatchResultApiResponse response =
-                    RefundApiFixtures.batchAllSuccessApiResponse(
-                            List.of(
-                                    "01940001-0000-7000-8000-000000000001",
-                                    "01940001-0000-7000-8000-000000000002"));
+                    RefundApiFixtures.batchAllSuccessApiResponse(List.of("1001", "1002"));
 
             given(accessChecker.resolveActorInfo())
                     .willReturn(new MarketAccessChecker.ActorInfo(null, "admin@test.com"));
@@ -292,15 +280,9 @@ class RefundCommandControllerRestDocsTest {
             // given
             RejectRefundBatchApiRequest request = RefundApiFixtures.rejectBatchRequest();
             BatchProcessingResult<String> batchResult =
-                    RefundApiFixtures.batchSuccessResult(
-                            List.of(
-                                    "01940001-0000-7000-8000-000000000001",
-                                    "01940001-0000-7000-8000-000000000002"));
+                    RefundApiFixtures.batchSuccessResult(List.of("1001", "1002"));
             BatchResultApiResponse response =
-                    RefundApiFixtures.batchAllSuccessApiResponse(
-                            List.of(
-                                    "01940001-0000-7000-8000-000000000001",
-                                    "01940001-0000-7000-8000-000000000002"));
+                    RefundApiFixtures.batchAllSuccessApiResponse(List.of("1001", "1002"));
 
             given(accessChecker.resolveActorInfo())
                     .willReturn(new MarketAccessChecker.ActorInfo(null, "admin@test.com"));
@@ -373,15 +355,9 @@ class RefundCommandControllerRestDocsTest {
             // given
             HoldRefundBatchApiRequest request = RefundApiFixtures.holdBatchRequest();
             BatchProcessingResult<String> batchResult =
-                    RefundApiFixtures.batchSuccessResult(
-                            List.of(
-                                    "01940001-0000-7000-8000-000000000001",
-                                    "01940001-0000-7000-8000-000000000002"));
+                    RefundApiFixtures.batchSuccessResult(List.of("1001", "1002"));
             BatchResultApiResponse response =
-                    RefundApiFixtures.batchAllSuccessApiResponse(
-                            List.of(
-                                    "01940001-0000-7000-8000-000000000001",
-                                    "01940001-0000-7000-8000-000000000002"));
+                    RefundApiFixtures.batchAllSuccessApiResponse(List.of("1001", "1002"));
 
             given(accessChecker.resolveActorInfo())
                     .willReturn(new MarketAccessChecker.ActorInfo(null, "admin@test.com"));
@@ -456,11 +432,9 @@ class RefundCommandControllerRestDocsTest {
             // given
             HoldRefundBatchApiRequest request = RefundApiFixtures.releaseBatchRequest();
             BatchProcessingResult<String> batchResult =
-                    RefundApiFixtures.batchSuccessResult(
-                            List.of("01940001-0000-7000-8000-000000000001"));
+                    RefundApiFixtures.batchSuccessResult(List.of("1001"));
             BatchResultApiResponse response =
-                    RefundApiFixtures.batchAllSuccessApiResponse(
-                            List.of("01940001-0000-7000-8000-000000000001"));
+                    RefundApiFixtures.batchAllSuccessApiResponse(List.of("1001"));
 
             given(accessChecker.resolveActorInfo())
                     .willReturn(new MarketAccessChecker.ActorInfo(null, "admin@test.com"));

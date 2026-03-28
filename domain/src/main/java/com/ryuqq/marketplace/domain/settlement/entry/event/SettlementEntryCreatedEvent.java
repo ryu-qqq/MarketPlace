@@ -10,6 +10,6 @@ public record SettlementEntryCreatedEvent(
         SettlementEntryId entryId,
         long sellerId,
         EntryType entryType,
-        String orderItemId,
+        Long orderItemId,
         Instant occurredAt)
         implements DomainEvent {}

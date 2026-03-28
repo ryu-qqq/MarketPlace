@@ -9,10 +9,10 @@ package com.ryuqq.marketplace.application.refund.dto.command;
  * @param orderItemId 주문상품 ID
  * @param outboxType Outbox 유형
  */
-public record ExecuteRefundOutboxCommand(Long outboxId, String orderItemId, String outboxType) {
+public record ExecuteRefundOutboxCommand(Long outboxId, Long orderItemId, String outboxType) {
 
     public static ExecuteRefundOutboxCommand of(
-            Long outboxId, String orderItemId, String outboxType) {
+            Long outboxId, Long orderItemId, String outboxType) {
         return new ExecuteRefundOutboxCommand(outboxId, orderItemId, outboxType);
     }
 }

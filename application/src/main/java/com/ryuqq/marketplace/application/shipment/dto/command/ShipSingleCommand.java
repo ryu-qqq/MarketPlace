@@ -10,7 +10,7 @@ package com.ryuqq.marketplace.application.shipment.dto.command;
  * @param shipmentMethodType 배송 방법 유형
  */
 public record ShipSingleCommand(
-        String orderItemId,
+        Long orderItemId,
         String trackingNumber,
         String courierCode,
         String courierName,

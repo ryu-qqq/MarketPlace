@@ -41,15 +41,16 @@ class LegacyOrderStatusMapperTest {
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {
-            "ORDER_PROCESSING",
-            "DELIVERY_PENDING",
-            "DELIVERY_PROCESSING",
-            "DELIVERY_COMPLETED",
-            "ORDER_COMPLETED",
-            "SALE_CANCELLED",
-            "RETURN_REQUEST"
-        })
+        @ValueSource(
+                strings = {
+                    "ORDER_PROCESSING",
+                    "DELIVERY_PENDING",
+                    "DELIVERY_PROCESSING",
+                    "DELIVERY_COMPLETED",
+                    "ORDER_COMPLETED",
+                    "SALE_CANCELLED",
+                    "RETURN_REQUEST"
+                })
         @DisplayName("ORDER_FAILED 이외의 상태는 이관 대상이다")
         void isEligibleForMigration_WithOtherStatus_ReturnsTrue(String status) {
             assertThat(sut.isEligibleForMigration(status)).isTrue();
@@ -94,13 +95,14 @@ class LegacyOrderStatusMapperTest {
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {
-            "DELIVERY_COMPLETED",
-            "DELIVERY_COMPLETE",
-            "ORDER_COMPLETED",
-            "SETTLEMENT_PROCESSING",
-            "SETTLEMENT_COMPLETED"
-        })
+        @ValueSource(
+                strings = {
+                    "DELIVERY_COMPLETED",
+                    "DELIVERY_COMPLETE",
+                    "ORDER_COMPLETED",
+                    "SETTLEMENT_PROCESSING",
+                    "SETTLEMENT_COMPLETED"
+                })
         @DisplayName("배송완료/정산 관련 상태 → Shipment DELIVERED")
         void resolve_WithDeliveredStatuses_ReturnsShipmentDelivered(String status) {
             LegacyOrderStatusMapper.OrderStatusResolution resolution = sut.resolve(status);
@@ -117,11 +119,12 @@ class LegacyOrderStatusMapperTest {
     class CancelFlowTest {
 
         @ParameterizedTest
-        @ValueSource(strings = {
-            "SALE_CANCELLED",
-            "SALE_CANCELLED_COMPLETED",
-            "CANCEL_REQUEST_COMPLETED"
-        })
+        @ValueSource(
+                strings = {
+                    "SALE_CANCELLED",
+                    "SALE_CANCELLED_COMPLETED",
+                    "CANCEL_REQUEST_COMPLETED"
+                })
         @DisplayName("취소 완료 상태 → Cancel COMPLETED")
         void resolve_WithCancelCompletedStatuses_ReturnsCancelCompleted(String status) {
             LegacyOrderStatusMapper.OrderStatusResolution resolution = sut.resolve(status);

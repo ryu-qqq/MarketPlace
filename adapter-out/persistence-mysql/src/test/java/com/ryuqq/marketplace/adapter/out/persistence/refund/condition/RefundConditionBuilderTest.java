@@ -161,7 +161,7 @@ class RefundConditionBuilderTest {
         @DisplayName("유효한 orderItemId 입력 시 BooleanExpression을 반환합니다")
         void orderItemIdEq_WithValidOrderItemId_ReturnsBooleanExpression() {
             // given
-            String orderItemId = "01900000-0000-7000-0000-000000000010";
+            Long orderItemId = 1001L;
 
             // when
             BooleanExpression result = conditionBuilder.orderItemIdEq(orderItemId);
@@ -183,10 +183,7 @@ class RefundConditionBuilderTest {
         @DisplayName("orderItemId 목록이 있으면 BooleanExpression을 반환합니다")
         void orderItemIdIn_WithValidIds_ReturnsBooleanExpression() {
             // given
-            List<String> ids =
-                    List.of(
-                            "01900000-0000-7000-0000-000000000010",
-                            "01900000-0000-7000-0000-000000000011");
+            List<Long> ids = List.of(1001L, 2001L);
 
             // when
             BooleanExpression result = conditionBuilder.orderItemIdIn(ids);

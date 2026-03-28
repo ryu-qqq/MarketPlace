@@ -120,7 +120,7 @@ public class NaverCancelClaimSyncStrategy implements CancelClaimSyncStrategy {
         return OutboxSyncResult.success();
     }
 
-    private String resolveExternalProductOrderId(String orderItemId) {
+    private String resolveExternalProductOrderId(Long orderItemId) {
         return mappingQueryPort
                 .findByOrderItemId(orderItemId)
                 .map(m -> m.externalProductOrderId())

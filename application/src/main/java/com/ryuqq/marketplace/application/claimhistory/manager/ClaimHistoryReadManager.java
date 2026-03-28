@@ -29,7 +29,7 @@ public class ClaimHistoryReadManager {
     }
 
     @Transactional(readOnly = true)
-    public List<ClaimHistory> findByOrderItemId(String orderItemId) {
+    public List<ClaimHistory> findByOrderItemId(Long orderItemId) {
         return queryPort.findByOrderItemId(orderItemId);
     }
 

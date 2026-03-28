@@ -19,7 +19,7 @@ public final class ClaimHistoryJpaEntityFixtures {
     // ===== 기본 상수 =====
     public static final String DEFAULT_ID = "01956f4a-2b3c-7d8e-9f0a-1b2c3d4e5f70";
     public static final String DEFAULT_CLAIM_ID = "cancel-claim-001";
-    public static final String DEFAULT_ORDER_ITEM_ID = "order-item-001";
+    public static final Long DEFAULT_ORDER_ITEM_ID = 1001L;
     public static final String DEFAULT_CLAIM_TYPE = "CANCEL";
     public static final String DEFAULT_HISTORY_TYPE = "STATUS_CHANGE";
     public static final String DEFAULT_TITLE = "승인";
@@ -127,7 +127,7 @@ public final class ClaimHistoryJpaEntityFixtures {
     }
 
     /** ORDER 타입 수기 메모 Entity 생성 (claimId null). */
-    public static ClaimHistoryJpaEntity orderMemoEntity(String orderItemId) {
+    public static ClaimHistoryJpaEntity orderMemoEntity(Long orderItemId) {
         return ClaimHistoryJpaEntity.create(
                 UUID.randomUUID().toString(),
                 "ORDER",

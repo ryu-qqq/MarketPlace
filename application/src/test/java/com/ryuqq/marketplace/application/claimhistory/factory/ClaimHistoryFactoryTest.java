@@ -48,8 +48,7 @@ class ClaimHistoryFactoryTest {
 
             // when
             ClaimHistory result =
-                    sut.createManualMemo(
-                            claimType, claimId, "order-item-001", message, actorId, actorName);
+                    sut.createManualMemo(claimType, claimId, 1001L, message, actorId, actorName);
 
             // then
             assertThat(result).isNotNull();
@@ -81,8 +80,7 @@ class ClaimHistoryFactoryTest {
 
             // when
             ClaimHistory result =
-                    sut.createManualMemo(
-                            claimType, claimId, "order-item-001", message, actorId, actorName);
+                    sut.createManualMemo(claimType, claimId, 1001L, message, actorId, actorName);
 
             // then
             assertThat(result.claimType()).isEqualTo(ClaimType.REFUND);
@@ -112,13 +110,7 @@ class ClaimHistoryFactoryTest {
             // when
             ClaimHistory result =
                     sut.createStatusChange(
-                            claimType,
-                            claimId,
-                            "order-item-001",
-                            fromStatus,
-                            toStatus,
-                            actorId,
-                            actorName);
+                            claimType, claimId, 1001L, fromStatus, toStatus, actorId, actorName);
 
             // then
             assertThat(result).isNotNull();
@@ -149,13 +141,7 @@ class ClaimHistoryFactoryTest {
             // when
             ClaimHistory result =
                     sut.createStatusChange(
-                            claimType,
-                            claimId,
-                            "order-item-001",
-                            fromStatus,
-                            toStatus,
-                            actorId,
-                            actorName);
+                            claimType, claimId, 1001L, fromStatus, toStatus, actorId, actorName);
 
             // then
             assertThat(result.historyType()).isEqualTo(ClaimHistoryType.STATUS_CHANGE);
@@ -182,8 +168,7 @@ class ClaimHistoryFactoryTest {
 
             // when
             ClaimHistory result =
-                    sut.createStatusChangeBySystem(
-                            claimType, claimId, "order-item-001", fromStatus, toStatus);
+                    sut.createStatusChangeBySystem(claimType, claimId, 1001L, fromStatus, toStatus);
 
             // then
             assertThat(result).isNotNull();
@@ -211,8 +196,7 @@ class ClaimHistoryFactoryTest {
 
             // when
             ClaimHistory result =
-                    sut.createStatusChangeBySystem(
-                            claimType, claimId, "order-item-001", fromStatus, toStatus);
+                    sut.createStatusChangeBySystem(claimType, claimId, 1001L, fromStatus, toStatus);
 
             // then
             assertThat(result.title()).isEqualTo("상태 변경");

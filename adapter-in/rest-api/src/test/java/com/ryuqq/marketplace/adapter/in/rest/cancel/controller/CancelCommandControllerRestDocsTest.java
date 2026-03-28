@@ -81,15 +81,9 @@ class CancelCommandControllerRestDocsTest {
             // given
             SellerCancelBatchApiRequest request = CancelApiFixtures.sellerCancelBatchRequest();
             BatchProcessingResult<String> batchResult =
-                    CancelApiFixtures.batchSuccessResult(
-                            List.of(
-                                    "01940001-0000-7000-8000-000000000001",
-                                    "01940001-0000-7000-8000-000000000002"));
+                    CancelApiFixtures.batchSuccessResult(List.of("1001", "1002"));
             BatchResultApiResponse response =
-                    CancelApiFixtures.batchAllSuccessApiResponse(
-                            List.of(
-                                    "01940001-0000-7000-8000-000000000001",
-                                    "01940001-0000-7000-8000-000000000002"));
+                    CancelApiFixtures.batchAllSuccessApiResponse(List.of("1001", "1002"));
 
             given(accessChecker.resolveActorInfo())
                     .willReturn(new MarketAccessChecker.ActorInfo(100L, "seller@test.com"));

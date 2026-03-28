@@ -8,7 +8,7 @@ public record RequestExchangeBatchCommand(
         List<ExchangeRequestItem> items, String requestedBy, long sellerId) {
 
     public record ExchangeRequestItem(
-            String orderItemId,
+            Long orderItemId,
             int exchangeQty,
             ExchangeReasonType reasonType,
             String reasonDetail,

@@ -81,7 +81,8 @@ public class ShipmentOutbox {
     public static ShipmentOutbox forNew(
             OrderItemId orderItemId, ShipmentOutboxType outboxType, String payload, Instant now) {
         ShipmentOutboxIdempotencyKey idempotencyKey =
-                ShipmentOutboxIdempotencyKey.generate(orderItemId.value(), outboxType, now);
+                ShipmentOutboxIdempotencyKey.generate(
+                        String.valueOf(orderItemId.value()), outboxType, now);
         return new ShipmentOutbox(
                 ShipmentOutboxId.forNew(),
                 orderItemId,
@@ -232,7 +233,7 @@ public class ShipmentOutbox {
         return orderItemId;
     }
 
-    public String orderItemIdValue() {
+    public Long orderItemIdValue() {
         return orderItemId.value();
     }
 

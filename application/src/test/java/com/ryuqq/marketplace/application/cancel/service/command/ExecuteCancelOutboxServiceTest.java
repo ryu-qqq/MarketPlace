@@ -59,8 +59,8 @@ class ExecuteCancelOutboxServiceTest {
             Instant now = Instant.now();
 
             given(outboxReadManager.getById(command.outboxId())).willReturn(outbox);
-            given(outbox.orderItemIdValue()).willReturn("OI-001");
-            given(mappingReadManager.findByOrderItemId("OI-001")).willReturn(mapping);
+            given(outbox.orderItemIdValue()).willReturn(1001L);
+            given(mappingReadManager.findByOrderItemId(1001L)).willReturn(mapping);
             given(mapping.salesChannelId()).willReturn(100L);
             given(shopReadManager.findActiveBySalesChannelId(100L)).willReturn(List.of(shop));
             given(claimSyncStrategy.execute(outbox, shop)).willReturn(successResult);
@@ -88,8 +88,8 @@ class ExecuteCancelOutboxServiceTest {
             Instant now = Instant.now();
 
             given(outboxReadManager.getById(command.outboxId())).willReturn(outbox);
-            given(outbox.orderItemIdValue()).willReturn("OI-001");
-            given(mappingReadManager.findByOrderItemId("OI-001")).willReturn(mapping);
+            given(outbox.orderItemIdValue()).willReturn(1001L);
+            given(mappingReadManager.findByOrderItemId(1001L)).willReturn(mapping);
             given(mapping.salesChannelId()).willReturn(100L);
             given(shopReadManager.findActiveBySalesChannelId(100L)).willReturn(List.of(shop));
             given(claimSyncStrategy.execute(outbox, shop)).willReturn(failResult);
@@ -122,8 +122,8 @@ class ExecuteCancelOutboxServiceTest {
             Instant now = Instant.now();
 
             given(outboxReadManager.getById(command.outboxId())).willReturn(outbox);
-            given(outbox.orderItemIdValue()).willReturn("OI-001");
-            given(mappingReadManager.findByOrderItemId("OI-001")).willReturn(mapping);
+            given(outbox.orderItemIdValue()).willReturn(1001L);
+            given(mappingReadManager.findByOrderItemId(1001L)).willReturn(mapping);
             given(mapping.salesChannelId()).willReturn(100L);
             given(shopReadManager.findActiveBySalesChannelId(100L)).willReturn(List.of(shop));
             given(claimSyncStrategy.execute(outbox, shop))

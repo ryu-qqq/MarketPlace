@@ -70,7 +70,7 @@ public class CancelApiMapper {
     private SellerCancelItem toSellerCancelItem(
             SellerCancelItemApiRequest item, CancelReasonType reasonType, String reasonDetail) {
         return new SellerCancelItem(
-                item.orderId(), // V4 간극: orderId = 내부 orderItemId
+                Long.parseLong(item.orderId()), // V4 간극: orderId = 내부 orderItemId
                 item.cancelQty(),
                 reasonType,
                 reasonDetail);
@@ -88,7 +88,7 @@ public class CancelApiMapper {
 
     public AddClaimHistoryMemoCommand toAddMemoCommand(
             String cancelId,
-            String orderItemId,
+            Long orderItemId,
             AddClaimHistoryMemoApiRequest request,
             MarketAccessChecker.ActorInfo actor) {
         return new AddClaimHistoryMemoCommand(
@@ -121,7 +121,7 @@ public class CancelApiMapper {
 
     public PageApiResponse<CancelListItemApiResponseV4> toPageResponseV4(
             CancelPageResult result, ClaimOrderEnricher enricher) {
-        List<String> orderItemIds =
+        List<Long> orderItemIds =
                 result.cancels().stream().map(CancelListResult::orderItemId).toList();
         ClaimOrderEnricher.OrderContext ctx = enricher.loadOrderContext(orderItemIds);
 
@@ -136,7 +136,7 @@ public class CancelApiMapper {
 
     private CancelListItemApiResponseV4 toListResponseV4(
             CancelListResult r, ClaimOrderEnricher enricher, ClaimOrderEnricher.OrderContext ctx) {
-        String itemId = r.orderItemId();
+        Long itemId = r.orderItemId();
         ClaimListItemApiResponseV4.OrderProductV4 orderProduct =
                 enricher.toOrderProductV4(itemId, ctx);
         return new CancelListItemApiResponseV4(
@@ -186,7 +186,9 @@ public class CancelApiMapper {
         return new CancelListApiResponse(
                 nullToEmpty(result.cancelId()),
                 nullToEmpty(result.cancelNumber()),
-                nullToEmpty(result.orderItemId()), // V4 간극: orderId = orderItemId
+                result.orderItemId() != null
+                        ? String.valueOf(result.orderItemId())
+                        : "", // V4 간극: orderId = orderItemId
                 result.cancelQty(),
                 nullToEmpty(result.cancelType()),
                 nullToEmpty(result.cancelStatus()),
@@ -232,7 +234,7 @@ public class CancelApiMapper {
                         formatInstant(result.completedAt()));
 
         return new CancelDetailApiResponse(
-                nullToEmpty(result.orderItemId()),
+                result.orderItemId() != null ? String.valueOf(result.orderItemId()) : "",
                 orderProduct,
                 cancelInfo,
                 buyerInfo,

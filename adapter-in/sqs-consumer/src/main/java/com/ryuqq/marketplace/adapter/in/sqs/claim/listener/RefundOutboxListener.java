@@ -58,7 +58,9 @@ public class RefundOutboxListener {
         try {
             useCase.execute(
                     ExecuteRefundOutboxCommand.of(
-                            message.outboxId(), message.orderItemId(), message.outboxType()));
+                            message.outboxId(),
+                            Long.parseLong(message.orderItemId()),
+                            message.outboxType()));
             sample.stop(durationTimer);
             successCounter.increment();
         } catch (Exception e) {

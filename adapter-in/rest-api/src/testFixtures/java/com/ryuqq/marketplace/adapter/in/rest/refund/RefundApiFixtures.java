@@ -46,7 +46,8 @@ public final class RefundApiFixtures {
     // ===== 상수 =====
     public static final String DEFAULT_REFUND_CLAIM_ID = "01940001-0000-7000-8000-000000000001";
     public static final String DEFAULT_CLAIM_NUMBER = "RC-20250101-001";
-    public static final String DEFAULT_ORDER_ITEM_ID = "01940001-0000-7000-8000-000000000099";
+    public static final long DEFAULT_ORDER_ITEM_ID = 1001L;
+    public static final String DEFAULT_ORDER_ITEM_ID_STR = String.valueOf(DEFAULT_ORDER_ITEM_ID);
     public static final String DEFAULT_REFUND_STATUS = "REQUESTED";
     public static final String DEFAULT_REASON_TYPE = "CHANGE_OF_MIND";
     public static final String DEFAULT_REASON_DETAIL = "단순 변심입니다";
@@ -60,8 +61,8 @@ public final class RefundApiFixtures {
     public static RequestRefundBatchApiRequest requestBatchRequest() {
         List<RefundRequestItemApiRequest> items =
                 List.of(
-                        requestItemApiRequest("01940001-0000-7000-8000-000000000001"),
-                        requestItemApiRequest("01940001-0000-7000-8000-000000000002"));
+                        requestItemApiRequest(DEFAULT_ORDER_ITEM_ID_STR),
+                        requestItemApiRequest("1002"));
         return new RequestRefundBatchApiRequest(items);
     }
 
@@ -317,7 +318,7 @@ public final class RefundApiFixtures {
         return new RefundListApiResponse(
                 refundClaimId,
                 DEFAULT_CLAIM_NUMBER,
-                DEFAULT_ORDER_ITEM_ID,
+                DEFAULT_ORDER_ITEM_ID_STR,
                 1,
                 DEFAULT_REFUND_STATUS,
                 DEFAULT_REASON_TYPE,
@@ -370,7 +371,7 @@ public final class RefundApiFixtures {
                         DEFAULT_FORMATTED_TIME,
                         null);
         return new RefundDetailApiResponse(
-                DEFAULT_ORDER_ITEM_ID,
+                DEFAULT_ORDER_ITEM_ID_STR,
                 List.of(),
                 claimInfo,
                 null,

@@ -619,7 +619,19 @@ public class TestContainersExternalMockConfig {
     @Bean
     @Primary
     public IdGeneratorPort stubIdGeneratorPort() {
-        return () -> UUID.randomUUID().toString();
+        final java.util.concurrent.atomic.AtomicLong longIdSequence =
+                new java.util.concurrent.atomic.AtomicLong(1);
+        return new IdGeneratorPort() {
+            @Override
+            public String generate() {
+                return UUID.randomUUID().toString();
+            }
+
+            @Override
+            public Long generateLong() {
+                return longIdSequence.getAndIncrement();
+            }
+        };
     }
 
     @Bean

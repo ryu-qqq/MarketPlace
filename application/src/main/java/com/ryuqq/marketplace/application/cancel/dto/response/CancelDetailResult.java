@@ -8,7 +8,7 @@ import java.util.List;
 public record CancelDetailResult(
         String cancelId,
         String cancelNumber,
-        String orderItemId,
+        Long orderItemId,
         int cancelQty,
         String cancelType,
         String cancelStatus,

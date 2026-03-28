@@ -62,7 +62,8 @@ public class ExchangeOutbox {
     public static ExchangeOutbox forNew(
             OrderItemId orderItemId, ExchangeOutboxType outboxType, String payload, Instant now) {
         ExchangeOutboxIdempotencyKey idempotencyKey =
-                ExchangeOutboxIdempotencyKey.generate(orderItemId.value(), outboxType, now);
+                ExchangeOutboxIdempotencyKey.generate(
+                        String.valueOf(orderItemId.value()), outboxType, now);
         return new ExchangeOutbox(
                 ExchangeOutboxId.forNew(),
                 orderItemId,
@@ -210,7 +211,7 @@ public class ExchangeOutbox {
         return orderItemId;
     }
 
-    public String orderItemIdValue() {
+    public Long orderItemIdValue() {
         return orderItemId.value();
     }
 

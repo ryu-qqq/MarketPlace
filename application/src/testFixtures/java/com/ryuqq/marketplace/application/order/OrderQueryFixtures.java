@@ -93,10 +93,10 @@ public final class OrderQueryFixtures {
     // ===== OrderItemResult Fixtures =====
 
     public static OrderItemResult orderItemResult() {
-        return orderItemResult("01940001-0000-7000-8000-000000000001", DEFAULT_ORDER_ID);
+        return orderItemResult(1001L, DEFAULT_ORDER_ID);
     }
 
-    public static OrderItemResult orderItemResult(String orderItemId, String orderId) {
+    public static OrderItemResult orderItemResult(Long orderItemId, String orderId) {
         return new OrderItemResult(
                 orderItemId,
                 "ORD-20250115-0001-001",
@@ -130,7 +130,7 @@ public final class OrderQueryFixtures {
 
     // ===== OrderCancelResult Fixtures =====
 
-    public static OrderCancelResult completedCancelResult(String orderItemId) {
+    public static OrderCancelResult completedCancelResult(Long orderItemId) {
         return new OrderCancelResult(
                 "1",
                 orderItemId,
@@ -147,7 +147,7 @@ public final class OrderQueryFixtures {
                 Instant.parse("2026-02-19T11:00:00Z"));
     }
 
-    public static OrderCancelResult requestedCancelResult(String orderItemId) {
+    public static OrderCancelResult requestedCancelResult(Long orderItemId) {
         return new OrderCancelResult(
                 "2",
                 orderItemId,
@@ -166,7 +166,7 @@ public final class OrderQueryFixtures {
 
     // ===== OrderClaimResult Fixtures =====
 
-    public static OrderClaimResult completedClaimResult(String orderItemId) {
+    public static OrderClaimResult completedClaimResult(Long orderItemId) {
         return new OrderClaimResult(
                 "1",
                 orderItemId,
@@ -188,7 +188,7 @@ public final class OrderQueryFixtures {
                 null);
     }
 
-    public static OrderClaimResult requestedClaimResult(String orderItemId) {
+    public static OrderClaimResult requestedClaimResult(Long orderItemId) {
         return new OrderClaimResult(
                 "2",
                 orderItemId,
@@ -256,8 +256,8 @@ public final class OrderQueryFixtures {
                 orderItemResult(),
                 orderListResult(),
                 paymentResult(),
-                List.of(completedCancelResult("01940001-0000-7000-8000-000000000001")),
-                List.of(completedClaimResult("01940001-0000-7000-8000-000000000001")),
+                List.of(completedCancelResult(1001L)),
+                List.of(completedClaimResult(1001L)),
                 List.of(orderHistoryResult()));
     }
 

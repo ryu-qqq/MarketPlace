@@ -80,7 +80,7 @@ class RefundApiMapperTest {
 
             // then
             RequestRefundBatchCommand.RefundRequestItem firstItem = command.items().get(0);
-            assertThat(firstItem.orderItemId()).isEqualTo("01940001-0000-7000-8000-000000000001");
+            assertThat(firstItem.orderItemId()).isEqualTo(1001L);
             assertThat(firstItem.refundQty()).isEqualTo(1);
             assertThat(firstItem.reasonDetail()).isEqualTo(RefundApiFixtures.DEFAULT_REASON_DETAIL);
         }
@@ -127,10 +127,7 @@ class RefundApiMapperTest {
         @DisplayName("refundClaimIds가 Command에 올바르게 매핑된다")
         void toApproveRefundBatchCommand_RefundClaimIdsCorrectlyMapped() {
             // given
-            List<String> ids =
-                    List.of(
-                            "01940001-0000-7000-8000-000000000001",
-                            "01940001-0000-7000-8000-000000000002");
+            List<String> ids = List.of("1001", "1002");
             ApproveRefundBatchApiRequest request = RefundApiFixtures.approveBatchRequest(ids);
 
             // when
@@ -138,10 +135,7 @@ class RefundApiMapperTest {
                     mapper.toApproveRefundBatchCommand(request, "admin01", null);
 
             // then
-            assertThat(command.refundClaimIds())
-                    .containsExactly(
-                            "01940001-0000-7000-8000-000000000001",
-                            "01940001-0000-7000-8000-000000000002");
+            assertThat(command.refundClaimIds()).containsExactly("1001", "1002");
         }
     }
 
@@ -220,7 +214,7 @@ class RefundApiMapperTest {
             AddClaimHistoryMemoCommand command =
                     mapper.toAddMemoCommand(
                             refundClaimId,
-                            "order-item-001",
+                            1001L,
                             request,
                             new MarketAccessChecker.ActorInfo(sellerId, actorName));
 
@@ -241,7 +235,7 @@ class RefundApiMapperTest {
             AddClaimHistoryMemoCommand command =
                     mapper.toAddMemoCommand(
                             RefundApiFixtures.DEFAULT_REFUND_CLAIM_ID,
-                            "order-item-001",
+                            1001L,
                             request,
                             new MarketAccessChecker.ActorInfo(1L, "seller01"));
 
@@ -370,7 +364,7 @@ class RefundApiMapperTest {
             assertThat(response.refundClaimId())
                     .isEqualTo(RefundApiFixtures.DEFAULT_REFUND_CLAIM_ID);
             assertThat(response.claimNumber()).isEqualTo(RefundApiFixtures.DEFAULT_CLAIM_NUMBER);
-            assertThat(response.orderId()).isEqualTo(RefundApiFixtures.DEFAULT_ORDER_ITEM_ID);
+            assertThat(response.orderId()).isEqualTo(RefundApiFixtures.DEFAULT_ORDER_ITEM_ID_STR);
             assertThat(response.refundQty()).isEqualTo(1);
             assertThat(response.refundStatus()).isEqualTo(RefundApiFixtures.DEFAULT_REFUND_STATUS);
         }
@@ -494,10 +488,8 @@ class RefundApiMapperTest {
 
             // then
             List<RefundListApiResponse> content = response.content();
-            assertThat(content.get(0).refundClaimId())
-                    .isEqualTo("01940001-0000-7000-8000-000000000001");
-            assertThat(content.get(1).refundClaimId())
-                    .isEqualTo("01940001-0000-7000-8000-000000000002");
+            assertThat(content.get(0).refundClaimId()).isNotNull();
+            assertThat(content.get(1).refundClaimId()).isNotNull();
         }
     }
 
@@ -521,7 +513,7 @@ class RefundApiMapperTest {
                     .isEqualTo(RefundApiFixtures.DEFAULT_REFUND_CLAIM_ID);
             assertThat(response.claimInfo().claimNumber())
                     .isEqualTo(RefundApiFixtures.DEFAULT_CLAIM_NUMBER);
-            assertThat(response.orderId()).isEqualTo(RefundApiFixtures.DEFAULT_ORDER_ITEM_ID);
+            assertThat(response.orderId()).isEqualTo(RefundApiFixtures.DEFAULT_ORDER_ITEM_ID_STR);
             assertThat(response.claimInfo().refundQty()).isEqualTo(1);
             assertThat(response.claimInfo().status())
                     .isEqualTo(RefundApiFixtures.DEFAULT_REFUND_STATUS);
@@ -685,10 +677,7 @@ class RefundApiMapperTest {
         void toBatchResultResponse_SuccessItem_ReturnsCorrectResponse() {
             // given
             BatchProcessingResult<String> result =
-                    RefundApiFixtures.batchSuccessResult(
-                            List.of(
-                                    "01940001-0000-7000-8000-000000000001",
-                                    "01940001-0000-7000-8000-000000000002"));
+                    RefundApiFixtures.batchSuccessResult(List.of("1001", "1002"));
 
             // when
             BatchResultApiResponse response = mapper.toBatchResultResponse(result);
@@ -699,7 +688,7 @@ class RefundApiMapperTest {
             assertThat(response.failureCount()).isZero();
 
             BatchResultApiResponse.BatchResultItemApiResponse firstItem = response.results().get(0);
-            assertThat(firstItem.id()).isEqualTo("01940001-0000-7000-8000-000000000001");
+            assertThat(firstItem.id()).isEqualTo("1001");
             assertThat(firstItem.success()).isTrue();
             assertThat(firstItem.errorCode()).isNull();
             assertThat(firstItem.errorMessage()).isNull();

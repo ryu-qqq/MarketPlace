@@ -30,7 +30,7 @@ public class CancelSettlementProcessor {
 
     /** 취소 역분개 Entry를 생성하고 저장한다. 실패해도 클레임 처리를 막지 않는다. */
     public void createReversalEntry(
-            String orderItemId, long sellerId, String cancelId, int refundAmount) {
+            Long orderItemId, long sellerId, String cancelId, int refundAmount) {
         try {
             CreateReversalEntryCommand command =
                     new CreateReversalEntryCommand(

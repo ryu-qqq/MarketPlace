@@ -13,9 +13,9 @@ public interface RefundQueryPort {
 
     Optional<RefundClaim> findById(RefundClaimId id);
 
-    Optional<RefundClaim> findByOrderItemId(String orderItemId);
+    Optional<RefundClaim> findByOrderItemId(Long orderItemId);
 
-    List<RefundClaim> findByOrderItemIds(List<String> orderItemIds);
+    List<RefundClaim> findByOrderItemIds(List<Long> orderItemIds);
 
     List<RefundClaim> findByCriteria(RefundSearchCriteria criteria);
 
@@ -23,7 +23,7 @@ public interface RefundQueryPort {
 
     Map<RefundStatus, Long> countByStatus();
 
-    List<RefundClaim> findAllByOrderItemId(String orderItemId);
+    List<RefundClaim> findAllByOrderItemId(Long orderItemId);
 
     /** refundClaimId 목록으로 일괄 조회. sellerId가 null이면 전체 조회 (슈퍼어드민). */
     List<RefundClaim> findByIdIn(List<String> refundClaimIds, Long sellerId);

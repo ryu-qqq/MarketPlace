@@ -4,7 +4,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.never;
 
 import com.ryuqq.marketplace.application.legacyconversion.dto.result.LegacyOrderCompositeResult;
 import com.ryuqq.marketplace.application.legacyconversion.factory.LegacyOrderConversionFactory;
@@ -86,15 +85,12 @@ class LegacyOrderConversionCoordinatorSyncTest {
                     .willReturn(Optional.empty());
 
             LegacyOrderCompositeResult composite = createComposite("ORDER_PROCESSING");
-            given(compositeReadManager.fetchOrderComposite(LEGACY_ORDER_ID))
-                    .willReturn(composite);
+            given(compositeReadManager.fetchOrderComposite(LEGACY_ORDER_ID)).willReturn(composite);
             given(statusMapper.isEligibleForMigration("ORDER_PROCESSING")).willReturn(true);
             given(statusMapper.resolve("ORDER_PROCESSING"))
-                    .willReturn(
-                            LegacyOrderStatusMapper.OrderStatusResolution.normalOrder(null));
+                    .willReturn(LegacyOrderStatusMapper.OrderStatusResolution.normalOrder(null));
             given(channelResolver.resolve(any(), any(), any()))
-                    .willReturn(
-                            new LegacyOrderChannelResolver.ChannelResolution(1L, "SETOF"));
+                    .willReturn(new LegacyOrderChannelResolver.ChannelResolution(1L, "SETOF"));
             given(channelResolver.resolveExternalOrderNo(any(), eq(LEGACY_ORDER_ID)))
                     .willReturn(String.valueOf(LEGACY_ORDER_ID));
 

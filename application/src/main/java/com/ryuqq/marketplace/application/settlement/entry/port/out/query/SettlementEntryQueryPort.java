@@ -22,7 +22,7 @@ public interface SettlementEntryQueryPort {
     List<SettlementEntry> findBySellerIdAndStatus(long sellerId, EntryStatus status);
 
     /** 특정 orderItemId의 Entry 목록. */
-    List<SettlementEntry> findByOrderItemId(String orderItemId);
+    List<SettlementEntry> findByOrderItemId(Long orderItemId);
 
     /** ID 목록으로 Entry 일괄 조회. */
     List<SettlementEntry> findByIdIn(List<String> entryIds);

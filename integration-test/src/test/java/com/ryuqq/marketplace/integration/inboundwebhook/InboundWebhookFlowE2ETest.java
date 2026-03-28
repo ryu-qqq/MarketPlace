@@ -115,7 +115,7 @@ class InboundWebhookFlowE2ETest extends E2ETestBase {
      * @param orderItemId 내부 orderItemId
      */
     private void seedMapping(
-            String externalOrderId, String externalProductOrderId, String orderItemId) {
+            String externalOrderId, String externalProductOrderId, Long orderItemId) {
         externalOrderItemMappingRepository.save(
                 ExternalOrderItemMappingJpaEntity.create(
                         null,
@@ -134,7 +134,7 @@ class InboundWebhookFlowE2ETest extends E2ETestBase {
      * @param orderItemStatus OrderItem 상태 ("READY", "CONFIRMED" 등)
      * @return 저장된 orderItemId
      */
-    private String seedOrderItemWithStatus(String orderId, String orderItemStatus) {
+    private Long seedOrderItemWithStatus(String orderId, String orderItemStatus) {
         OrderJpaEntity order = OrderJpaEntityFixtures.orderedEntity(orderId);
         orderRepository.save(order);
 
@@ -271,7 +271,7 @@ class InboundWebhookFlowE2ETest extends E2ETestBase {
             String externalOrderId = "EXT-FLOW1-ORD-002";
             String externalProductOrderId = "EXT-FLOW1-PO-002";
             String orderId = UUID.randomUUID().toString();
-            String orderItemId = seedOrderItemWithStatus(orderId, "READY");
+            Long orderItemId = seedOrderItemWithStatus(orderId, "READY");
 
             // Step 2. ExternalOrderItemMapping 시딩 (externalProductOrderId → orderItemId)
             seedMapping(externalOrderId, externalProductOrderId, orderItemId);
@@ -298,7 +298,7 @@ class InboundWebhookFlowE2ETest extends E2ETestBase {
             String externalOrderId = "EXT-FLOW1-ORD-003";
             String externalProductOrderId = "EXT-FLOW1-PO-003";
             String orderId = UUID.randomUUID().toString();
-            String orderItemId = seedOrderItemWithStatus(orderId, "CONFIRMED");
+            Long orderItemId = seedOrderItemWithStatus(orderId, "CONFIRMED");
             seedMapping(externalOrderId, externalProductOrderId, orderItemId);
 
             // Step 2. PURCHASE_CONFIRMED 첫 번째 호출
@@ -338,7 +338,7 @@ class InboundWebhookFlowE2ETest extends E2ETestBase {
             String externalOrderId = "EXT-FLOW2-ORD-001";
             String externalProductOrderId = "EXT-FLOW2-PO-001";
             String orderId = UUID.randomUUID().toString();
-            String orderItemId = seedOrderItemWithStatus(orderId, "READY");
+            Long orderItemId = seedOrderItemWithStatus(orderId, "READY");
 
             // Step 2. ExternalOrderItemMapping 시딩
             seedMapping(externalOrderId, externalProductOrderId, orderItemId);
@@ -393,7 +393,7 @@ class InboundWebhookFlowE2ETest extends E2ETestBase {
             String externalOrderId = "EXT-FLOW3-ORD-001";
             String externalProductOrderId = "EXT-FLOW3-PO-001";
             String orderId = UUID.randomUUID().toString();
-            String orderItemId = seedOrderItemWithStatus(orderId, "CONFIRMED");
+            Long orderItemId = seedOrderItemWithStatus(orderId, "CONFIRMED");
             seedMapping(externalOrderId, externalProductOrderId, orderItemId);
 
             // Step 2. RETURN_REQUESTED 웹훅 호출 → 반품 동기화 성공
@@ -423,7 +423,7 @@ class InboundWebhookFlowE2ETest extends E2ETestBase {
             String externalOrderId = "EXT-FLOW3-ORD-002";
             String externalProductOrderId = "EXT-FLOW3-PO-002";
             String orderId = UUID.randomUUID().toString();
-            String orderItemId = seedOrderItemWithStatus(orderId, "CONFIRMED");
+            Long orderItemId = seedOrderItemWithStatus(orderId, "CONFIRMED");
             seedMapping(externalOrderId, externalProductOrderId, orderItemId);
 
             // Step 2. RETURN_REQUESTED 웹훅 호출 → 반품 생성 성공

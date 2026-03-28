@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 @DisplayName("ExchangeOutbox Aggregate 단위 테스트")
 class ExchangeOutboxTest {
 
-    private static final String DEFAULT_ORDER_ITEM_ID = "01900000-0000-7000-0000-000000000010";
+    private static final Long DEFAULT_ORDER_ITEM_ID = 1001L;
     private static final String DEFAULT_PAYLOAD =
             "{\"orderItemId\":\"" + DEFAULT_ORDER_ITEM_ID + "\"}";
 

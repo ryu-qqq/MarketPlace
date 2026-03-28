@@ -19,8 +19,8 @@ public class ExchangeOutboxJpaEntity {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "order_item_id", nullable = false, length = 36)
-    private String orderItemId;
+    @Column(name = "order_item_id", nullable = false)
+    private Long orderItemId;
 
     @Column(name = "outbox_type", nullable = false, length = 20)
     private String outboxType;
@@ -61,7 +61,7 @@ public class ExchangeOutboxJpaEntity {
     @SuppressWarnings("PMD.ExcessiveParameterList")
     private ExchangeOutboxJpaEntity(
             Long id,
-            String orderItemId,
+            Long orderItemId,
             String outboxType,
             String status,
             String payload,
@@ -91,7 +91,7 @@ public class ExchangeOutboxJpaEntity {
     @SuppressWarnings("PMD.ExcessiveParameterList")
     public static ExchangeOutboxJpaEntity create(
             Long id,
-            String orderItemId,
+            Long orderItemId,
             String outboxType,
             String status,
             String payload,
@@ -123,7 +123,7 @@ public class ExchangeOutboxJpaEntity {
         return id;
     }
 
-    public String getOrderItemId() {
+    public Long getOrderItemId() {
         return orderItemId;
     }
 

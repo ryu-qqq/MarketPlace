@@ -39,7 +39,7 @@ public class ShipmentQueryAdapter implements ShipmentQueryPort {
 
     @Override
     public List<Shipment> findByOrderItemIds(List<OrderItemId> orderItemIds) {
-        List<String> ids = orderItemIds.stream().map(OrderItemId::value).toList();
+        List<Long> ids = orderItemIds.stream().map(OrderItemId::value).toList();
         return repository.findByOrderItemIds(ids).stream().map(mapper::toDomain).toList();
     }
 
@@ -54,7 +54,7 @@ public class ShipmentQueryAdapter implements ShipmentQueryPort {
     }
 
     @Override
-    public List<String> findFulfillmentOrderItemIds(ShipmentSearchCriteria criteria) {
+    public List<Long> findFulfillmentOrderItemIds(ShipmentSearchCriteria criteria) {
         return repository.findFulfillmentOrderItemIds(criteria);
     }
 

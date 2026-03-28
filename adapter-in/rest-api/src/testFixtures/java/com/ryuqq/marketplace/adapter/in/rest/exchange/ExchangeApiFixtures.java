@@ -52,7 +52,8 @@ public final class ExchangeApiFixtures {
     // ===== 상수 =====
     public static final String DEFAULT_EXCHANGE_CLAIM_ID = "01940001-0000-7000-9000-000000000001";
     public static final String DEFAULT_CLAIM_NUMBER = "EXC-20260101-0001";
-    public static final String DEFAULT_ORDER_ITEM_ID = "01940001-0000-7000-8000-000000000001";
+    public static final long DEFAULT_ORDER_ITEM_ID = 1001L;
+    public static final String DEFAULT_ORDER_ITEM_ID_STR = String.valueOf(DEFAULT_ORDER_ITEM_ID);
     public static final String DEFAULT_LINKED_ORDER_ID = "01940001-0000-7000-8000-000000000099";
     public static final String DEFAULT_EXCHANGE_STATUS = "REQUESTED";
     public static final String DEFAULT_REASON_TYPE = "SIZE_CHANGE";
@@ -79,7 +80,7 @@ public final class ExchangeApiFixtures {
         List<ExchangeRequestItemApiRequest> items =
                 List.of(
                         new ExchangeRequestItemApiRequest(
-                                DEFAULT_ORDER_ITEM_ID,
+                                DEFAULT_ORDER_ITEM_ID_STR,
                                 DEFAULT_EXCHANGE_QTY,
                                 DEFAULT_REASON_TYPE,
                                 DEFAULT_REASON_DETAIL,
@@ -337,7 +338,7 @@ public final class ExchangeApiFixtures {
         return new ExchangeListApiResponse(
                 DEFAULT_EXCHANGE_CLAIM_ID,
                 DEFAULT_CLAIM_NUMBER,
-                DEFAULT_ORDER_ITEM_ID,
+                DEFAULT_ORDER_ITEM_ID_STR,
                 DEFAULT_EXCHANGE_QTY,
                 DEFAULT_EXCHANGE_STATUS,
                 DEFAULT_REASON_TYPE,
@@ -407,7 +408,7 @@ public final class ExchangeApiFixtures {
                         DEFAULT_FORMATTED_TIME,
                         null);
         return new ExchangeDetailApiResponse(
-                DEFAULT_ORDER_ITEM_ID,
+                DEFAULT_ORDER_ITEM_ID_STR,
                 java.util.List.of(),
                 exchangeClaimInfo,
                 null,

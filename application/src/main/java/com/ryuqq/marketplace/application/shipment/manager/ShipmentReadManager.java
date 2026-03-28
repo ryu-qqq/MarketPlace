@@ -57,7 +57,7 @@ public class ShipmentReadManager {
     }
 
     @Transactional(readOnly = true)
-    public List<String> findFulfillmentOrderItemIds(ShipmentSearchCriteria criteria) {
+    public List<Long> findFulfillmentOrderItemIds(ShipmentSearchCriteria criteria) {
         return queryPort.findFulfillmentOrderItemIds(criteria);
     }
 

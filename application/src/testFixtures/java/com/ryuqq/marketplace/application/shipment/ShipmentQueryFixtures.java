@@ -29,7 +29,7 @@ public final class ShipmentQueryFixtures {
 
     private static final String DEFAULT_SHIPMENT_ID = "01944b2a-1234-7fff-8888-abcdef012345";
     private static final String DEFAULT_SHIPMENT_NUMBER = "SHP-20260218-0001";
-    private static final String DEFAULT_ORDER_ITEM_ID = "01940001-0000-7000-8000-000000000001";
+    private static final Long DEFAULT_ORDER_ITEM_ID = 1001L;
     private static final String DEFAULT_ORDER_ID = "01900000-0000-7000-8000-000000000001";
     private static final Instant FIXED_NOW = Instant.parse("2026-02-18T10:00:00Z");
 

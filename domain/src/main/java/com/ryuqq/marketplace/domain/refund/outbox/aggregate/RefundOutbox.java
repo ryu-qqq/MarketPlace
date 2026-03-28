@@ -62,7 +62,8 @@ public class RefundOutbox {
     public static RefundOutbox forNew(
             OrderItemId orderItemId, RefundOutboxType outboxType, String payload, Instant now) {
         RefundOutboxIdempotencyKey idempotencyKey =
-                RefundOutboxIdempotencyKey.generate(orderItemId.value(), outboxType, now);
+                RefundOutboxIdempotencyKey.generate(
+                        String.valueOf(orderItemId.value()), outboxType, now);
         return new RefundOutbox(
                 RefundOutboxId.forNew(),
                 orderItemId,
@@ -211,7 +212,7 @@ public class RefundOutbox {
         return orderItemId;
     }
 
-    public String orderItemIdValue() {
+    public Long orderItemIdValue() {
         return orderItemId.value();
     }
 

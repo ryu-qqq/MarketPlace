@@ -99,7 +99,7 @@ class ExchangeBatchValidatorTest {
         @DisplayName("진행 중인 Refund가 있으면 true를 반환한다")
         void hasActiveClaim_HasActiveRefund_ReturnsTrue() {
             // given
-            String orderItemId = "01900000-0000-7000-0000-000000000010";
+            Long orderItemId = 1001L;
             RefundClaim activeRefund = RefundFixtures.requestedRefundClaim();
 
             given(refundReadManager.findByOrderItemId(orderItemId))
@@ -116,9 +116,9 @@ class ExchangeBatchValidatorTest {
         @DisplayName("진행 중인 Exchange가 있으면 true를 반환한다")
         void hasActiveClaim_HasActiveExchange_ReturnsTrue() {
             // given
-            String orderItemId = "01900000-0000-7000-0000-000000000010";
+            Long orderItemId = 1001L;
             ExchangeClaim activeExchange = ExchangeFixtures.requestedExchangeClaim();
-            OrderItemId orderItemIdVo = OrderItemId.of(orderItemId);
+            OrderItemId orderItemIdVo = OrderItemId.of(1001L);
 
             given(refundReadManager.findByOrderItemId(orderItemId)).willReturn(Optional.empty());
             given(exchangeReadManager.findByOrderItemId(orderItemIdVo))
@@ -135,9 +135,9 @@ class ExchangeBatchValidatorTest {
         @DisplayName("진행 중인 클레임이 없으면 false를 반환한다")
         void hasActiveClaim_NoActiveClaim_ReturnsFalse() {
             // given
-            String orderItemId = "01900000-0000-7000-0000-000000000010";
+            Long orderItemId = 1001L;
             ExchangeClaim completedExchange = ExchangeFixtures.completedExchangeClaim();
-            OrderItemId orderItemIdVo = OrderItemId.of(orderItemId);
+            OrderItemId orderItemIdVo = OrderItemId.of(1001L);
 
             given(refundReadManager.findByOrderItemId(orderItemId)).willReturn(Optional.empty());
             given(exchangeReadManager.findByOrderItemId(orderItemIdVo))
@@ -154,8 +154,8 @@ class ExchangeBatchValidatorTest {
         @DisplayName("Refund와 Exchange 모두 없으면 false를 반환한다")
         void hasActiveClaim_NoClaims_ReturnsFalse() {
             // given
-            String orderItemId = "01900000-0000-7000-0000-000000000010";
-            OrderItemId orderItemIdVo = OrderItemId.of(orderItemId);
+            Long orderItemId = 1001L;
+            OrderItemId orderItemIdVo = OrderItemId.of(1001L);
 
             given(refundReadManager.findByOrderItemId(orderItemId)).willReturn(Optional.empty());
             given(exchangeReadManager.findByOrderItemId(orderItemIdVo))

@@ -54,7 +54,7 @@ class GetShipmentListServiceTest {
             ShipmentSearchParams params = ShipmentQueryFixtures.searchParams();
             ShipmentSearchCriteria criteria =
                     org.mockito.Mockito.mock(ShipmentSearchCriteria.class);
-            String orderItemId = "01940001-0000-7000-8000-000000000001";
+            Long orderItemId = 1001L;
             Shipment shipment = ShipmentFixtures.preparingShipment();
             OrderItemResult item =
                     OrderQueryFixtures.orderItemResult(
@@ -114,7 +114,7 @@ class GetShipmentListServiceTest {
             ShipmentSearchParams params = ShipmentQueryFixtures.searchParams();
             ShipmentSearchCriteria criteria =
                     org.mockito.Mockito.mock(ShipmentSearchCriteria.class);
-            String orderItemId = "01940001-0000-7000-8000-000000000001";
+            Long orderItemId = 1001L;
             ShipmentPageResult expected = ShipmentQueryFixtures.emptyShipmentPageResult();
 
             given(queryFactory.createCriteria(params)).willReturn(criteria);

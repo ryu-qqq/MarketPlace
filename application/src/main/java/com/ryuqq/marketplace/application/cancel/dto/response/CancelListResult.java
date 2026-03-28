@@ -6,7 +6,7 @@ import java.time.Instant;
 public record CancelListResult(
         String cancelId,
         String cancelNumber,
-        String orderItemId,
+        Long orderItemId,
         int cancelQty,
         String cancelType,
         String cancelStatus,

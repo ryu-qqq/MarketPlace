@@ -21,7 +21,7 @@ import java.time.Instant;
  */
 public record OrderCancelResult(
         String cancelId,
-        String orderItemId,
+        Long orderItemId,
         String cancelNumber,
         String cancelStatus,
         int quantity,

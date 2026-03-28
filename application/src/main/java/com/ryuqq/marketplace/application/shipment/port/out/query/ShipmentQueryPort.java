@@ -23,7 +23,7 @@ public interface ShipmentQueryPort {
     long countByCriteria(ShipmentSearchCriteria criteria);
 
     /** OrderItem 기준 주문 이행 목록 조회. shipment 없는 주문도 포함. */
-    List<String> findFulfillmentOrderItemIds(ShipmentSearchCriteria criteria);
+    List<Long> findFulfillmentOrderItemIds(ShipmentSearchCriteria criteria);
 
     /** OrderItem 기준 주문 이행 목록 카운트. */
     long countFulfillment(ShipmentSearchCriteria criteria);

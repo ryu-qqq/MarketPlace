@@ -19,8 +19,8 @@ public class OrderItemHistoryJpaEntity extends BaseAuditEntity {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "order_item_id", nullable = false, length = 36)
-    private String orderItemId;
+    @Column(name = "order_item_id", nullable = false)
+    private Long orderItemId;
 
     @Column(name = "from_status", length = 30)
     private String fromStatus;
@@ -46,7 +46,7 @@ public class OrderItemHistoryJpaEntity extends BaseAuditEntity {
 
     private OrderItemHistoryJpaEntity(
             Long id,
-            String orderItemId,
+            Long orderItemId,
             String fromStatus,
             String toStatus,
             String changedBy,
@@ -68,7 +68,7 @@ public class OrderItemHistoryJpaEntity extends BaseAuditEntity {
 
     public static OrderItemHistoryJpaEntity create(
             Long id,
-            String orderItemId,
+            Long orderItemId,
             String fromStatus,
             String toStatus,
             String changedBy,
@@ -94,7 +94,7 @@ public class OrderItemHistoryJpaEntity extends BaseAuditEntity {
         return id;
     }
 
-    public String getOrderItemId() {
+    public Long getOrderItemId() {
         return orderItemId;
     }
 

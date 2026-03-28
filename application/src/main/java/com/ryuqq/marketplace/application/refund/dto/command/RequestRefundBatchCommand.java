@@ -8,5 +8,5 @@ public record RequestRefundBatchCommand(
         List<RefundRequestItem> items, String requestedBy, long sellerId) {
 
     public record RefundRequestItem(
-            String orderItemId, int refundQty, RefundReasonType reasonType, String reasonDetail) {}
+            Long orderItemId, int refundQty, RefundReasonType reasonType, String reasonDetail) {}
 }

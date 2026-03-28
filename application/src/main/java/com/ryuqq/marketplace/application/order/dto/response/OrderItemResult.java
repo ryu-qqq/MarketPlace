@@ -33,7 +33,7 @@ package com.ryuqq.marketplace.application.order.dto.response;
  * @param externalOrderStatus 외부몰 주문 상태
  */
 public record OrderItemResult(
-        String orderItemId,
+        Long orderItemId,
         String orderItemNumber,
         String orderId,
         long productGroupId,

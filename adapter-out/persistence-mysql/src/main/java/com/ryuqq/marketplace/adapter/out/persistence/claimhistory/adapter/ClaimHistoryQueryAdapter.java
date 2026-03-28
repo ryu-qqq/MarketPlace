@@ -41,7 +41,7 @@ public class ClaimHistoryQueryAdapter implements ClaimHistoryQueryPort {
     }
 
     @Override
-    public List<ClaimHistory> findByOrderItemId(String orderItemId) {
+    public List<ClaimHistory> findByOrderItemId(Long orderItemId) {
         return claimHistoryRepository.findByOrderItemId(orderItemId).stream()
                 .map(mapper::toDomain)
                 .toList();

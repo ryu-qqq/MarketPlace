@@ -109,7 +109,7 @@ public class ShipmentQueryApiMapper {
         ShipmentListResult.ReceiverInfo r = result.receiver();
 
         return new ShipmentListApiResponseV4(
-                p != null ? nullToEmpty(p.orderItemId()) : "",
+                p != null && p.orderItemId() != null ? String.valueOf(p.orderItemId()) : "",
                 p != null ? nullToEmpty(p.orderItemNumber()) : "",
                 s != null ? nullToEmpty(s.shipmentNumber()) : "",
                 s != null ? nullToEmpty(s.status()) : "",
@@ -141,7 +141,7 @@ public class ShipmentQueryApiMapper {
                     "", "", null, null, 0, 0, "", "", "", 0, "", 0, 0, 0, "", "", List.of());
         }
         return new OrderListApiResponseV4.OrderProductApiResponse(
-                nullToEmpty(p.orderItemId()),
+                p.orderItemId() != null ? String.valueOf(p.orderItemId()) : "",
                 nullToEmpty(p.productGroupName()),
                 new OrderListApiResponseV4.PriceApiResponse(
                         p.unitPrice(), p.unitPrice(), p.unitPrice(), p.discountAmount(), 0, 0),
@@ -200,7 +200,7 @@ public class ShipmentQueryApiMapper {
     private ProductOrderInfoResponse toProductOrderInfoResponse(
             ShipmentListResult.ProductOrderInfo info) {
         return new ProductOrderInfoResponse(
-                info.orderItemId(),
+                info.orderItemId() != null ? String.valueOf(info.orderItemId()) : "",
                 info.productGroupId(),
                 info.productId(),
                 info.skuCode(),

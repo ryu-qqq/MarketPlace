@@ -48,9 +48,7 @@ class ClaimHistoryConditionBuilderTest {
             // given
             ClaimHistoryPageCriteria criteria =
                     ClaimHistoryPageCriteria.of(
-                            "order-item-001",
-                            null,
-                            QueryContext.defaultOf(ClaimHistorySortKey.defaultKey()));
+                            1001L, null, QueryContext.defaultOf(ClaimHistorySortKey.defaultKey()));
 
             // when
             BooleanExpression result = conditionBuilder.orderItemIdEq(criteria);
@@ -63,8 +61,7 @@ class ClaimHistoryConditionBuilderTest {
         @DisplayName("claimType 필터 없이도 orderItemId 조건은 항상 반환됩니다")
         void orderItemIdEq_WithoutClaimType_StillReturnsBooleanExpression() {
             // given
-            ClaimHistoryPageCriteria criteria =
-                    ClaimHistoryPageCriteria.defaultOf("order-item-002");
+            ClaimHistoryPageCriteria criteria = ClaimHistoryPageCriteria.defaultOf(1002L);
 
             // when
             BooleanExpression result = conditionBuilder.orderItemIdEq(criteria);
@@ -88,7 +85,7 @@ class ClaimHistoryConditionBuilderTest {
             // given
             ClaimHistoryPageCriteria criteria =
                     ClaimHistoryPageCriteria.of(
-                            "order-item-001",
+                            1001L,
                             ClaimType.CANCEL,
                             QueryContext.defaultOf(ClaimHistorySortKey.defaultKey()));
 
@@ -103,8 +100,7 @@ class ClaimHistoryConditionBuilderTest {
         @DisplayName("claimType 필터가 없는 criteria 입력 시 null을 반환합니다")
         void claimTypeEq_WithNoClaimTypeFilter_ReturnsNull() {
             // given
-            ClaimHistoryPageCriteria criteria =
-                    ClaimHistoryPageCriteria.defaultOf("order-item-001");
+            ClaimHistoryPageCriteria criteria = ClaimHistoryPageCriteria.defaultOf(1001L);
 
             // when
             BooleanExpression result = conditionBuilder.claimTypeEq(criteria);
@@ -119,7 +115,7 @@ class ClaimHistoryConditionBuilderTest {
             // given
             ClaimHistoryPageCriteria criteria =
                     ClaimHistoryPageCriteria.of(
-                            "order-item-001",
+                            1001L,
                             ClaimType.REFUND,
                             QueryContext.defaultOf(ClaimHistorySortKey.defaultKey()));
 
@@ -136,7 +132,7 @@ class ClaimHistoryConditionBuilderTest {
             // given
             ClaimHistoryPageCriteria criteria =
                     ClaimHistoryPageCriteria.of(
-                            "order-item-001",
+                            1001L,
                             ClaimType.EXCHANGE,
                             QueryContext.defaultOf(ClaimHistorySortKey.defaultKey()));
 
@@ -153,7 +149,7 @@ class ClaimHistoryConditionBuilderTest {
             // given
             ClaimHistoryPageCriteria criteria =
                     ClaimHistoryPageCriteria.of(
-                            "order-item-001",
+                            1001L,
                             ClaimType.ORDER,
                             QueryContext.defaultOf(ClaimHistorySortKey.defaultKey()));
 

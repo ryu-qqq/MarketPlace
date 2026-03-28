@@ -91,16 +91,14 @@ class CancelQueryE2ETest extends E2ETestBase {
             // REQUESTED 2건, APPROVED 1건, REJECTED 1건 직접 시딩
             cancelRepository.save(
                     CancelJpaEntityFixtures.requestedEntityWithNumber(
-                            "cancel-sum-req-001", "CAN-SUM-REQ-001", "order-item-sum-001", 10L));
+                            "cancel-sum-req-001", "CAN-SUM-REQ-001", 1001L, 10L));
             cancelRepository.save(
                     CancelJpaEntityFixtures.requestedEntityWithNumber(
-                            "cancel-sum-req-002", "CAN-SUM-REQ-002", "order-item-sum-002", 10L));
+                            "cancel-sum-req-002", "CAN-SUM-REQ-002", 1002L, 10L));
             cancelRepository.save(
-                    CancelJpaEntityFixtures.approvedEntity(
-                            "cancel-sum-app-001", "order-item-sum-003", 10L));
+                    CancelJpaEntityFixtures.approvedEntity("cancel-sum-app-001", 1003L, 10L));
             cancelRepository.save(
-                    CancelJpaEntityFixtures.rejectedEntity(
-                            "cancel-sum-rej-001", "order-item-sum-004", 10L));
+                    CancelJpaEntityFixtures.rejectedEntity("cancel-sum-rej-001", 1004L, 10L));
 
             given().spec(givenSuperAdmin())
                     .when()
@@ -159,13 +157,11 @@ class CancelQueryE2ETest extends E2ETestBase {
         void getList_ThreeRecords_ReturnsPaged() {
             cancelRepository.save(
                     CancelJpaEntityFixtures.requestedEntityWithNumber(
-                            "cancel-list-001", "CAN-LIST-001", "order-item-list-001", 10L));
+                            "cancel-list-001", "CAN-LIST-001", 2001L, 10L));
             cancelRepository.save(
-                    CancelJpaEntityFixtures.approvedEntity(
-                            "cancel-list-002", "order-item-list-002", 10L));
+                    CancelJpaEntityFixtures.approvedEntity("cancel-list-002", 2002L, 10L));
             cancelRepository.save(
-                    CancelJpaEntityFixtures.rejectedEntity(
-                            "cancel-list-003", "order-item-list-003", 10L));
+                    CancelJpaEntityFixtures.rejectedEntity("cancel-list-003", 2003L, 10L));
 
             given().spec(givenSuperAdmin())
                     .queryParam("page", 0)
@@ -184,19 +180,19 @@ class CancelQueryE2ETest extends E2ETestBase {
         void getList_PageSize2_ReturnsCorrectPage() {
             cancelRepository.save(
                     CancelJpaEntityFixtures.requestedEntityWithNumber(
-                            "cancel-page-001", "CAN-PAGE-001", "order-item-page-001", 10L));
+                            "cancel-page-001", "CAN-PAGE-001", 3001L, 10L));
             cancelRepository.save(
                     CancelJpaEntityFixtures.requestedEntityWithNumber(
-                            "cancel-page-002", "CAN-PAGE-002", "order-item-page-002", 10L));
+                            "cancel-page-002", "CAN-PAGE-002", 3002L, 10L));
             cancelRepository.save(
                     CancelJpaEntityFixtures.requestedEntityWithNumber(
-                            "cancel-page-003", "CAN-PAGE-003", "order-item-page-003", 10L));
+                            "cancel-page-003", "CAN-PAGE-003", 3003L, 10L));
             cancelRepository.save(
                     CancelJpaEntityFixtures.requestedEntityWithNumber(
-                            "cancel-page-004", "CAN-PAGE-004", "order-item-page-004", 10L));
+                            "cancel-page-004", "CAN-PAGE-004", 3004L, 10L));
             cancelRepository.save(
                     CancelJpaEntityFixtures.requestedEntityWithNumber(
-                            "cancel-page-005", "CAN-PAGE-005", "order-item-page-005", 10L));
+                            "cancel-page-005", "CAN-PAGE-005", 3005L, 10L));
 
             given().spec(givenSuperAdmin())
                     .queryParam("page", 0)
@@ -215,22 +211,14 @@ class CancelQueryE2ETest extends E2ETestBase {
         void getList_StatusFilter_FiltersCorrectly() {
             cancelRepository.save(
                     CancelJpaEntityFixtures.requestedEntityWithNumber(
-                            "cancel-filter-req-001",
-                            "CAN-FILT-REQ-001",
-                            "order-item-filt-001",
-                            10L));
+                            "cancel-filter-req-001", "CAN-FILT-REQ-001", 4001L, 10L));
             cancelRepository.save(
                     CancelJpaEntityFixtures.requestedEntityWithNumber(
-                            "cancel-filter-req-002",
-                            "CAN-FILT-REQ-002",
-                            "order-item-filt-002",
-                            10L));
+                            "cancel-filter-req-002", "CAN-FILT-REQ-002", 4002L, 10L));
             cancelRepository.save(
-                    CancelJpaEntityFixtures.approvedEntity(
-                            "cancel-filter-app-001", "order-item-filt-003", 10L));
+                    CancelJpaEntityFixtures.approvedEntity("cancel-filter-app-001", 4003L, 10L));
             cancelRepository.save(
-                    CancelJpaEntityFixtures.rejectedEntity(
-                            "cancel-filter-rej-001", "order-item-filt-004", 10L));
+                    CancelJpaEntityFixtures.rejectedEntity("cancel-filter-rej-001", 4004L, 10L));
 
             given().spec(givenSuperAdmin())
                     .queryParam("statuses", "REQUESTED")
@@ -253,8 +241,7 @@ class CancelQueryE2ETest extends E2ETestBase {
         @DisplayName("[Q14-1] 존재하는 cancelId로 상세 조회")
         void getDetail_ExistingId_ReturnsDetail() {
             cancelRepository.save(
-                    CancelJpaEntityFixtures.requestedEntity(
-                            "cancel-detail-001", "order-item-detail-001", 10L));
+                    CancelJpaEntityFixtures.requestedEntity("cancel-detail-001", 5001L, 10L));
 
             given().spec(givenSuperAdmin())
                     .when()

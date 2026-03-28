@@ -21,14 +21,14 @@ import org.junit.jupiter.api.Test;
  *
  * <h3>배경</h3>
  *
- * <p>레거시 운영 기간 동안 디즈니 상품은 셀릭→네이버 경로로 등록됩니다. 셀릭이 네이버에 상품을 등록하면 네이버 상품
- * ID(originProductNo)가 생기는데, 이 ID가 우리 market DB에 없습니다. 이 도구는 네이버 API에서 상품을 조회하여
- * sellerManagementCode(= luxurydb product_group_id)로 매칭하고, 우리 outbound_products(네이버)에 등록합니다.
+ * <p>레거시 운영 기간 동안 디즈니 상품은 셀릭→네이버 경로로 등록됩니다. 셀릭이 네이버에 상품을 등록하면 네이버 상품 ID(originProductNo)가 생기는데, 이
+ * ID가 우리 market DB에 없습니다. 이 도구는 네이버 API에서 상품을 조회하여 sellerManagementCode(= luxurydb
+ * product_group_id)로 매칭하고, 우리 outbound_products(네이버)에 등록합니다.
  *
  * <h3>매칭 키</h3>
  *
- * <p>셀릭이 네이버에 상품을 등록할 때 {@code sellerManagementCode}에 luxurydb product_group_id를 넣습니다. 이 값은
- * 네이버 상품 상세 API({@code /v2/products/origin-products/{id}})의 {@code
+ * <p>셀릭이 네이버에 상품을 등록할 때 {@code sellerManagementCode}에 luxurydb product_group_id를 넣습니다. 이 값은 네이버 상품
+ * 상세 API({@code /v2/products/origin-products/{id}})의 {@code
  * originProduct.detailAttribute.sellerCodeInfo.sellerManagementCode}에서 확인할 수 있습니다.
  *
  * <h3>최적화</h3>
@@ -55,8 +55,8 @@ import org.junit.jupiter.api.Test;
  *
  * <h3>DB 연결 없이 동작</h3>
  *
- * <p>이 도구는 DB 접속 없이 네이버 API만 호출합니다. 이미 등록된 네이버 상품 ID는 환경변수
- * {@code KNOWN_NAVER_PRODUCT_IDS}로 전달하거나, 실행 전에 DB에서 추출합니다:
+ * <p>이 도구는 DB 접속 없이 네이버 API만 호출합니다. 이미 등록된 네이버 상품 ID는 환경변수 {@code KNOWN_NAVER_PRODUCT_IDS}로 전달하거나,
+ * 실행 전에 DB에서 추출합니다:
  *
  * <pre>
  * # market DB에서 이미 등록된 네이버 상품 ID 추출
@@ -80,8 +80,7 @@ class NaverSellicProductSyncTest {
     /**
      * 증분 동기화 — 신규 상품만 조회하여 INSERT SQL 생성.
      *
-     * <p>실행 전 KNOWN_NAVER_PRODUCT_IDS 환경변수에 이미 등록된 네이버 상품 ID를 콤마로 전달하면 해당 상품은
-     * 상세 조회를 건너뜁니다.
+     * <p>실행 전 KNOWN_NAVER_PRODUCT_IDS 환경변수에 이미 등록된 네이버 상품 ID를 콤마로 전달하면 해당 상품은 상세 조회를 건너뜁니다.
      *
      * <pre>
      * # 이미 등록된 ID 추출 후 실행
@@ -173,8 +172,7 @@ class NaverSellicProductSyncTest {
         int totalPages = 1;
 
         while (page <= totalPages) {
-            String searchBody =
-                    String.format("{\"page\":%d,\"size\":%d}", page, SEARCH_PAGE_SIZE);
+            String searchBody = String.format("{\"page\":%d,\"size\":%d}", page, SEARCH_PAGE_SIZE);
             HttpRequest req =
                     HttpRequest.newBuilder()
                             .uri(URI.create(NaverAuthHelper.BASE_URL + "/v1/products/search"))
@@ -184,8 +182,7 @@ class NaverSellicProductSyncTest {
                             .POST(HttpRequest.BodyPublishers.ofString(searchBody))
                             .build();
 
-            HttpResponse<String> resp =
-                    httpClient.send(req, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> resp = httpClient.send(req, HttpResponse.BodyHandlers.ofString());
 
             if (resp.statusCode() != 200) {
                 throw new IllegalStateException(
@@ -275,8 +272,7 @@ class NaverSellicProductSyncTest {
         }
 
         if (!failedIds.isEmpty()) {
-            System.err.printf(
-                    "%n경고: %d건 조회 실패. 누락된 ID: %s%n", failedIds.size(), failedIds);
+            System.err.printf("%n경고: %d건 조회 실패. 누락된 ID: %s%n", failedIds.size(), failedIds);
         }
 
         return mappings;
@@ -297,8 +293,7 @@ class NaverSellicProductSyncTest {
                             .GET()
                             .build();
 
-            HttpResponse<String> resp =
-                    httpClient.send(req, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> resp = httpClient.send(req, HttpResponse.BodyHandlers.ofString());
 
             if (resp.statusCode() == 429) {
                 long wait = (long) Math.pow(2, retry) * 1000;
@@ -317,8 +312,7 @@ class NaverSellicProductSyncTest {
                 "-- 형식: originProductNo|sellerManagementCode(=legacyProductGroupId)|status|name");
         for (NaverProductMapping m : mappings) {
             System.out.printf(
-                    "%d|%s|%s|%s%n",
-                    m.originProductNo, m.legacyProductGroupId, m.status, m.name);
+                    "%d|%s|%s|%s%n", m.originProductNo, m.legacyProductGroupId, m.status, m.name);
         }
         System.out.println("=== NAVER_PRODUCT_MAPPING_END ===");
     }
@@ -332,17 +326,19 @@ class NaverSellicProductSyncTest {
                 "-- product_group_id는 legacy_product_id_mappings에서 internal_product_group_id로 변환");
         System.out.println();
         System.out.println(
-                "INSERT INTO market.outbound_products"
-                        + " (product_group_id, sales_channel_id, shop_id, external_product_id, status, created_at, updated_at)");
+                "INSERT INTO market.outbound_products (product_group_id, sales_channel_id, shop_id,"
+                        + " external_product_id, status, created_at, updated_at)");
         System.out.println(
-                "SELECT lm.internal_product_group_id, 2, 0, v.naver_id, 'REGISTERED', NOW(6), NOW(6)");
+                "SELECT lm.internal_product_group_id, 2, 0, v.naver_id, 'REGISTERED', NOW(6),"
+                        + " NOW(6)");
         System.out.println("FROM (VALUES");
 
         for (int i = 0; i < mappings.size(); i++) {
             NaverProductMapping m = mappings.get(i);
             String comma = (i < mappings.size() - 1) ? "," : "";
             // legacyProductGroupId는 숫자 검증을 통과한 값만 도달하므로 안전하게 숫자로 출력
-            System.out.printf("  ROW(%d, '%d')%s%n",
+            System.out.printf(
+                    "  ROW(%d, '%d')%s%n",
                     Long.parseLong(m.legacyProductGroupId), m.originProductNo, comma);
         }
 

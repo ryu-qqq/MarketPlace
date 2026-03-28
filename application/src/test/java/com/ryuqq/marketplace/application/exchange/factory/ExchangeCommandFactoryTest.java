@@ -53,7 +53,7 @@ class ExchangeCommandFactoryTest {
                             historyFactory.createStatusChange(
                                     org.mockito.ArgumentMatchers.any(),
                                     org.mockito.ArgumentMatchers.anyString(),
-                                    org.mockito.ArgumentMatchers.anyString(),
+                                    org.mockito.ArgumentMatchers.anyLong(),
                                     org.mockito.ArgumentMatchers.isNull(),
                                     org.mockito.ArgumentMatchers.eq("REQUESTED"),
                                     org.mockito.ArgumentMatchers.anyString(),
@@ -90,7 +90,7 @@ class ExchangeCommandFactoryTest {
                             historyFactory.createStatusChange(
                                     org.mockito.ArgumentMatchers.any(),
                                     org.mockito.ArgumentMatchers.anyString(),
-                                    org.mockito.ArgumentMatchers.anyString(),
+                                    org.mockito.ArgumentMatchers.anyLong(),
                                     org.mockito.ArgumentMatchers.eq("REQUESTED"),
                                     org.mockito.ArgumentMatchers.eq("COLLECTING"),
                                     org.mockito.ArgumentMatchers.anyString(),
@@ -123,7 +123,7 @@ class ExchangeCommandFactoryTest {
                             historyFactory.createStatusChange(
                                     org.mockito.ArgumentMatchers.any(),
                                     org.mockito.ArgumentMatchers.anyString(),
-                                    org.mockito.ArgumentMatchers.anyString(),
+                                    org.mockito.ArgumentMatchers.anyLong(),
                                     org.mockito.ArgumentMatchers.eq("COLLECTING"),
                                     org.mockito.ArgumentMatchers.eq("COLLECTED"),
                                     org.mockito.ArgumentMatchers.anyString(),
@@ -158,7 +158,7 @@ class ExchangeCommandFactoryTest {
                             historyFactory.createStatusChange(
                                     org.mockito.ArgumentMatchers.any(),
                                     org.mockito.ArgumentMatchers.anyString(),
-                                    org.mockito.ArgumentMatchers.anyString(),
+                                    org.mockito.ArgumentMatchers.anyLong(),
                                     org.mockito.ArgumentMatchers.eq("REQUESTED"),
                                     org.mockito.ArgumentMatchers.eq("REJECTED"),
                                     org.mockito.ArgumentMatchers.anyString(),

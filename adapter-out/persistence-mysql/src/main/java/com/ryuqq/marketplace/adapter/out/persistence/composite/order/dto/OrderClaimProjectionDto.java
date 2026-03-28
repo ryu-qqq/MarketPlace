@@ -5,7 +5,7 @@ import java.time.Instant;
 /** 주문 클레임 프로젝션. refund_claims + exchange_claims 테이블에서 조회. */
 public record OrderClaimProjectionDto(
         String claimId,
-        String orderItemId,
+        Long orderItemId,
         String claimNumber,
         String claimType,
         String claimStatus,

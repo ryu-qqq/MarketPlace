@@ -81,13 +81,13 @@ class ShipmentFlowE2ETest extends E2ETestBase {
     /**
      * @return [0]=orderItemId, [1]=orderItemNumber
      */
-    private String[] seedOrderItem(String orderId) {
+    private Object[] seedOrderItem(String orderId) {
         OrderJpaEntity order = OrderJpaEntityFixtures.orderedEntity(orderId);
         orderRepository.save(order);
 
         OrderItemJpaEntity item = OrderItemJpaEntityFixtures.defaultItem(orderId);
         OrderItemJpaEntity saved = orderItemRepository.save(item);
-        return new String[] {saved.getId(), saved.getOrderItemNumber()};
+        return new Object[] {saved.getId(), saved.getOrderItemNumber()};
     }
 
     @Nested
@@ -99,8 +99,8 @@ class ShipmentFlowE2ETest extends E2ETestBase {
         @DisplayName("[FLOW-1] 발주확인 배치 → Shipment 생성 확인")
         void confirmBatch_CreatesShipments_Success() {
             // Seed: READY 상태 OrderItem 2건
-            String itemId1 = seedOrderItem("order-confirm-001")[0];
-            String itemId2 = seedOrderItem("order-confirm-002")[0];
+            Long itemId1 = (Long) seedOrderItem("order-confirm-001")[0];
+            Long itemId2 = (Long) seedOrderItem("order-confirm-002")[0];
 
             // Step 1: POST - 발주확인 배치 (orderItemId 기반)
             given().spec(givenSuperAdmin())
@@ -130,14 +130,11 @@ class ShipmentFlowE2ETest extends E2ETestBase {
         @Tag("P0")
         @DisplayName("[FLOW-2] 발주확인 - 존재하지 않는 orderItemId → 빈 결과 (조회 결과 0건)")
         void confirmBatch_NonExistentId_ReturnsEmptyResult() {
-            String itemId1 = seedOrderItem("order-partial-001")[0];
+            Long itemId1 = (Long) seedOrderItem("order-partial-001")[0];
 
             // 존재하지 않는 orderItemId → findAllByIds에서 반환 안됨
             given().spec(givenSuperAdmin())
-                    .body(
-                            Map.of(
-                                    "orderIds",
-                                    List.of(itemId1, "01940001-0000-7000-8000-000000000999")))
+                    .body(Map.of("orderIds", List.of(itemId1, 99999999L)))
                     .when()
                     .post(CONFIRM_BATCH)
                     .then()
@@ -167,7 +164,7 @@ class ShipmentFlowE2ETest extends E2ETestBase {
         @DisplayName("[FLOW-4] 발주확인 → 송장등록(배치) → 목록 조회 전체 플로우")
         void confirmThenShipBatch_ThenGetList_FullFlow() {
             // Seed: READY OrderItem
-            String[] seed = seedOrderItem("order-flow-001");
+            Object[] seed = seedOrderItem("order-flow-001");
 
             // Step 1: 발주확인
             given().spec(givenSuperAdmin())
@@ -210,8 +207,8 @@ class ShipmentFlowE2ETest extends E2ETestBase {
         @DisplayName("[FLOW-5] 복수 배송 발주확인 → 송장등록 배치 → 조회")
         void confirmThenShipBatch_MultipleShipments_AllShipped() {
             // Seed: READY OrderItem 2건
-            String[] seed1 = seedOrderItem("order-multi-001");
-            String[] seed2 = seedOrderItem("order-multi-002");
+            Object[] seed1 = seedOrderItem("order-multi-001");
+            Object[] seed2 = seedOrderItem("order-multi-002");
 
             // Step 1: 발주확인 배치
             given().spec(givenSuperAdmin())
@@ -253,7 +250,7 @@ class ShipmentFlowE2ETest extends E2ETestBase {
         @DisplayName("[FLOW-6] 단건 주문상품별 송장등록")
         void shipSingle_AfterConfirm_Shipped() {
             // Seed: READY OrderItem
-            String orderItemId = seedOrderItem("order-single-001")[0];
+            Long orderItemId = (Long) seedOrderItem("order-single-001")[0];
 
             // Step 1: 발주확인
             given().spec(givenSuperAdmin())

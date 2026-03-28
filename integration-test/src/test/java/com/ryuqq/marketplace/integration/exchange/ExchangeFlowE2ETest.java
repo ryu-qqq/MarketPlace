@@ -86,13 +86,13 @@ class ExchangeFlowE2ETest extends E2ETestBase {
 
     // ===== 헬퍼 메서드 =====
 
-    private String seedOrderItem(String orderId) {
+    private Long seedOrderItem(String orderId) {
         orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
         var savedItem = orderItemRepository.save(OrderItemJpaEntityFixtures.defaultItem(orderId));
         return savedItem.getId();
     }
 
-    private String requestExchange(String orderItemId) {
+    private String requestExchange(Long orderItemId) {
         Map<String, Object> item = new HashMap<>();
         item.put("orderId", orderItemId);
         item.put("exchangeQty", 1);
@@ -206,7 +206,7 @@ class ExchangeFlowE2ETest extends E2ETestBase {
                 "[FLOW-1] 교환 해피패스 전체 - REQUESTED→COLLECTING→COLLECTED→PREPARING→SHIPPING→COMPLETED")
         void flow1_happyPath_requestToCompleted() {
             // given: ORDERED 상태 OrderItem 1건
-            String orderItemId = seedOrderItem("order-flow1-001");
+            Long orderItemId = seedOrderItem("order-flow1-001");
 
             // Step 1: 교환 요청
             String exchangeClaimId = requestExchange(orderItemId);
@@ -261,7 +261,7 @@ class ExchangeFlowE2ETest extends E2ETestBase {
         @DisplayName("[FLOW-2] 교환 요청 → 거절 - REQUESTED → REJECTED")
         void flow2_requestToRejected() {
             // given: ORDERED 상태 OrderItem 1건
-            String orderItemId = seedOrderItem("order-flow2-001");
+            Long orderItemId = seedOrderItem("order-flow2-001");
 
             // Step 1: 교환 요청
             String exchangeClaimId = requestExchange(orderItemId);
@@ -286,7 +286,7 @@ class ExchangeFlowE2ETest extends E2ETestBase {
         @DisplayName("[FLOW-3] 교환 → 환불 전환 - ConvertToRefund 플로우")
         void flow3_exchangeToRefundConversion() {
             // given: ORDERED 상태 OrderItem 1건
-            String orderItemId = seedOrderItem("order-flow3-001");
+            Long orderItemId = seedOrderItem("order-flow3-001");
 
             // Step 1: 교환 요청
             String exchangeClaimId = requestExchange(orderItemId);

@@ -91,7 +91,9 @@ public class SettlementApiMapper {
         return new SettlementListItemApiResponse(
                 entry.entryId(),
                 apiStatus,
-                nullToEmpty(entry.orderItemId()), // V4 간극: orderItemId → orderId
+                entry.orderItemId() != null
+                        ? String.valueOf(entry.orderItemId())
+                        : "", // V4 간극: orderItemId → orderId
                 "", // orderNumber: Entry에 없음
                 entry.sellerId(),
                 amounts,

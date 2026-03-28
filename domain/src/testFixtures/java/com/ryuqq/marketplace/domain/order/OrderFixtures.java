@@ -63,7 +63,7 @@ public final class OrderFixtures {
     }
 
     public static OrderItemId defaultOrderItemId() {
-        return OrderItemId.of("01940001-0000-7000-8000-000000000001");
+        return OrderItemId.of(1001L);
     }
 
     // ===== VO Fixtures =====
@@ -188,7 +188,7 @@ public final class OrderFixtures {
                         ? defaultExternalOrderItemPrice().quantity()
                         : 0;
         return OrderItem.reconstitute(
-                OrderItemId.of("01940001-0000-7000-8000-000000000" + String.format("%03d", id)),
+                OrderItemId.of(1000L + id),
                 OrderItemNumber.of("ORD-20240101-0001-" + String.format("%03d", id)),
                 defaultInternalProductReference(),
                 defaultExternalProductSnapshot(),

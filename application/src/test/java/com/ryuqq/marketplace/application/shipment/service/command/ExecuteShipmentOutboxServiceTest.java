@@ -46,7 +46,7 @@ class ExecuteShipmentOutboxServiceTest {
     @Mock private ShopReadManager shopReadManager;
 
     private static final Long OUTBOX_ID = 1L;
-    private static final String ORDER_ITEM_ID = "01940001-0000-7000-8000-000000000001";
+    private static final Long ORDER_ITEM_ID = 1001L;
     private static final String CHANNEL_CODE = "NAVER";
     private static final Instant NOW = Instant.parse("2026-02-18T10:00:00Z");
 

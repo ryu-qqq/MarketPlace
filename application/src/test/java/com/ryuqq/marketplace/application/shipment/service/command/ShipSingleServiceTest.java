@@ -53,7 +53,7 @@ class ShipSingleServiceTest {
             ShipmentShipData shipData = ShipmentShipData.of("1234567890", method);
 
             ShipSingleCommand command = ShipmentCommandFixtures.shipSingleCommand();
-            OrderItemId orderItemId = OrderItemId.of("01940001-0000-7000-8000-000000000001");
+            OrderItemId orderItemId = OrderItemId.of(1001L);
             ShipSingleContext context = new ShipSingleContext(orderItemId, shipData, now);
 
             given(commandFactory.createShipSingleContext(command)).willReturn(context);
@@ -79,7 +79,7 @@ class ShipSingleServiceTest {
             ShipmentShipData shipData = ShipmentShipData.of("1234567890", method);
 
             ShipSingleCommand command = ShipmentCommandFixtures.shipSingleCommand();
-            OrderItemId orderItemId = OrderItemId.of("01940001-0000-7000-8000-000000000001");
+            OrderItemId orderItemId = OrderItemId.of(1001L);
             ShipSingleContext context = new ShipSingleContext(orderItemId, shipData, now);
 
             given(commandFactory.createShipSingleContext(command)).willReturn(context);

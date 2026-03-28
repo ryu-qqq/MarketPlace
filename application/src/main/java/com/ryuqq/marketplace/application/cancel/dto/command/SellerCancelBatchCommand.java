@@ -8,5 +8,5 @@ public record SellerCancelBatchCommand(
         List<SellerCancelItem> items, String requestedBy, long sellerId) {
 
     public record SellerCancelItem(
-            String orderItemId, int cancelQty, CancelReasonType reasonType, String reasonDetail) {}
+            Long orderItemId, int cancelQty, CancelReasonType reasonType, String reasonDetail) {}
 }

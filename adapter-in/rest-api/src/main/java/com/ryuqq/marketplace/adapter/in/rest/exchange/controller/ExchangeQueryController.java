@@ -77,7 +77,7 @@ public class ExchangeQueryController {
     public ResponseEntity<ApiResponse<ExchangeDetailApiResponse>> getDetail(
             @PathVariable String exchangeClaimId) {
         ExchangeDetailResult result = getExchangeDetailUseCase.execute(exchangeClaimId);
-        String itemId = result.orderItemId();
+        Long itemId = result.orderItemId();
         ClaimOrderEnricher.OrderContext ctx = enricher.loadOrderContext(List.of(itemId));
         return ResponseEntity.ok(
                 ApiResponse.of(

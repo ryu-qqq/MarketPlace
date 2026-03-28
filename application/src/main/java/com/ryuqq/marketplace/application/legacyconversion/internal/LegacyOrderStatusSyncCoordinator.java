@@ -94,10 +94,7 @@ public class LegacyOrderStatusSyncCoordinator {
             OrderItemStatus targetStatus = resolveTargetStatus(resolution);
 
             if (currentStatus == targetStatus) {
-                log.info(
-                        "상태 동일, 건너뜀: legacyOrderId={}, status={}",
-                        legacyOrderId,
-                        currentStatus);
+                log.info("상태 동일, 건너뜀: legacyOrderId={}, status={}", legacyOrderId, currentStatus);
                 completeOutbox(outbox, now);
                 return;
             }
@@ -132,12 +129,10 @@ public class LegacyOrderStatusSyncCoordinator {
      */
     private OrderItemStatus resolveTargetStatus(
             LegacyOrderStatusMapper.OrderStatusResolution resolution) {
-        if (resolution.hasCancel()
-                && resolution.cancelStatus() == CancelStatus.COMPLETED) {
+        if (resolution.hasCancel() && resolution.cancelStatus() == CancelStatus.COMPLETED) {
             return OrderItemStatus.CANCELLED;
         }
-        if (resolution.hasRefund()
-                && resolution.refundStatus() == RefundStatus.COMPLETED) {
+        if (resolution.hasRefund() && resolution.refundStatus() == RefundStatus.COMPLETED) {
             return OrderItemStatus.RETURNED;
         }
         if (resolution.hasRefund()

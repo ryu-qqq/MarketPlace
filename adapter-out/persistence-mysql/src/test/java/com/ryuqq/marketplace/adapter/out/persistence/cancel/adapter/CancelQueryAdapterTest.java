@@ -83,7 +83,7 @@ class CancelQueryAdapterTest {
         @DisplayName("존재하지 않는 ID로 조회 시 빈 Optional을 반환합니다")
         void findById_WithNonExistingId_ReturnsEmpty() {
             // given
-            String id = "01900000-9999-7000-0000-000000000000";
+            String id = "non-existent-cancel-id";
             CancelId cancelId = CancelId.of(id);
 
             given(cancelRepository.findById(id)).willReturn(Optional.empty());
@@ -125,7 +125,7 @@ class CancelQueryAdapterTest {
         @DisplayName("존재하는 orderItemId로 조회 시 Cancel 도메인을 반환합니다")
         void findByOrderItemId_WithExistingOrderItemId_ReturnsCancel() {
             // given
-            String orderItemId = CancelJpaEntityFixtures.DEFAULT_ORDER_ITEM_ID;
+            Long orderItemId = CancelJpaEntityFixtures.DEFAULT_ORDER_ITEM_ID;
             OrderItemId id = OrderItemId.of(orderItemId);
             CancelJpaEntity entity =
                     CancelJpaEntityFixtures.requestedEntity(
@@ -149,7 +149,7 @@ class CancelQueryAdapterTest {
         @DisplayName("존재하지 않는 orderItemId로 조회 시 빈 Optional을 반환합니다")
         void findByOrderItemId_WithNonExistingOrderItemId_ReturnsEmpty() {
             // given
-            String orderItemId = "01900000-9999-7000-0000-000000000000";
+            Long orderItemId = 9999L;
             OrderItemId id = OrderItemId.of(orderItemId);
 
             given(cancelRepository.findByOrderItemId(orderItemId)).willReturn(Optional.empty());
@@ -175,18 +175,18 @@ class CancelQueryAdapterTest {
         @DisplayName("orderItemId 목록으로 조회 시 Cancel 목록을 반환합니다")
         void findByOrderItemIds_WithExistingIds_ReturnsCancelList() {
             // given
-            String orderItemId1 = "01900000-0000-7000-0000-000000000011";
-            String orderItemId2 = "01900000-0000-7000-0000-000000000012";
+            Long orderItemId1 = 2001L;
+            Long orderItemId2 = 2002L;
             List<OrderItemId> ids =
                     List.of(OrderItemId.of(orderItemId1), OrderItemId.of(orderItemId2));
             CancelJpaEntity entity1 =
                     CancelJpaEntityFixtures.requestedEntity(
-                            "cancel-id-001",
+                            "cancel-id-" + orderItemId1,
                             orderItemId1,
                             CancelJpaEntityFixtures.DEFAULT_SELLER_ID);
             CancelJpaEntity entity2 =
                     CancelJpaEntityFixtures.requestedEntity(
-                            "cancel-id-002",
+                            "cancel-id-" + orderItemId2,
                             orderItemId2,
                             CancelJpaEntityFixtures.DEFAULT_SELLER_ID);
             Cancel domain1 = CancelFixtures.requestedCancel();
@@ -208,12 +208,9 @@ class CancelQueryAdapterTest {
         @DisplayName("일치하는 orderItemId가 없으면 빈 리스트를 반환합니다")
         void findByOrderItemIds_WithNoResults_ReturnsEmptyList() {
             // given
-            List<OrderItemId> ids = List.of(OrderItemId.of("01900000-9999-7000-0000-000000000000"));
+            List<OrderItemId> ids = List.of(OrderItemId.of(9999L));
 
-            given(
-                            cancelRepository.findByOrderItemIds(
-                                    List.of("01900000-9999-7000-0000-000000000000")))
-                    .willReturn(List.of());
+            given(cancelRepository.findByOrderItemIds(List.of(9999L))).willReturn(List.of());
 
             // when
             List<Cancel> result = queryAdapter.findByOrderItemIds(ids);
@@ -226,7 +223,7 @@ class CancelQueryAdapterTest {
         @DisplayName("OrderItemId 목록이 String 값 목록으로 변환되어 repository에 전달됩니다")
         void findByOrderItemIds_DelegatesToRepositoryWithStringValues() {
             // given
-            String orderItemId = CancelJpaEntityFixtures.DEFAULT_ORDER_ITEM_ID;
+            Long orderItemId = CancelJpaEntityFixtures.DEFAULT_ORDER_ITEM_ID;
             List<OrderItemId> ids = List.of(OrderItemId.of(orderItemId));
 
             given(cancelRepository.findByOrderItemIds(List.of(orderItemId))).willReturn(List.of());

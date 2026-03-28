@@ -9,10 +9,10 @@ package com.ryuqq.marketplace.application.cancel.dto.command;
  * @param orderItemId 주문상품 ID
  * @param outboxType Outbox 유형
  */
-public record ExecuteCancelOutboxCommand(Long outboxId, String orderItemId, String outboxType) {
+public record ExecuteCancelOutboxCommand(Long outboxId, Long orderItemId, String outboxType) {
 
     public static ExecuteCancelOutboxCommand of(
-            Long outboxId, String orderItemId, String outboxType) {
+            Long outboxId, Long orderItemId, String outboxType) {
         return new ExecuteCancelOutboxCommand(outboxId, orderItemId, outboxType);
     }
 }

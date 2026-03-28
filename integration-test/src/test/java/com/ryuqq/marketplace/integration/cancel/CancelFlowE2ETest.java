@@ -93,9 +93,9 @@ class CancelFlowE2ETest extends E2ETestBase {
      * Order + OrderItem 시딩 헬퍼.
      *
      * @param orderId Order ID
-     * @return 저장된 OrderItem의 ID (UUIDv7 String)
+     * @return 저장된 OrderItem의 ID (Long)
      */
-    private String seedOrderItem(String orderId) {
+    private Long seedOrderItem(String orderId) {
         orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
         OrderItemJpaEntity item = OrderItemJpaEntityFixtures.defaultItem(orderId);
         return orderItemRepository.save(item).getId();
@@ -110,7 +110,7 @@ class CancelFlowE2ETest extends E2ETestBase {
         @DisplayName("[FLOW-1] 판매자 취소 → 목록 조회 → 상세 조회 전체 플로우")
         void sellerCancel_ThenQueryListAndDetail_FullFlow() {
             // Step 1. 전제 조건: Order + OrderItem 시딩
-            String orderItemId = seedOrderItem("order-flow1-001");
+            Long orderItemId = seedOrderItem("order-flow1-001");
 
             // Step 2. 판매자 취소 요청
             given().spec(givenSuperAdmin())
@@ -176,7 +176,7 @@ class CancelFlowE2ETest extends E2ETestBase {
                     .body("data", notNullValue());
 
             // Step 2. OrderItem 시딩 후 판매자 취소 (APPROVED 상태 생성)
-            String orderItemId = seedOrderItem("order-flow2-001");
+            Long orderItemId = seedOrderItem("order-flow2-001");
 
             given().spec(givenSuperAdmin())
                     .body(createSellerCancelRequest(orderItemId))
@@ -210,7 +210,7 @@ class CancelFlowE2ETest extends E2ETestBase {
         @DisplayName("[FLOW-3] REQUESTED Cancel → 승인 → OrderItem CANCELLED 검증")
         void buyerCancel_ThenApprove_OrderItemCancelled_Flow() {
             // Step 1. 전제 조건: Order + OrderItem 시딩
-            String orderItemId = seedOrderItem("order-flow3-001");
+            Long orderItemId = seedOrderItem("order-flow3-001");
 
             // Step 2. Cancel 직접 시딩 (BUYER_CANCEL, REQUESTED 상태)
             cancelRepository.save(
@@ -260,7 +260,7 @@ class CancelFlowE2ETest extends E2ETestBase {
         @DisplayName("[FLOW-4] REQUESTED Cancel → 거절 → OrderItem READY 원복 검증")
         void buyerCancel_ThenReject_OrderItemRemainsReady_Flow() {
             // Step 1. 전제 조건: Order + OrderItem 시딩
-            String orderItemId = seedOrderItem("order-flow4-001");
+            Long orderItemId = seedOrderItem("order-flow4-001");
 
             // Step 2. Cancel 직접 시딩 (BUYER_CANCEL, REQUESTED 상태)
             cancelRepository.save(
@@ -319,14 +319,13 @@ class CancelFlowE2ETest extends E2ETestBase {
         @DisplayName("[FLOW-5] 승인 가능 항목과 불가 항목 혼재 → BatchResultApiResponse 부분 실패 검증")
         void approveBatch_MixedRequestedAndApproved_PartialFailure_Flow() {
             // Step 1. 전제 조건: OrderItem 1건 + Cancel 2건 (REQUESTED, APPROVED) 시딩
-            String orderItemId = seedOrderItem("order-flow5-001");
+            Long orderItemId = seedOrderItem("order-flow5-001");
 
             cancelRepository.save(
                     CancelJpaEntityFixtures.requestedEntityWithNumber(
                             "cancel-flow5-req-001", "CAN-FLOW5-REQ-001", orderItemId, 10L));
             cancelRepository.save(
-                    CancelJpaEntityFixtures.approvedEntity(
-                            "cancel-flow5-app-001", "order-item-flow5-dummy", 10L));
+                    CancelJpaEntityFixtures.approvedEntity("cancel-flow5-app-001", 9999L, 10L));
 
             // Step 2. 승인 배치 - REQUESTED 1건 성공, APPROVED 1건 실패 (상태 전이 불가)
             given().spec(givenSuperAdmin())
@@ -353,7 +352,7 @@ class CancelFlowE2ETest extends E2ETestBase {
         @DisplayName("[FLOW-6] 취소 건에 메모 등록 후 2번째 메모 추가 - 각각 별도 이력")
         void addMemo_Twice_TwoHistoriesStored_Flow() {
             // Step 1. OrderItem + Cancel 시딩 (REQUESTED 상태)
-            String orderItemId = seedOrderItem("order-flow6-001");
+            Long orderItemId = seedOrderItem("order-flow6-001");
             cancelRepository.save(
                     CancelJpaEntityFixtures.requestedEntity("cancel-flow6-001", orderItemId, 10L));
 
@@ -392,7 +391,7 @@ class CancelFlowE2ETest extends E2ETestBase {
         @DisplayName("[FLOW-7] 다른 sellerId로 판매자 취소 요청 시 소유권 불일치 - 배치 실패 또는 403")
         void sellerCancel_WrongSeller_OwnershipFailure_Flow() {
             // 전제 조건: OrderItem 시딩 (sellerId=10 = DEFAULT_SELLER_ID)
-            String orderItemId = seedOrderItem("order-flow7-001");
+            Long orderItemId = seedOrderItem("order-flow7-001");
 
             // 다른 orgId로 요청 (sellerId가 10이 아닌 셀러)
             given().spec(givenSellerUser("org-other-seller", "cancel:write"))
@@ -425,7 +424,7 @@ class CancelFlowE2ETest extends E2ETestBase {
             String orderId = "order-flow8-001";
             orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
             OrderItemJpaEntity item = OrderItemJpaEntityFixtures.itemWithPrice(orderId, 10000, 3);
-            String orderItemId = orderItemRepository.save(item).getId();
+            Long orderItemId = orderItemRepository.save(item).getId();
 
             // Step 2. 1차 Cancel 시딩 (cancelQty=2, APPROVED 상태, refundAmount=20000)
             cancelRepository.save(
@@ -471,7 +470,7 @@ class CancelFlowE2ETest extends E2ETestBase {
 
     // ===== Helper 메서드 =====
 
-    private Map<String, Object> createSellerCancelRequest(String orderItemId) {
+    private Map<String, Object> createSellerCancelRequest(Long orderItemId) {
         return Map.of(
                 "items",
                 List.of(Map.of("orderId", orderItemId, "cancelQty", 1)),
@@ -479,8 +478,7 @@ class CancelFlowE2ETest extends E2ETestBase {
                 Map.of("reasonType", "OUT_OF_STOCK", "reasonDetail", "재고 소진"));
     }
 
-    private Map<String, Object> createSellerCancelRequestWithQty(
-            String orderItemId, int cancelQty) {
+    private Map<String, Object> createSellerCancelRequestWithQty(Long orderItemId, int cancelQty) {
         return Map.of(
                 "items",
                 List.of(Map.of("orderId", orderItemId, "cancelQty", cancelQty)),

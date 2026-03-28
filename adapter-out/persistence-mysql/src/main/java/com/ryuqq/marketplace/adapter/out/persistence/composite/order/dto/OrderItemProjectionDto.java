@@ -2,7 +2,7 @@ package com.ryuqq.marketplace.adapter.out.persistence.composite.order.dto;
 
 /** 주문 상품 프로젝션 (order_items 전체 필드). */
 public record OrderItemProjectionDto(
-        String orderItemId,
+        Long orderItemId,
         String orderId,
         long productGroupId,
         Long sellerId,

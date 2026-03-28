@@ -55,7 +55,8 @@ public class RequestRefundBatchService implements RequestRefundBatchUseCase {
         for (RefundRequestItem item : command.items()) {
             try {
                 if (validator.hasActiveClaim(item.orderItemId())) {
-                    batchResult.addFailure(item.orderItemId(), "해당 주문상품에 진행 중인 클레임이 있습니다");
+                    batchResult.addFailure(
+                            String.valueOf(item.orderItemId()), "해당 주문상품에 진행 중인 클레임이 있습니다");
                     continue;
                 }
 
@@ -84,7 +85,7 @@ public class RequestRefundBatchService implements RequestRefundBatchUseCase {
                         "환불 요청 생성 실패: orderItemId={}, error={}",
                         item.orderItemId(),
                         e.getMessage());
-                batchResult.addFailure(item.orderItemId(), e.getMessage());
+                batchResult.addFailure(String.valueOf(item.orderItemId()), e.getMessage());
             }
         }
 

@@ -115,7 +115,7 @@ public class ExternalOrderItemMapping {
         return orderItemId;
     }
 
-    public String orderItemIdValue() {
+    public Long orderItemIdValue() {
         return orderItemId.value();
     }
 

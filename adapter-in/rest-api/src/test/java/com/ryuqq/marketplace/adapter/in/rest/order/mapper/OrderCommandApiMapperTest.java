@@ -32,7 +32,7 @@ class OrderCommandApiMapperTest {
         @DisplayName("orderItemId, 메모 요청, actorInfo를 AddClaimHistoryMemoCommand로 변환한다")
         void toAddMemoCommand_ConvertsRequest_ReturnsCommand() {
             // given
-            String orderItemId = OrderApiFixtures.DEFAULT_ORDER_ITEM_ID;
+            String orderItemId = OrderApiFixtures.DEFAULT_ORDER_ITEM_ID_STR;
             AddClaimHistoryMemoApiRequest request = OrderApiFixtures.addMemoRequest();
             long actorId = 100L;
             String actorName = "seller01";
@@ -46,7 +46,7 @@ class OrderCommandApiMapperTest {
             // then
             assertThat(command.claimType()).isEqualTo(ClaimType.ORDER);
             assertThat(command.claimId()).isEqualTo(orderItemId);
-            assertThat(command.orderItemId()).isEqualTo(orderItemId);
+            assertThat(command.orderItemId()).isEqualTo(Long.parseLong(orderItemId));
             assertThat(command.message()).isEqualTo("주문 수기 메모 내용입니다.");
             assertThat(command.actorId()).isEqualTo("100");
             assertThat(command.actorName()).isEqualTo(actorName);
@@ -56,7 +56,7 @@ class OrderCommandApiMapperTest {
         @DisplayName("claimId와 orderItemId가 동일한 orderItemId로 설정된다")
         void toAddMemoCommand_ClaimIdAndOrderItemIdAreSame() {
             // given
-            String orderItemId = OrderApiFixtures.DEFAULT_ORDER_ITEM_ID;
+            String orderItemId = OrderApiFixtures.DEFAULT_ORDER_ITEM_ID_STR;
             AddClaimHistoryMemoApiRequest request = OrderApiFixtures.addMemoRequest();
             MarketAccessChecker.ActorInfo actor =
                     new MarketAccessChecker.ActorInfo(200L, "admin01");
@@ -66,15 +66,15 @@ class OrderCommandApiMapperTest {
                     mapper.toAddMemoCommand(orderItemId, request, actor);
 
             // then
-            assertThat(command.claimId()).isEqualTo(command.orderItemId());
             assertThat(command.claimId()).isEqualTo(orderItemId);
+            assertThat(command.orderItemId()).isEqualTo(Long.parseLong(orderItemId));
         }
 
         @Test
         @DisplayName("claimType은 항상 ORDER로 설정된다")
         void toAddMemoCommand_ClaimTypeIsAlwaysOrder() {
             // given
-            String orderItemId = OrderApiFixtures.DEFAULT_ORDER_ITEM_ID;
+            String orderItemId = OrderApiFixtures.DEFAULT_ORDER_ITEM_ID_STR;
             AddClaimHistoryMemoApiRequest request = new AddClaimHistoryMemoApiRequest("다른 메모");
             MarketAccessChecker.ActorInfo actor = new MarketAccessChecker.ActorInfo(1L, "operator");
 
@@ -90,7 +90,7 @@ class OrderCommandApiMapperTest {
         @DisplayName("actorId는 Long을 String으로 변환한다")
         void toAddMemoCommand_ActorIdConvertedToString() {
             // given
-            String orderItemId = OrderApiFixtures.DEFAULT_ORDER_ITEM_ID;
+            String orderItemId = OrderApiFixtures.DEFAULT_ORDER_ITEM_ID_STR;
             AddClaimHistoryMemoApiRequest request = OrderApiFixtures.addMemoRequest();
             long actorId = 9999L;
             MarketAccessChecker.ActorInfo actor =
@@ -109,7 +109,7 @@ class OrderCommandApiMapperTest {
         @DisplayName("메모 내용이 그대로 커맨드의 message로 설정된다")
         void toAddMemoCommand_MessageMappedFromRequest() {
             // given
-            String orderItemId = OrderApiFixtures.DEFAULT_ORDER_ITEM_ID;
+            String orderItemId = OrderApiFixtures.DEFAULT_ORDER_ITEM_ID_STR;
             String expectedMessage = "특수 메모 내용 - 테스트용";
             AddClaimHistoryMemoApiRequest request =
                     new AddClaimHistoryMemoApiRequest(expectedMessage);

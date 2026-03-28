@@ -37,8 +37,8 @@ public class SettlementEntryJpaEntity extends BaseAuditEntity {
     @Column(name = "settlement_amount", nullable = false)
     private int settlementAmount;
 
-    @Column(name = "order_item_id", nullable = false, length = 36)
-    private String orderItemId;
+    @Column(name = "order_item_id", nullable = false)
+    private Long orderItemId;
 
     @Column(name = "claim_id", length = 36)
     private String claimId;
@@ -69,7 +69,7 @@ public class SettlementEntryJpaEntity extends BaseAuditEntity {
             int commissionRate,
             int commissionAmount,
             int settlementAmount,
-            String orderItemId,
+            Long orderItemId,
             String claimId,
             String claimType,
             String reversalOfEntryId,
@@ -103,7 +103,7 @@ public class SettlementEntryJpaEntity extends BaseAuditEntity {
             int commissionRate,
             int commissionAmount,
             int settlementAmount,
-            String orderItemId,
+            Long orderItemId,
             String claimId,
             String claimType,
             String reversalOfEntryId,
@@ -162,7 +162,7 @@ public class SettlementEntryJpaEntity extends BaseAuditEntity {
         return settlementAmount;
     }
 
-    public String getOrderItemId() {
+    public Long getOrderItemId() {
         return orderItemId;
     }
 

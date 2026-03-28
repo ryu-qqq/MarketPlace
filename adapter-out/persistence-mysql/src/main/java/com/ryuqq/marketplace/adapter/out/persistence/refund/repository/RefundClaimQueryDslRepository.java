@@ -38,7 +38,7 @@ public class RefundClaimQueryDslRepository {
         return Optional.ofNullable(entity);
     }
 
-    public Optional<RefundClaimJpaEntity> findByOrderItemId(String orderItemId) {
+    public Optional<RefundClaimJpaEntity> findByOrderItemId(Long orderItemId) {
         RefundClaimJpaEntity entity =
                 queryFactory
                         .selectFrom(refundClaim)
@@ -47,14 +47,14 @@ public class RefundClaimQueryDslRepository {
         return Optional.ofNullable(entity);
     }
 
-    public List<RefundClaimJpaEntity> findAllByOrderItemId(String orderItemId) {
+    public List<RefundClaimJpaEntity> findAllByOrderItemId(Long orderItemId) {
         return queryFactory
                 .selectFrom(refundClaim)
                 .where(conditionBuilder.orderItemIdEq(orderItemId))
                 .fetch();
     }
 
-    public List<RefundClaimJpaEntity> findByOrderItemIds(List<String> orderItemIds) {
+    public List<RefundClaimJpaEntity> findByOrderItemIds(List<Long> orderItemIds) {
         return queryFactory
                 .selectFrom(refundClaim)
                 .where(conditionBuilder.orderItemIdIn(orderItemIds))

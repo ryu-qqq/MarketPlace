@@ -44,7 +44,7 @@ public class ClaimHistoryQueryDslRepository {
                 .fetch();
     }
 
-    public List<ClaimHistoryJpaEntity> findByOrderItemId(String orderItemId) {
+    public List<ClaimHistoryJpaEntity> findByOrderItemId(Long orderItemId) {
         return queryFactory
                 .selectFrom(claimHistory)
                 .where(claimHistory.orderItemId.eq(orderItemId))

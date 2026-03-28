@@ -92,7 +92,7 @@ class RefundContainerFlowE2ETest extends ContainerE2ETestBase {
             String orderId = "order-refund-flow-001";
             orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
             OrderItemJpaEntity item = OrderItemJpaEntityFixtures.itemWithPrice(orderId, 29900, 1);
-            String orderItemId = orderItemRepository.save(item).getId();
+            Long orderItemId = orderItemRepository.save(item).getId();
 
             // step 1: 환불 요청
             givenSuperAdmin()
@@ -158,7 +158,7 @@ class RefundContainerFlowE2ETest extends ContainerE2ETestBase {
             String orderId = "order-refund-reject-flow-001";
             orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
             OrderItemJpaEntity item = OrderItemJpaEntityFixtures.itemWithPrice(orderId, 15000, 1);
-            String orderItemId = orderItemRepository.save(item).getId();
+            Long orderItemId = orderItemRepository.save(item).getId();
 
             // step 1: 환불 요청
             givenSuperAdmin()
@@ -209,7 +209,7 @@ class RefundContainerFlowE2ETest extends ContainerE2ETestBase {
             String orderId = "order-refund-hold-flow-001";
             orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
             OrderItemJpaEntity item = OrderItemJpaEntityFixtures.itemWithPrice(orderId, 20000, 1);
-            String orderItemId = orderItemRepository.save(item).getId();
+            Long orderItemId = orderItemRepository.save(item).getId();
 
             // step 1: 환불 요청
             givenSuperAdmin()
@@ -288,7 +288,7 @@ class RefundContainerFlowE2ETest extends ContainerE2ETestBase {
             String orderId = "order-refund-memo-flow-001";
             orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
             OrderItemJpaEntity item = OrderItemJpaEntityFixtures.itemWithPrice(orderId, 10000, 2);
-            String orderItemId = orderItemRepository.save(item).getId();
+            Long orderItemId = orderItemRepository.save(item).getId();
 
             // step 1: 환불 요청
             givenSuperAdmin()

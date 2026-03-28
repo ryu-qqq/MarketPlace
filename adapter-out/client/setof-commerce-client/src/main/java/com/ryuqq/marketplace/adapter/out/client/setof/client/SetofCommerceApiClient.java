@@ -593,7 +593,7 @@ public class SetofCommerceApiClient {
      *
      * <p>POST /api/v2/orders/{orderItemId}/confirm
      */
-    public void confirmOrder(String shopSecret, String orderItemId) {
+    public void confirmOrder(String shopSecret, Long orderItemId) {
         log.info("세토프 커머스 주문 확인 요청: orderItemId={}", orderItemId);
         executor.execute(
                 () ->
@@ -610,7 +610,7 @@ public class SetofCommerceApiClient {
      *
      * <p>POST /api/v2/orders/{orderItemId}/ready-to-ship
      */
-    public void readyToShip(String shopSecret, String orderItemId) {
+    public void readyToShip(String shopSecret, Long orderItemId) {
         log.info("세토프 커머스 배송 준비 완료 요청: orderItemId={}", orderItemId);
         executor.execute(
                 () ->

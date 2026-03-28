@@ -14,7 +14,7 @@ public final class ShipmentOutboxJpaEntityFixtures {
 
     // ===== 기본 상수 =====
     public static final Long DEFAULT_ID = 1L;
-    public static final String DEFAULT_ORDER_ITEM_ID = "01940001-0000-7000-8000-000000000001";
+    public static final Long DEFAULT_ORDER_ITEM_ID = 1001L;
     public static final String DEFAULT_PAYLOAD =
             "{\"shipmentId\":\"01944b2a-1234-7fff-8888-abcdef012345\"}";
     public static final int DEFAULT_RETRY_COUNT = 0;
@@ -186,8 +186,7 @@ public final class ShipmentOutboxJpaEntityFixtures {
     }
 
     /** 특정 orderItemId를 가진 PENDING Entity 생성. */
-    public static ShipmentOutboxJpaEntity pendingEntityWithOrderItemId(
-            Long id, String orderItemId) {
+    public static ShipmentOutboxJpaEntity pendingEntityWithOrderItemId(Long id, Long orderItemId) {
         Instant now = Instant.now();
         return ShipmentOutboxJpaEntity.of(
                 id,

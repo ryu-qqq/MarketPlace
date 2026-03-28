@@ -129,12 +129,8 @@ class ReceivePurchaseConfirmedWebhookServiceTest {
             String extId2 = "EXT-PO-002";
             List<String> externalProductOrderIds = List.of(extId1, extId2);
 
-            ExternalOrderItemMapping mapping1 =
-                    ClaimSyncFixtures.mappingWithOrderItemId(
-                            "01940001-0000-7000-8000-000000000001");
-            ExternalOrderItemMapping mapping2 =
-                    ClaimSyncFixtures.mappingWithOrderItemId(
-                            "01940001-0000-7000-8000-000000000002");
+            ExternalOrderItemMapping mapping1 = ClaimSyncFixtures.mappingWithOrderItemId(2001L);
+            ExternalOrderItemMapping mapping2 = ClaimSyncFixtures.mappingWithOrderItemId(2002L);
 
             OrderItem readyItem = OrderFixtures.reconstitutedOrderItem();
             OrderItem confirmedItem = OrderFixtures.confirmedOrderItem();

@@ -77,7 +77,7 @@ public class CancelQueryController {
     public ResponseEntity<ApiResponse<CancelDetailApiResponse>> getDetail(
             @PathVariable String cancelId) {
         CancelDetailResult result = getCancelDetailUseCase.execute(cancelId);
-        String itemId = result.orderItemId();
+        Long itemId = result.orderItemId();
         ClaimOrderEnricher.OrderContext ctx = enricher.loadOrderContext(List.of(itemId));
         return ResponseEntity.ok(
                 ApiResponse.of(

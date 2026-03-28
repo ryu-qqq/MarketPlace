@@ -38,7 +38,7 @@ public class ExchangeClaimQueryDslRepository {
         return Optional.ofNullable(entity);
     }
 
-    public Optional<ExchangeClaimJpaEntity> findByOrderItemId(String orderItemId) {
+    public Optional<ExchangeClaimJpaEntity> findByOrderItemId(Long orderItemId) {
         ExchangeClaimJpaEntity entity =
                 queryFactory
                         .selectFrom(exchangeClaim)
@@ -47,14 +47,14 @@ public class ExchangeClaimQueryDslRepository {
         return Optional.ofNullable(entity);
     }
 
-    public List<ExchangeClaimJpaEntity> findAllByOrderItemId(String orderItemId) {
+    public List<ExchangeClaimJpaEntity> findAllByOrderItemId(Long orderItemId) {
         return queryFactory
                 .selectFrom(exchangeClaim)
                 .where(conditionBuilder.orderItemIdEq(orderItemId))
                 .fetch();
     }
 
-    public List<ExchangeClaimJpaEntity> findByOrderItemIds(List<String> orderItemIds) {
+    public List<ExchangeClaimJpaEntity> findByOrderItemIds(List<Long> orderItemIds) {
         return queryFactory
                 .selectFrom(exchangeClaim)
                 .where(conditionBuilder.orderItemIdIn(orderItemIds))

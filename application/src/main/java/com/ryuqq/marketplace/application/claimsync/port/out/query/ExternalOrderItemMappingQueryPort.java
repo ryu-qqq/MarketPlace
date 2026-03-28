@@ -13,5 +13,5 @@ public interface ExternalOrderItemMappingQueryPort {
 
     List<ExternalOrderItemMapping> findByOrderItemIds(List<OrderItemId> orderItemIds);
 
-    Optional<ExternalOrderItemMapping> findByOrderItemId(String orderItemId);
+    Optional<ExternalOrderItemMapping> findByOrderItemId(Long orderItemId);
 }

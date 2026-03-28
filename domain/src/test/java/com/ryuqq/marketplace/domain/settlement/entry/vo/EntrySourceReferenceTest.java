@@ -19,7 +19,7 @@ class EntrySourceReferenceTest {
         @Test
         @DisplayName("판매 Entry 참조를 생성한다")
         void createForSalesReference() {
-            String orderItemId = "oi-test-001";
+            Long orderItemId = 1001L;
 
             EntrySourceReference reference = EntrySourceReference.forSales(orderItemId);
 
@@ -37,11 +37,10 @@ class EntrySourceReferenceTest {
         }
 
         @Test
-        @DisplayName("orderItemId가 빈 문자열이면 예외가 발생한다")
-        void throwWhenOrderItemIdIsBlank() {
-            assertThatThrownBy(() -> EntrySourceReference.forSales(""))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("orderItemId");
+        @DisplayName("유효한 orderItemId로 생성에 성공한다")
+        void createWithValidOrderItemId() {
+            EntrySourceReference reference = EntrySourceReference.forSales(1001L);
+            assertThat(reference.orderItemId()).isEqualTo(1001L);
         }
     }
 
@@ -52,7 +51,7 @@ class EntrySourceReferenceTest {
         @Test
         @DisplayName("취소 클레임 참조를 생성한다")
         void createForCancelClaimReference() {
-            String orderItemId = "oi-test-001";
+            Long orderItemId = 1001L;
             String claimId = "cancel-001";
             String claimType = "CANCEL";
 
@@ -68,7 +67,7 @@ class EntrySourceReferenceTest {
         @DisplayName("환불 클레임 참조를 생성한다")
         void createForRefundClaimReference() {
             EntrySourceReference reference =
-                    EntrySourceReference.forClaim("oi-002", "refund-001", "REFUND");
+                    EntrySourceReference.forClaim(1002L, "refund-001", "REFUND");
 
             assertThat(reference.claimType()).isEqualTo("REFUND");
         }
@@ -76,9 +75,9 @@ class EntrySourceReferenceTest {
         @Test
         @DisplayName("claimId와 claimType이 null이어도 생성된다")
         void createWithNullClaimInfo() {
-            EntrySourceReference reference = EntrySourceReference.forClaim("oi-001", null, null);
+            EntrySourceReference reference = EntrySourceReference.forClaim(1001L, null, null);
 
-            assertThat(reference.orderItemId()).isEqualTo("oi-001");
+            assertThat(reference.orderItemId()).isEqualTo(1001L);
             assertThat(reference.claimId()).isNull();
             assertThat(reference.claimType()).isNull();
         }
@@ -91,8 +90,8 @@ class EntrySourceReferenceTest {
         @Test
         @DisplayName("같은 값이면 동일하다")
         void sameValuesAreEqual() {
-            EntrySourceReference ref1 = EntrySourceReference.forSales("oi-001");
-            EntrySourceReference ref2 = EntrySourceReference.forSales("oi-001");
+            EntrySourceReference ref1 = EntrySourceReference.forSales(1001L);
+            EntrySourceReference ref2 = EntrySourceReference.forSales(1001L);
 
             assertThat(ref1).isEqualTo(ref2);
             assertThat(ref1.hashCode()).isEqualTo(ref2.hashCode());
@@ -101,8 +100,8 @@ class EntrySourceReferenceTest {
         @Test
         @DisplayName("orderItemId가 다르면 다르다")
         void differentOrderItemIdAreNotEqual() {
-            EntrySourceReference ref1 = EntrySourceReference.forSales("oi-001");
-            EntrySourceReference ref2 = EntrySourceReference.forSales("oi-002");
+            EntrySourceReference ref1 = EntrySourceReference.forSales(1001L);
+            EntrySourceReference ref2 = EntrySourceReference.forSales(1002L);
 
             assertThat(ref1).isNotEqualTo(ref2);
         }
@@ -110,9 +109,9 @@ class EntrySourceReferenceTest {
         @Test
         @DisplayName("클레임 정보 유무가 다르면 다르다")
         void differentClaimInfoAreNotEqual() {
-            EntrySourceReference salesRef = EntrySourceReference.forSales("oi-001");
+            EntrySourceReference salesRef = EntrySourceReference.forSales(1001L);
             EntrySourceReference claimRef =
-                    EntrySourceReference.forClaim("oi-001", "cancel-001", "CANCEL");
+                    EntrySourceReference.forClaim(1001L, "cancel-001", "CANCEL");
 
             assertThat(salesRef).isNotEqualTo(claimRef);
         }
@@ -125,9 +124,9 @@ class EntrySourceReferenceTest {
         @Test
         @DisplayName("record이므로 필드값을 직접 변경할 수 없다")
         void recordIsImmutable() {
-            EntrySourceReference reference = EntrySourceReference.forSales("oi-001");
+            EntrySourceReference reference = EntrySourceReference.forSales(1001L);
 
-            assertThat(reference.orderItemId()).isEqualTo("oi-001");
+            assertThat(reference.orderItemId()).isEqualTo(1001L);
             assertThat(reference.claimId()).isNull();
         }
     }

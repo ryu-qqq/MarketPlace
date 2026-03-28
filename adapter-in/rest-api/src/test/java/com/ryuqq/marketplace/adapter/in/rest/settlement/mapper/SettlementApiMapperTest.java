@@ -196,7 +196,7 @@ class SettlementApiMapperTest {
                             "HOLD",
                             100L,
                             "SALES",
-                            "oi-hold-001",
+                            9001L,
                             50000,
                             1000,
                             5000,
@@ -237,7 +237,7 @@ class SettlementApiMapperTest {
                     mapper.toPageResponse(pageResult);
 
             // then
-            assertThat(response.content().get(0).orderId()).isEqualTo("oi-test-001");
+            assertThat(response.content().get(0).orderId()).isEqualTo(String.valueOf(1001L));
         }
     }
 

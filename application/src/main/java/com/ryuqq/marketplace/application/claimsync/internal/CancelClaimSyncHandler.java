@@ -336,7 +336,7 @@ public class CancelClaimSyncHandler implements ClaimSyncHandler {
 
     /** 클레임 이력을 생성하고 저장한다. 수량 정보를 message에 포함. */
     private void recordHistory(
-            String cancelId, String orderItemId, String fromStatus, String toStatus, int qty) {
+            String cancelId, Long orderItemId, String fromStatus, String toStatus, int qty) {
         String from = fromStatus != null ? fromStatus : "NEW";
         historyCommandManager.persist(
                 historyFactory.createStatusChangeBySystemWithQty(

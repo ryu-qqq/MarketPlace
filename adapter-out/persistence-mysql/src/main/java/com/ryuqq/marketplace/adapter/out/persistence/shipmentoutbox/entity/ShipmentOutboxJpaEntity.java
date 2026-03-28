@@ -28,8 +28,8 @@ public class ShipmentOutboxJpaEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "order_item_id", nullable = false, length = 36)
-    private String orderItemId;
+    @Column(name = "order_item_id", nullable = false)
+    private Long orderItemId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "outbox_type", nullable = false, length = 20)
@@ -71,7 +71,7 @@ public class ShipmentOutboxJpaEntity {
 
     private ShipmentOutboxJpaEntity(
             Long id,
-            String orderItemId,
+            Long orderItemId,
             OutboxType outboxType,
             Status status,
             String payload,
@@ -100,7 +100,7 @@ public class ShipmentOutboxJpaEntity {
 
     public static ShipmentOutboxJpaEntity of(
             Long id,
-            String orderItemId,
+            Long orderItemId,
             OutboxType outboxType,
             Status status,
             String payload,
@@ -132,7 +132,7 @@ public class ShipmentOutboxJpaEntity {
         return id;
     }
 
-    public String getOrderItemId() {
+    public Long getOrderItemId() {
         return orderItemId;
     }
 

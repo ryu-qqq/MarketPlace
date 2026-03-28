@@ -3,7 +3,6 @@ package com.ryuqq.marketplace.application.order.factory;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.times;
 
 import com.ryuqq.marketplace.application.common.port.out.IdGeneratorPort;
 import com.ryuqq.marketplace.application.common.time.TimeProvider;
@@ -43,6 +42,7 @@ class OrderCommandFactoryTest {
             Instant now = CommonVoFixtures.now();
             given(timeProvider.now()).willReturn(now);
             given(idGeneratorPort.generate()).willReturn("01900000-0000-7000-8000-000000000001");
+            given(idGeneratorPort.generateLong()).willReturn(1001L);
 
             // when
             Order result = sut.createOrder(command);
@@ -51,7 +51,8 @@ class OrderCommandFactoryTest {
             assertThat(result).isNotNull();
             assertThat(result.orderNumber()).isNotNull();
             then(timeProvider).should().now();
-            then(idGeneratorPort).should(times(2)).generate();
+            then(idGeneratorPort).should().generate();
+            then(idGeneratorPort).should().generateLong();
         }
 
         @Test
@@ -62,6 +63,7 @@ class OrderCommandFactoryTest {
             Instant now = CommonVoFixtures.now();
             given(timeProvider.now()).willReturn(now);
             given(idGeneratorPort.generate()).willReturn("01900000-0000-7000-8000-000000000001");
+            given(idGeneratorPort.generateLong()).willReturn(1001L);
 
             // when
             Order result = sut.createOrder(command);
@@ -80,6 +82,7 @@ class OrderCommandFactoryTest {
             Instant now = CommonVoFixtures.now();
             given(timeProvider.now()).willReturn(now);
             given(idGeneratorPort.generate()).willReturn("01900000-0000-7000-8000-000000000001");
+            given(idGeneratorPort.generateLong()).willReturn(1001L);
 
             // when
             Order result = sut.createOrder(command);
@@ -98,6 +101,7 @@ class OrderCommandFactoryTest {
             Instant now = CommonVoFixtures.now();
             given(timeProvider.now()).willReturn(now);
             given(idGeneratorPort.generate()).willReturn("01900000-0000-7000-8000-000000000001");
+            given(idGeneratorPort.generateLong()).willReturn(1001L);
 
             // when
             Order result = sut.createOrder(command);
@@ -114,6 +118,7 @@ class OrderCommandFactoryTest {
             Instant now = CommonVoFixtures.now();
             given(timeProvider.now()).willReturn(now);
             given(idGeneratorPort.generate()).willReturn("01900000-0000-7000-8000-000000000001");
+            given(idGeneratorPort.generateLong()).willReturn(1001L);
 
             // when
             Order result = sut.createOrder(command);
@@ -130,6 +135,7 @@ class OrderCommandFactoryTest {
             Instant now = CommonVoFixtures.now();
             given(timeProvider.now()).willReturn(now);
             given(idGeneratorPort.generate()).willReturn("01900000-0000-7000-8000-000000000001");
+            given(idGeneratorPort.generateLong()).willReturn(1001L);
 
             // when
             Order result = sut.createOrder(command);
@@ -146,6 +152,7 @@ class OrderCommandFactoryTest {
             Instant now = CommonVoFixtures.now();
             given(timeProvider.now()).willReturn(now);
             given(idGeneratorPort.generate()).willReturn("01900000-0000-7000-8000-000000000002");
+            given(idGeneratorPort.generateLong()).willReturn(1002L);
 
             // when
             Order result = sut.createOrder(command);
@@ -163,6 +170,7 @@ class OrderCommandFactoryTest {
             Instant now = CommonVoFixtures.now();
             given(timeProvider.now()).willReturn(now);
             given(idGeneratorPort.generate()).willReturn("01900000-0000-7000-8000-000000000001");
+            given(idGeneratorPort.generateLong()).willReturn(1001L);
 
             // when
             Order result = sut.createOrder(command);

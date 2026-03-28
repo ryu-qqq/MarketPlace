@@ -71,7 +71,7 @@ class RefundQueryE2ETest extends E2ETestBase {
 
     // ===== 공통 시딩 헬퍼 =====
 
-    private String seedOrderItem(String orderId) {
+    private Long seedOrderItem(String orderId) {
         OrderJpaEntity order = OrderJpaEntityFixtures.orderedEntity(orderId);
         orderRepository.save(order);
         OrderItemJpaEntity item = OrderItemJpaEntityFixtures.defaultItem(orderId);

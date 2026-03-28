@@ -41,7 +41,7 @@ public class SettlementEntryReadManager {
     }
 
     @Transactional(readOnly = true)
-    public List<SettlementEntry> findByOrderItemId(String orderItemId) {
+    public List<SettlementEntry> findByOrderItemId(Long orderItemId) {
         return queryPort.findByOrderItemId(orderItemId);
     }
 

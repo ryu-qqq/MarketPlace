@@ -23,7 +23,7 @@ public final class ExchangeQueryFixtures {
 
     // ===== 기본 상수 =====
     private static final String DEFAULT_CLAIM_ID = "01900000-0000-7000-0000-000000000001";
-    private static final String DEFAULT_ORDER_ITEM_ID = "01900000-0000-7000-0000-000000000010";
+    private static final Long DEFAULT_ORDER_ITEM_ID = 1001L;
 
     // ===== ExchangeSearchParams Fixtures =====
 

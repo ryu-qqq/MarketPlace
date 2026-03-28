@@ -116,7 +116,7 @@ class RefundBatchValidatorTest {
         @DisplayName("활성 환불 클레임이 있으면 true를 반환한다")
         void hasActiveClaim_ActiveRefundExists_ReturnsTrue() {
             // given
-            String orderItemId = "01940001-0000-7000-8000-000000000001";
+            Long orderItemId = 1001L;
             RefundClaim activeClaim = RefundFixtures.requestedRefundClaim();
 
             given(refundReadManager.findByOrderItemId(orderItemId))
@@ -133,7 +133,7 @@ class RefundBatchValidatorTest {
         @DisplayName("활성 환불 클레임이 없고 활성 교환 클레임도 없으면 false를 반환한다")
         void hasActiveClaim_NoActiveClaims_ReturnsFalse() {
             // given
-            String orderItemId = "01940001-0000-7000-8000-000000000001";
+            Long orderItemId = 1001L;
 
             given(refundReadManager.findByOrderItemId(orderItemId)).willReturn(Optional.empty());
             given(exchangeReadManager.findByOrderItemId(OrderItemId.of(orderItemId)))
@@ -150,7 +150,7 @@ class RefundBatchValidatorTest {
         @DisplayName("완료된 환불 클레임만 있으면 false를 반환한다")
         void hasActiveClaim_CompletedRefundOnly_ReturnsFalse() {
             // given
-            String orderItemId = "01940001-0000-7000-8000-000000000001";
+            Long orderItemId = 1001L;
             RefundClaim completedClaim = RefundFixtures.completedRefundClaim();
 
             given(refundReadManager.findByOrderItemId(orderItemId))

@@ -35,14 +35,13 @@ public class ClaimOrderEnricher {
     }
 
     /** orderItemId 목록으로 OrderItem + Order 정보를 배치 조회한다. */
-    public OrderContext loadOrderContext(List<String> orderItemIds) {
-        List<String> validIds =
-                orderItemIds.stream().filter(id -> id != null && !id.isEmpty()).toList();
+    public OrderContext loadOrderContext(List<Long> orderItemIds) {
+        List<Long> validIds = orderItemIds.stream().filter(id -> id != null && id != 0L).toList();
         if (validIds.isEmpty()) {
             return new OrderContext(Map.of(), Map.of());
         }
 
-        Map<String, OrderItemResult> orderItems = orderReadManager.findOrderItemsByIds(validIds);
+        Map<Long, OrderItemResult> orderItems = orderReadManager.findOrderItemsByIds(validIds);
 
         List<String> orderIds =
                 orderItems.values().stream()
@@ -59,13 +58,13 @@ public class ClaimOrderEnricher {
 
     /** 주문 데이터 컨텍스트. */
     public record OrderContext(
-            Map<String, OrderItemResult> orderItems, Map<String, OrderListResult> orders) {
+            Map<Long, OrderItemResult> orderItems, Map<String, OrderListResult> orders) {
 
-        public OrderItemResult getItem(String orderItemId) {
+        public OrderItemResult getItem(Long orderItemId) {
             return orderItems.get(orderItemId);
         }
 
-        public OrderListResult getOrder(String orderItemId) {
+        public OrderListResult getOrder(Long orderItemId) {
             OrderItemResult item = orderItems.get(orderItemId);
             return item != null ? orders.get(item.orderId()) : null;
         }
@@ -73,7 +72,7 @@ public class ClaimOrderEnricher {
 
     // ==================== V4 공통 필드 생성 ====================
 
-    public OrderProductV4 toOrderProductV4(String orderItemId, OrderContext ctx) {
+    public OrderProductV4 toOrderProductV4(Long orderItemId, OrderContext ctx) {
         OrderItemResult item = ctx.getItem(orderItemId);
         if (item == null) {
             return emptyOrderProduct();
@@ -81,7 +80,7 @@ public class ClaimOrderEnricher {
         int unitPrice = item.unitPrice();
         int discountRate = unitPrice > 0 ? (item.discountAmount() * 100 / unitPrice) : 0;
         return new OrderProductV4(
-                nullToEmpty(item.orderItemId()),
+                item.orderItemId() != null ? String.valueOf(item.orderItemId()) : "",
                 nullToEmpty(item.orderItemNumber()),
                 nullToEmpty(item.productGroupName()),
                 new PriceV4(
@@ -107,7 +106,7 @@ public class ClaimOrderEnricher {
                 List.of());
     }
 
-    public BuyerInfoV4 toBuyerInfoV4(String orderItemId, OrderContext ctx) {
+    public BuyerInfoV4 toBuyerInfoV4(Long orderItemId, OrderContext ctx) {
         OrderListResult order = ctx.getOrder(orderItemId);
         if (order == null) {
             return new BuyerInfoV4("", "");
@@ -115,7 +114,7 @@ public class ClaimOrderEnricher {
         return new BuyerInfoV4(nullToEmpty(order.buyerName()), nullToEmpty(order.buyerPhone()));
     }
 
-    public PaymentV4 toPaymentV4(String orderItemId, OrderContext ctx) {
+    public PaymentV4 toPaymentV4(Long orderItemId, OrderContext ctx) {
         OrderListResult order = ctx.getOrder(orderItemId);
         if (order == null) {
             return new PaymentV4("", "", 0, "");
@@ -127,7 +126,7 @@ public class ClaimOrderEnricher {
                 nullToEmpty(order.paymentMethod()));
     }
 
-    public ReceiverInfoV4 toReceiverInfoV4(String orderItemId, OrderContext ctx) {
+    public ReceiverInfoV4 toReceiverInfoV4(Long orderItemId, OrderContext ctx) {
         OrderItemResult item = ctx.getItem(orderItemId);
         if (item == null) {
             return new ReceiverInfoV4("", "", "", "", "");
@@ -140,7 +139,7 @@ public class ClaimOrderEnricher {
                 nullToEmpty(item.receiverZipcode()));
     }
 
-    public ExternalOrderInfoV4 toExternalOrderInfoV4(String orderItemId, OrderContext ctx) {
+    public ExternalOrderInfoV4 toExternalOrderInfoV4(Long orderItemId, OrderContext ctx) {
         OrderListResult order = ctx.getOrder(orderItemId);
         if (order == null) {
             return new ExternalOrderInfoV4("", "");

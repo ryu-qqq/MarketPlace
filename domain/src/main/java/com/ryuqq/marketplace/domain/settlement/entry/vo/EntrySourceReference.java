@@ -7,22 +7,22 @@ package com.ryuqq.marketplace.domain.settlement.entry.vo;
  * @param claimId 클레임 ID (역분개 시, nullable)
  * @param claimType 클레임 유형 (역분개 시, nullable)
  */
-public record EntrySourceReference(String orderItemId, String claimId, String claimType) {
+public record EntrySourceReference(Long orderItemId, String claimId, String claimType) {
 
     public EntrySourceReference {
-        if (orderItemId == null || orderItemId.isBlank()) {
-            throw new IllegalArgumentException("orderItemId는 비어 있을 수 없습니다");
+        if (orderItemId == null) {
+            throw new IllegalArgumentException("orderItemId는 null일 수 없습니다");
         }
     }
 
     /** 판매 Entry용 (클레임 없음). */
-    public static EntrySourceReference forSales(String orderItemId) {
+    public static EntrySourceReference forSales(Long orderItemId) {
         return new EntrySourceReference(orderItemId, null, null);
     }
 
     /** 클레임 역분개 Entry용. */
     public static EntrySourceReference forClaim(
-            String orderItemId, String claimId, String claimType) {
+            Long orderItemId, String claimId, String claimType) {
         return new EntrySourceReference(orderItemId, claimId, claimType);
     }
 }

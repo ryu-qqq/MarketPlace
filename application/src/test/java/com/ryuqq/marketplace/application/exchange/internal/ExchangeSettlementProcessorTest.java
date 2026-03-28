@@ -37,7 +37,7 @@ class ExchangeSettlementProcessorTest {
         @DisplayName("정상 호출 시 claimType=EXCHANGE로 factory + persist가 호출된다")
         void createReversalEntry_Normal_CallsFactoryWithExchangeType() {
             // given
-            String orderItemId = "oi-test-001";
+            Long orderItemId = 1001L;
             long sellerId = 100L;
             String exchangeClaimId = "exchange-001";
             SettlementEntry entry = SettlementEntryFixtures.cancelReversalEntry();
@@ -59,7 +59,7 @@ class ExchangeSettlementProcessorTest {
         @DisplayName("factory에서 예외 발생 시 전파하지 않는다")
         void createReversalEntry_FactoryThrows_DoesNotPropagate() {
             // given
-            String orderItemId = "oi-test-001";
+            Long orderItemId = 1001L;
             long sellerId = 100L;
             String exchangeClaimId = "exchange-001";
 

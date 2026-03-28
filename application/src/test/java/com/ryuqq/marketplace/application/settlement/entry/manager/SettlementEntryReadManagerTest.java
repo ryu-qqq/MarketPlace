@@ -149,7 +149,7 @@ class SettlementEntryReadManagerTest {
         @DisplayName("orderItemId에 해당하는 Entry 목록을 반환한다")
         void findByOrderItemId_ExistingOrderItemId_ReturnsEntryList() {
             // given
-            String orderItemId = SettlementEntryFixtures.DEFAULT_ORDER_ITEM_ID;
+            long orderItemId = SettlementEntryFixtures.DEFAULT_ORDER_ITEM_ID;
             List<SettlementEntry> expected = List.of(SettlementEntryFixtures.salesEntry());
 
             given(queryPort.findByOrderItemId(orderItemId)).willReturn(expected);
@@ -165,7 +165,7 @@ class SettlementEntryReadManagerTest {
         @DisplayName("해당 orderItemId의 Entry가 없으면 빈 목록을 반환한다")
         void findByOrderItemId_NoEntries_ReturnsEmptyList() {
             // given
-            String orderItemId = "not-existing-oi";
+            Long orderItemId = 9999L;
 
             given(queryPort.findByOrderItemId(orderItemId)).willReturn(List.of());
 

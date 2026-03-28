@@ -92,9 +92,7 @@ class CancelOrderServiceTest {
         void execute_MultipleOrderItems_AllItemsCancelled() {
             // given
             OrderItemCancelCommand command =
-                    OrderCommandFixtures.orderItemCancelCommand(
-                            "01940001-0000-7000-8000-000000000001",
-                            "01940001-0000-7000-8000-000000000002");
+                    OrderCommandFixtures.orderItemCancelCommand("1001", "1002");
             OrderItem item1 =
                     OrderFixtures.reconstitutedOrderItem(
                             1L, com.ryuqq.marketplace.domain.order.vo.OrderItemStatus.READY);

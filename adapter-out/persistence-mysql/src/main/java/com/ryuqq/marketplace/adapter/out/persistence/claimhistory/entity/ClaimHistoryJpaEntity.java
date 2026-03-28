@@ -25,8 +25,8 @@ public class ClaimHistoryJpaEntity {
     @Column(name = "claim_id", length = 36)
     private String claimId;
 
-    @Column(name = "order_item_id", length = 36)
-    private String orderItemId;
+    @Column(name = "order_item_id")
+    private Long orderItemId;
 
     @Column(name = "history_type", nullable = false, length = 20)
     private String historyType;
@@ -56,7 +56,7 @@ public class ClaimHistoryJpaEntity {
             String id,
             String claimType,
             String claimId,
-            String orderItemId,
+            Long orderItemId,
             String historyType,
             String title,
             String message,
@@ -81,7 +81,7 @@ public class ClaimHistoryJpaEntity {
             String id,
             String claimType,
             String claimId,
-            String orderItemId,
+            Long orderItemId,
             String historyType,
             String title,
             String message,
@@ -115,7 +115,7 @@ public class ClaimHistoryJpaEntity {
         return claimId;
     }
 
-    public String getOrderItemId() {
+    public Long getOrderItemId() {
         return orderItemId;
     }
 

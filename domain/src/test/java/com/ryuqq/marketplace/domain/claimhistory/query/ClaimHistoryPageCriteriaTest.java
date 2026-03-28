@@ -24,7 +24,7 @@ class ClaimHistoryPageCriteriaTest {
         @DisplayName("모든 파라미터로 페이지 조회 조건을 생성한다")
         void createWithAllParameters() {
             // given
-            String orderItemId = "order-item-001";
+            Long orderItemId = 1001L;
             ClaimType claimType = ClaimType.CANCEL;
             QueryContext<ClaimHistorySortKey> queryContext =
                     QueryContext.of(
@@ -46,7 +46,7 @@ class ClaimHistoryPageCriteriaTest {
         @DisplayName("claimType이 null이어도 생성에 성공한다")
         void createWithNullClaimType() {
             // given
-            String orderItemId = "order-item-001";
+            Long orderItemId = 1001L;
             QueryContext<ClaimHistorySortKey> queryContext =
                     QueryContext.defaultOf(ClaimHistorySortKey.defaultKey());
 
@@ -68,7 +68,7 @@ class ClaimHistoryPageCriteriaTest {
         @DisplayName("orderItemId만으로 기본 페이지 조회 조건을 생성한다")
         void createDefaultCriteria() {
             // given
-            String orderItemId = "order-item-001";
+            Long orderItemId = 1001L;
 
             // when
             ClaimHistoryPageCriteria criteria = ClaimHistoryPageCriteria.defaultOf(orderItemId);
@@ -99,29 +99,18 @@ class ClaimHistoryPageCriteriaTest {
         }
 
         @Test
-        @DisplayName("orderItemId가 빈 문자열이면 예외가 발생한다")
-        void blankOrderItemIdThrowsException() {
+        @DisplayName("유효한 orderItemId로 생성에 성공한다")
+        void validOrderItemIdCreatesSuccessfully() {
             // given
             QueryContext<ClaimHistorySortKey> queryContext =
                     QueryContext.defaultOf(ClaimHistorySortKey.defaultKey());
 
-            // when & then
-            assertThatThrownBy(() -> ClaimHistoryPageCriteria.of("", null, queryContext))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("orderItemId");
-        }
+            // when
+            ClaimHistoryPageCriteria criteria =
+                    ClaimHistoryPageCriteria.of(1001L, null, queryContext);
 
-        @Test
-        @DisplayName("orderItemId가 공백만 있으면 예외가 발생한다")
-        void whitespaceOrderItemIdThrowsException() {
-            // given
-            QueryContext<ClaimHistorySortKey> queryContext =
-                    QueryContext.defaultOf(ClaimHistorySortKey.defaultKey());
-
-            // when & then
-            assertThatThrownBy(() -> ClaimHistoryPageCriteria.of("   ", null, queryContext))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("orderItemId");
+            // then
+            assertThat(criteria.orderItemId()).isEqualTo(1001L);
         }
     }
 
@@ -135,7 +124,7 @@ class ClaimHistoryPageCriteriaTest {
             // given
             ClaimHistoryPageCriteria criteria =
                     ClaimHistoryPageCriteria.of(
-                            "order-item-001",
+                            1001L,
                             ClaimType.CANCEL,
                             QueryContext.defaultOf(ClaimHistorySortKey.defaultKey()));
 
@@ -147,8 +136,7 @@ class ClaimHistoryPageCriteriaTest {
         @DisplayName("claimType이 null이면 false를 반환한다")
         void returnFalseWhenClaimTypeIsNull() {
             // given
-            ClaimHistoryPageCriteria criteria =
-                    ClaimHistoryPageCriteria.defaultOf("order-item-001");
+            ClaimHistoryPageCriteria criteria = ClaimHistoryPageCriteria.defaultOf(1001L);
 
             // then
             assertThat(criteria.hasClaimTypeFilter()).isFalse();
@@ -169,7 +157,7 @@ class ClaimHistoryPageCriteriaTest {
                             SortDirection.DESC,
                             PageRequest.of(0, 20));
             ClaimHistoryPageCriteria criteria =
-                    ClaimHistoryPageCriteria.of("order-item-001", null, queryContext);
+                    ClaimHistoryPageCriteria.of(1001L, null, queryContext);
 
             // then
             assertThat(criteria.size()).isEqualTo(20);
@@ -185,7 +173,7 @@ class ClaimHistoryPageCriteriaTest {
                             SortDirection.DESC,
                             PageRequest.of(2, 10));
             ClaimHistoryPageCriteria criteria =
-                    ClaimHistoryPageCriteria.of("order-item-001", null, queryContext);
+                    ClaimHistoryPageCriteria.of(1001L, null, queryContext);
 
             // then
             assertThat(criteria.offset()).isEqualTo(20L);
@@ -201,7 +189,7 @@ class ClaimHistoryPageCriteriaTest {
                             SortDirection.DESC,
                             PageRequest.of(3, 10));
             ClaimHistoryPageCriteria criteria =
-                    ClaimHistoryPageCriteria.of("order-item-001", null, queryContext);
+                    ClaimHistoryPageCriteria.of(1001L, null, queryContext);
 
             // then
             assertThat(criteria.page()).isEqualTo(3);
@@ -218,7 +206,7 @@ class ClaimHistoryPageCriteriaTest {
             // given
             ClaimHistoryPageCriteria criteria =
                     ClaimHistoryPageCriteria.of(
-                            "order-item-001",
+                            1001L,
                             ClaimType.CANCEL,
                             QueryContext.defaultOf(ClaimHistorySortKey.defaultKey()));
 
@@ -233,7 +221,7 @@ class ClaimHistoryPageCriteriaTest {
             // given
             ClaimHistoryPageCriteria criteria =
                     ClaimHistoryPageCriteria.of(
-                            "order-item-001",
+                            1001L,
                             ClaimType.REFUND,
                             QueryContext.defaultOf(ClaimHistorySortKey.defaultKey()));
 
@@ -248,7 +236,7 @@ class ClaimHistoryPageCriteriaTest {
             // given
             ClaimHistoryPageCriteria criteria =
                     ClaimHistoryPageCriteria.of(
-                            "order-item-001",
+                            1001L,
                             ClaimType.EXCHANGE,
                             QueryContext.defaultOf(ClaimHistorySortKey.defaultKey()));
 
@@ -263,7 +251,7 @@ class ClaimHistoryPageCriteriaTest {
             // given
             ClaimHistoryPageCriteria criteria =
                     ClaimHistoryPageCriteria.of(
-                            "order-item-001",
+                            1001L,
                             ClaimType.ORDER,
                             QueryContext.defaultOf(ClaimHistorySortKey.defaultKey()));
 

@@ -111,10 +111,11 @@ public final class OrderCommandFixtures {
 
     // ===== OrderItemStatusCommand Fixtures =====
 
-    public static final String DEFAULT_ORDER_ITEM_ID = "01940001-0000-7000-8000-000000000001";
+    public static final Long DEFAULT_ORDER_ITEM_ID = 1001L;
+    public static final String DEFAULT_ORDER_ITEM_ID_STR = String.valueOf(DEFAULT_ORDER_ITEM_ID);
 
     public static OrderItemStatusCommand orderItemStatusCommand() {
-        return new OrderItemStatusCommand(List.of(DEFAULT_ORDER_ITEM_ID), "system");
+        return new OrderItemStatusCommand(List.of(DEFAULT_ORDER_ITEM_ID_STR), "system");
     }
 
     public static OrderItemStatusCommand orderItemStatusCommand(String... orderItemIds) {
@@ -124,11 +125,11 @@ public final class OrderCommandFixtures {
     // ===== OrderItemCancelCommand Fixtures =====
 
     public static OrderItemCancelCommand orderItemCancelCommand() {
-        return new OrderItemCancelCommand(List.of(DEFAULT_ORDER_ITEM_ID), "단순 변심", "system");
+        return new OrderItemCancelCommand(List.of(DEFAULT_ORDER_ITEM_ID_STR), "단순 변심", "system");
     }
 
     public static OrderItemCancelCommand orderItemCancelCommand(String reason) {
-        return new OrderItemCancelCommand(List.of(DEFAULT_ORDER_ITEM_ID), reason, "system");
+        return new OrderItemCancelCommand(List.of(DEFAULT_ORDER_ITEM_ID_STR), reason, "system");
     }
 
     public static OrderItemCancelCommand orderItemCancelCommand(String... orderItemIds) {
@@ -138,11 +139,11 @@ public final class OrderCommandFixtures {
     // ===== StartClaimCommand Fixtures =====
 
     public static StartClaimCommand startClaimCommand() {
-        return new StartClaimCommand(List.of(DEFAULT_ORDER_ITEM_ID), "상품 불량", "system");
+        return new StartClaimCommand(List.of(DEFAULT_ORDER_ITEM_ID_STR), "상품 불량", "system");
     }
 
     public static StartClaimCommand startClaimCommand(String reason) {
-        return new StartClaimCommand(List.of(DEFAULT_ORDER_ITEM_ID), reason, "system");
+        return new StartClaimCommand(List.of(DEFAULT_ORDER_ITEM_ID_STR), reason, "system");
     }
 
     // ===== CreateOrderItemCommand Fixtures =====

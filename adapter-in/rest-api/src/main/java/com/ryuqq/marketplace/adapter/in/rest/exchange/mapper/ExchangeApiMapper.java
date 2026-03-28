@@ -78,7 +78,7 @@ public class ExchangeApiMapper {
 
     private ExchangeRequestItem toExchangeRequestItem(ExchangeRequestItemApiRequest item) {
         return new ExchangeRequestItem(
-                item.orderId(), // V4 간극: orderId = 내부 orderItemId
+                Long.parseLong(item.orderId()), // V4 간극: orderId = 내부 orderItemId
                 item.exchangeQty(),
                 ExchangeReasonType.valueOf(item.reasonType()),
                 item.reasonDetail(),
@@ -165,7 +165,7 @@ public class ExchangeApiMapper {
 
     public PageApiResponse<ClaimListItemApiResponseV4> toPageResponseV4(
             ExchangePageResult result, ClaimOrderEnricher enricher) {
-        List<String> orderItemIds =
+        List<Long> orderItemIds =
                 result.exchanges().stream().map(ExchangeListResult::orderItemId).toList();
         ClaimOrderEnricher.OrderContext ctx = enricher.loadOrderContext(orderItemIds);
 
@@ -182,7 +182,7 @@ public class ExchangeApiMapper {
             ExchangeListResult r,
             ClaimOrderEnricher enricher,
             ClaimOrderEnricher.OrderContext ctx) {
-        String itemId = r.orderItemId();
+        Long itemId = r.orderItemId();
         return new ClaimListItemApiResponseV4(
                 enricher.toOrderProductV4(itemId, ctx),
                 enricher.toClaimInfoV4(
@@ -249,7 +249,9 @@ public class ExchangeApiMapper {
         return new ExchangeListApiResponse(
                 nullToEmpty(result.exchangeClaimId()),
                 nullToEmpty(result.claimNumber()),
-                nullToEmpty(result.orderItemId()), // V4 간극: orderId = orderItemId
+                result.orderItemId() != null
+                        ? String.valueOf(result.orderItemId())
+                        : "", // V4 간극: orderId = orderItemId
                 result.exchangeQty(),
                 nullToEmpty(result.exchangeStatus()),
                 nullToEmpty(result.reasonType()),
@@ -372,7 +374,7 @@ public class ExchangeApiMapper {
                 orderProduct != null ? List.of(orderProduct) : List.of();
 
         return new ExchangeDetailApiResponse(
-                nullToEmpty(result.orderItemId()), // V4 간극
+                result.orderItemId() != null ? String.valueOf(result.orderItemId()) : "", // V4 간극
                 orderProducts,
                 claimInfo,
                 buyerInfo,
@@ -421,7 +423,7 @@ public class ExchangeApiMapper {
 
     public AddClaimHistoryMemoCommand toAddMemoCommand(
             String exchangeClaimId,
-            String orderItemId,
+            Long orderItemId,
             AddClaimHistoryMemoApiRequest request,
             MarketAccessChecker.ActorInfo actor) {
         return new AddClaimHistoryMemoCommand(

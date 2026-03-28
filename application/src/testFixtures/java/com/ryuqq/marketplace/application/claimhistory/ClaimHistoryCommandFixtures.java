@@ -18,7 +18,7 @@ public final class ClaimHistoryCommandFixtures {
     // ===== 기본 값 상수 =====
     public static final ClaimType DEFAULT_CLAIM_TYPE = ClaimType.CANCEL;
     public static final String DEFAULT_CLAIM_ID = "cancel-claim-001";
-    public static final String DEFAULT_ORDER_ITEM_ID = "order-item-001";
+    public static final Long DEFAULT_ORDER_ITEM_ID = 1001L;
     public static final String DEFAULT_MESSAGE = "고객 요청으로 취소 처리 확인";
     public static final String DEFAULT_ACTOR_ID = "admin-001";
     public static final String DEFAULT_ACTOR_NAME = "관리자";
@@ -58,7 +58,7 @@ public final class ClaimHistoryCommandFixtures {
     public static AddClaimHistoryMemoCommand addMemoCommand(
             ClaimType claimType,
             String claimId,
-            String orderItemId,
+            Long orderItemId,
             String message,
             String actorId,
             String actorName) {
@@ -66,8 +66,7 @@ public final class ClaimHistoryCommandFixtures {
                 claimType, claimId, orderItemId, message, actorId, actorName);
     }
 
-    public static AddClaimHistoryMemoCommand addOrderMemoCommand(
-            String orderItemId, String message) {
+    public static AddClaimHistoryMemoCommand addOrderMemoCommand(Long orderItemId, String message) {
         return new AddClaimHistoryMemoCommand(
                 ClaimType.ORDER, null, orderItemId, message, DEFAULT_ACTOR_ID, DEFAULT_ACTOR_NAME);
     }

@@ -50,8 +50,8 @@ class ShipBatchServiceTest {
         void execute_AllSuccess_ReturnsAllSuccess() {
             // given
             Instant now = Instant.parse("2026-02-18T10:00:00Z");
-            OrderItemId id1 = OrderItemId.of("01940001-0000-7000-8000-000000000001");
-            OrderItemId id2 = OrderItemId.of("01940001-0000-7000-8000-000000000002");
+            OrderItemId id1 = OrderItemId.of(1001L);
+            OrderItemId id2 = OrderItemId.of(1002L);
 
             ShipmentMethod method = ShipmentMethod.of(ShipmentMethodType.COURIER, "CJ", "CJ대한통운");
             ShipmentShipData data1 = ShipmentShipData.of("tracking-1", method);
@@ -94,8 +94,8 @@ class ShipBatchServiceTest {
         void execute_PartialFailure_ReturnsPartialResult() {
             // given
             Instant now = Instant.parse("2026-02-18T10:00:00Z");
-            OrderItemId id1 = OrderItemId.of("01940001-0000-7000-8000-000000000001");
-            OrderItemId id2 = OrderItemId.of("01940001-0000-7000-8000-000000000002");
+            OrderItemId id1 = OrderItemId.of(1001L);
+            OrderItemId id2 = OrderItemId.of(1002L);
 
             ShipmentMethod method = ShipmentMethod.of(ShipmentMethodType.COURIER, "CJ", "CJ대한통운");
             ShipmentShipData data1 = ShipmentShipData.of("tracking-1", method);
@@ -142,7 +142,7 @@ class ShipBatchServiceTest {
         void execute_AllFailure_ReturnsAllFailure() {
             // given
             Instant now = Instant.parse("2026-02-18T10:00:00Z");
-            OrderItemId id1 = OrderItemId.of("01940001-0000-7000-8000-000000000001");
+            OrderItemId id1 = OrderItemId.of(1001L);
 
             ShipmentMethod method = ShipmentMethod.of(ShipmentMethodType.COURIER, "CJ", "CJ대한통운");
             ShipmentShipData data1 = ShipmentShipData.of("tracking-1", method);

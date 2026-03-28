@@ -39,7 +39,7 @@ public class ExternalOrderItemMappingReadManager {
      * @return 매핑 정보, 없으면 null
      */
     @Transactional(readOnly = true)
-    public ExternalOrderItemMapping findByOrderItemId(String orderItemId) {
+    public ExternalOrderItemMapping findByOrderItemId(Long orderItemId) {
         return queryPort.findByOrderItemId(orderItemId).orElse(null);
     }
 }

@@ -52,7 +52,7 @@ public class SettlementEntryQueryDslRepository {
     }
 
     /** 특정 orderItemId의 Entry 목록. */
-    public List<SettlementEntryJpaEntity> findByOrderItemId(String orderItemId) {
+    public List<SettlementEntryJpaEntity> findByOrderItemId(Long orderItemId) {
         return queryFactory
                 .selectFrom(entry)
                 .where(entry.orderItemId.eq(orderItemId))

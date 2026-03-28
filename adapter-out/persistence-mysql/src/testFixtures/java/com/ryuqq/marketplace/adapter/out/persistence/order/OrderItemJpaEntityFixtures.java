@@ -3,7 +3,6 @@ package com.ryuqq.marketplace.adapter.out.persistence.order;
 import com.ryuqq.marketplace.adapter.out.persistence.order.entity.OrderItemJpaEntity;
 import java.time.Instant;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.IntStream;
 
 /** OrderItemJpaEntity 테스트 Fixtures. */
@@ -34,10 +33,10 @@ public final class OrderItemJpaEntityFixtures {
     /** 기본 주문 상품 Entity 생성. */
     public static OrderItemJpaEntity defaultItem(String orderId) {
         Instant now = Instant.now();
-        String itemId = UUID.randomUUID().toString();
+        long itemId = System.nanoTime();
         return OrderItemJpaEntity.create(
                 itemId,
-                "ORD-20240101-" + itemId.substring(0, 4) + "-001",
+                "ORD-20240101-" + itemId + "-001",
                 orderId,
                 DEFAULT_PRODUCT_GROUP_ID,
                 1L,
@@ -81,10 +80,10 @@ public final class OrderItemJpaEntityFixtures {
     /** CONFIRMED 상태의 주문 상품 Entity 생성. 교환/환불 테스트용. */
     public static OrderItemJpaEntity confirmedItem(String orderId) {
         Instant now = Instant.now();
-        String itemId = UUID.randomUUID().toString();
+        long itemId = System.nanoTime();
         return OrderItemJpaEntity.create(
                 itemId,
-                "ORD-20240101-" + itemId.substring(0, 4) + "-001",
+                "ORD-20240101-" + itemId + "-001",
                 orderId,
                 DEFAULT_PRODUCT_GROUP_ID,
                 1L,
@@ -124,10 +123,10 @@ public final class OrderItemJpaEntityFixtures {
     public static OrderItemJpaEntity itemWithPrice(String orderId, int unitPrice, int quantity) {
         Instant now = Instant.now();
         int totalAmount = unitPrice * quantity;
-        String itemId = UUID.randomUUID().toString();
+        long itemId = System.nanoTime();
         return OrderItemJpaEntity.create(
                 itemId,
-                "ORD-20240101-" + itemId.substring(0, 4) + "-001",
+                "ORD-20240101-" + itemId + "-001",
                 orderId,
                 DEFAULT_PRODUCT_GROUP_ID,
                 1L,

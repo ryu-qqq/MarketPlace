@@ -51,7 +51,8 @@ import org.springframework.test.web.servlet.MockMvc;
 class ShipmentCommandControllerRestDocsTest {
 
     private static final String SHIPMENTS_URL = ShipmentEndpoints.SHIPMENTS;
-    private static final String DEFAULT_ORDER_ITEM_ID = ShipmentApiFixtures.DEFAULT_ORDER_ITEM_ID;
+    private static final String DEFAULT_ORDER_ITEM_ID =
+            ShipmentApiFixtures.DEFAULT_ORDER_ITEM_ID_STR;
 
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;

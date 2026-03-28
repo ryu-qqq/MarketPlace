@@ -97,14 +97,14 @@ class RefundFlowE2ETest extends E2ETestBase {
      *
      * @return 저장된 OrderItem의 ID
      */
-    private String seedOrderItem(String orderId) {
+    private Long seedOrderItem(String orderId) {
         OrderJpaEntity order = OrderJpaEntityFixtures.orderedEntity(orderId);
         orderRepository.save(order);
         OrderItemJpaEntity item = OrderItemJpaEntityFixtures.defaultItem(orderId);
         return orderItemRepository.save(item).getId();
     }
 
-    private Map<String, Object> buildRefundRequestBody(String orderItemId, String reasonType) {
+    private Map<String, Object> buildRefundRequestBody(Long orderItemId, String reasonType) {
         Map<String, Object> item = new HashMap<>();
         // V4 간극: orderId 필드 = 내부 orderItemId
         item.put("orderId", orderItemId);
@@ -124,7 +124,7 @@ class RefundFlowE2ETest extends E2ETestBase {
         @DisplayName("[FLOW-01] 환불 요청 → 목록 조회 → 승인 → 상세 조회 COLLECTING 확인")
         void requestThenApprove_FullHappyPath_StatusBecomesCollecting() {
             // Step 1: OrderItem 시딩 (READY 상태)
-            String orderItemId = seedOrderItem("flow-01-order-001");
+            Long orderItemId = seedOrderItem("flow-01-order-001");
 
             // Step 2: 환불 요청 (C14)
             Response requestResponse =
@@ -190,7 +190,7 @@ class RefundFlowE2ETest extends E2ETestBase {
         @DisplayName("[FLOW-02] 환불 요청 → 거절 → 상세 조회 REJECTED 확인")
         void requestThenReject_StatusBecomesRejected() {
             // Step 1: OrderItem 시딩 후 환불 요청 (C14)
-            String orderItemId = seedOrderItem("flow-02-order-001");
+            Long orderItemId = seedOrderItem("flow-02-order-001");
 
             given().spec(givenSuperAdmin())
                     .body(buildRefundRequestBody(orderItemId, "CHANGE_OF_MIND"))

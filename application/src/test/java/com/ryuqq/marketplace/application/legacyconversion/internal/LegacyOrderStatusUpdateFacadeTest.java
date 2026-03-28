@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 
 import com.ryuqq.marketplace.application.cancel.manager.CancelCommandManager;
@@ -300,7 +299,8 @@ class LegacyOrderStatusUpdateFacadeTest {
                     new LegacyOrderStatusSyncBundle(
                             order, orderItem, OrderItemStatus.READY, resolution, LEGACY_ORDER_ID);
 
-            LegacyOrderCompositeResult composite = createCompositeWithInvoice("DELIVERY_PROCESSING", "CJGLS", "1234567890");
+            LegacyOrderCompositeResult composite =
+                    createCompositeWithInvoice("DELIVERY_PROCESSING", "CJGLS", "1234567890");
 
             given(shipmentReadManager.findByOrderItemId(orderItem.id()))
                     .willReturn(Optional.empty());

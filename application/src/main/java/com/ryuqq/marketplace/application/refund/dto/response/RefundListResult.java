@@ -6,7 +6,7 @@ import java.time.Instant;
 public record RefundListResult(
         String refundClaimId,
         String claimNumber,
-        String orderItemId,
+        Long orderItemId,
         int refundQty,
         String refundStatus,
         String reasonType,

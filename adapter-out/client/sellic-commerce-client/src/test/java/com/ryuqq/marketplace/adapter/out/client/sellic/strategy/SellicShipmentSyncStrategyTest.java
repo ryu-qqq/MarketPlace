@@ -47,7 +47,7 @@ class SellicShipmentSyncStrategyTest {
     private ShipmentOutbox mockOutbox(ShipmentOutboxType type, String payload) {
         ShipmentOutbox outbox = mock(ShipmentOutbox.class);
         Mockito.lenient().when(outbox.outboxType()).thenReturn(type);
-        Mockito.lenient().when(outbox.orderItemIdValue()).thenReturn("OI-001");
+        Mockito.lenient().when(outbox.orderItemIdValue()).thenReturn(1001L);
         if (payload != null) {
             Mockito.lenient().when(outbox.payload()).thenReturn(payload);
         }
@@ -106,7 +106,7 @@ class SellicShipmentSyncStrategyTest {
             var outbox = mockOutbox(ShipmentOutboxType.SHIP, payload);
             var mapping = mockMapping("999");
 
-            given(mappingQueryPort.findByOrderItemId("OI-001")).willReturn(Optional.of(mapping));
+            given(mappingQueryPort.findByOrderItemId(1001L)).willReturn(Optional.of(mapping));
             given(properties.getCustomerId()).willReturn("test-customer");
             given(properties.getApiKey()).willReturn("test-key");
             given(apiClient.registerShipment(any()))
@@ -125,7 +125,7 @@ class SellicShipmentSyncStrategyTest {
             var outbox = mockOutbox(ShipmentOutboxType.SHIP, payload);
             var mapping = mockMapping("999");
 
-            given(mappingQueryPort.findByOrderItemId("OI-001")).willReturn(Optional.of(mapping));
+            given(mappingQueryPort.findByOrderItemId(1001L)).willReturn(Optional.of(mapping));
             given(properties.getCustomerId()).willReturn("test-customer");
             given(properties.getApiKey()).willReturn("test-key");
             given(apiClient.registerShipment(any()))
@@ -144,7 +144,7 @@ class SellicShipmentSyncStrategyTest {
             var outbox = mockOutbox(ShipmentOutboxType.SHIP, payload);
             var mapping = mockMapping("999");
 
-            given(mappingQueryPort.findByOrderItemId("OI-001")).willReturn(Optional.of(mapping));
+            given(mappingQueryPort.findByOrderItemId(1001L)).willReturn(Optional.of(mapping));
             given(properties.getCustomerId()).willReturn("test-customer");
             given(properties.getApiKey()).willReturn("test-key");
             given(apiClient.registerShipment(any()))
@@ -162,7 +162,7 @@ class SellicShipmentSyncStrategyTest {
             String payload = "{\"trackingNumber\":\"12345\",\"courierCode\":\"CJ\"}";
             var outbox = mockOutbox(ShipmentOutboxType.SHIP, payload);
 
-            given(mappingQueryPort.findByOrderItemId("OI-001")).willReturn(Optional.empty());
+            given(mappingQueryPort.findByOrderItemId(1001L)).willReturn(Optional.empty());
 
             OutboxSyncResult result = sut.execute(outbox, null);
 

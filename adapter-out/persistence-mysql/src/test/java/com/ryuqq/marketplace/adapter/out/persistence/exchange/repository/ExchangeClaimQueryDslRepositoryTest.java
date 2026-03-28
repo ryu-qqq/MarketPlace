@@ -95,7 +95,7 @@ class ExchangeClaimQueryDslRepositoryTest {
         @Test
         @DisplayName("존재하는 orderItemId로 조회 시 Entity를 반환합니다")
         void findByOrderItemId_WithExistingOrderItemId_ReturnsEntity() {
-            String orderItemId = "01900000-0000-7000-0000-000000000020";
+            Long orderItemId = 1002L;
             ExchangeClaimJpaEntity saved =
                     persist(
                             ExchangeClaimJpaEntityFixtures.requestedEntityWithOrderItemId(
@@ -110,8 +110,7 @@ class ExchangeClaimQueryDslRepositoryTest {
         @Test
         @DisplayName("존재하지 않는 orderItemId 조회 시 빈 Optional을 반환합니다")
         void findByOrderItemId_WithNonExistent_ReturnsEmpty() {
-            Optional<ExchangeClaimJpaEntity> result =
-                    repository().findByOrderItemId("01900000-0000-7000-0000-000000000999");
+            Optional<ExchangeClaimJpaEntity> result = repository().findByOrderItemId(99999L);
 
             assertThat(result).isEmpty();
         }
@@ -128,8 +127,8 @@ class ExchangeClaimQueryDslRepositoryTest {
         @Test
         @DisplayName("orderItemId 목록으로 복수 Entity를 조회합니다")
         void findByOrderItemIds_WithMultipleIds_ReturnsEntities() {
-            String orderItemId1 = "01900000-0000-7000-0000-000000000030";
-            String orderItemId2 = "01900000-0000-7000-0000-000000000031";
+            Long orderItemId1 = 3001L;
+            Long orderItemId2 = 3002L;
             persist(
                     ExchangeClaimJpaEntityFixtures.requestedEntityWithOrderItemId(
                             "id-multi-001", orderItemId1));
@@ -149,8 +148,7 @@ class ExchangeClaimQueryDslRepositoryTest {
         @Test
         @DisplayName("결과가 없으면 빈 리스트를 반환합니다")
         void findByOrderItemIds_WithNoMatch_ReturnsEmptyList() {
-            List<ExchangeClaimJpaEntity> result =
-                    repository().findByOrderItemIds(List.of("non-existent-id"));
+            List<ExchangeClaimJpaEntity> result = repository().findByOrderItemIds(List.of(99999L));
 
             assertThat(result).isEmpty();
         }

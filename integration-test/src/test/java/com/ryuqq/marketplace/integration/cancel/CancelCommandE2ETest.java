@@ -89,9 +89,9 @@ class CancelCommandE2ETest extends E2ETestBase {
      * Order + OrderItem 시딩 헬퍼.
      *
      * @param orderId Order ID
-     * @return 저장된 OrderItem의 ID (UUIDv7 String)
+     * @return 저장된 OrderItem의 ID (Long)
      */
-    private String seedOrderItem(String orderId) {
+    private Long seedOrderItem(String orderId) {
         orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
         OrderItemJpaEntity item = OrderItemJpaEntityFixtures.defaultItem(orderId);
         return orderItemRepository.save(item).getId();
@@ -105,7 +105,7 @@ class CancelCommandE2ETest extends E2ETestBase {
         @Tag("P0")
         @DisplayName("[C19-1] 유효한 OrderItem 1건 판매자 취소 성공")
         void sellerCancelBatch_SingleItem_Success() {
-            String orderItemId = seedOrderItem("order-sc-001");
+            Long orderItemId = seedOrderItem("order-sc-001");
 
             given().spec(givenSuperAdmin())
                     .body(createSellerCancelRequest(orderItemId))
@@ -130,8 +130,8 @@ class CancelCommandE2ETest extends E2ETestBase {
         @Tag("P0")
         @DisplayName("[C19-2] OrderItem 2건 일괄 판매자 취소 성공")
         void sellerCancelBatch_TwoItems_Success() {
-            String itemId1 = seedOrderItem("order-sc-002");
-            String itemId2 = seedOrderItem("order-sc-003");
+            Long itemId1 = seedOrderItem("order-sc-002");
+            Long itemId2 = seedOrderItem("order-sc-003");
 
             given().spec(givenSuperAdmin())
                     .body(
@@ -218,7 +218,7 @@ class CancelCommandE2ETest extends E2ETestBase {
         @Tag("P0")
         @DisplayName("[C20-1] REQUESTED 상태 Cancel 승인 성공")
         void approveBatch_RequestedCancel_Success() {
-            String orderItemId = seedOrderItem("order-app-001");
+            Long orderItemId = seedOrderItem("order-app-001");
             cancelRepository.save(
                     CancelJpaEntityFixtures.requestedEntity(
                             "cancel-approve-001", orderItemId, 10L));
@@ -244,8 +244,8 @@ class CancelCommandE2ETest extends E2ETestBase {
         @Tag("P0")
         @DisplayName("[C20-2] 복수 Cancel 일괄 승인")
         void approveBatch_TwoCancels_Success() {
-            String orderItemId1 = seedOrderItem("order-app-002");
-            String orderItemId2 = seedOrderItem("order-app-003");
+            Long orderItemId1 = seedOrderItem("order-app-002");
+            Long orderItemId2 = seedOrderItem("order-app-003");
             cancelRepository.save(
                     CancelJpaEntityFixtures.requestedEntityWithNumber(
                             "cancel-app-001", "CAN-APP-001", orderItemId1, 10L));
@@ -281,8 +281,7 @@ class CancelCommandE2ETest extends E2ETestBase {
         @DisplayName("[C20-5] REJECTED 상태 Cancel 승인 시도 - 상태 전이 불가 (배치 실패 처리)")
         void approveBatch_RejectedCancel_FailsInBatch() {
             cancelRepository.save(
-                    CancelJpaEntityFixtures.rejectedEntity(
-                            "cancel-rejected-001", "order-item-rej-001", 10L));
+                    CancelJpaEntityFixtures.rejectedEntity("cancel-rejected-001", 9001L, 10L));
 
             given().spec(givenSuperAdmin())
                     .body(Map.of("cancelIds", List.of("cancel-rejected-001")))
@@ -302,7 +301,7 @@ class CancelCommandE2ETest extends E2ETestBase {
         @Tag("P0")
         @DisplayName("[C21-1] REQUESTED 상태 Cancel 거절 성공")
         void rejectBatch_RequestedCancel_Success() {
-            String orderItemId = seedOrderItem("order-rej-001");
+            Long orderItemId = seedOrderItem("order-rej-001");
             cancelRepository.save(
                     CancelJpaEntityFixtures.requestedEntity("cancel-reject-001", orderItemId, 10L));
             // 운송장 등록 상태 Shipment 생성 (네이버 정책: SHIPPED 이상이어야 거부 가능)
@@ -357,7 +356,7 @@ class CancelCommandE2ETest extends E2ETestBase {
         @Tag("P1")
         @DisplayName("[C21-3] APPROVED 상태 Cancel 거절 시도 - 상태 전이 불가 (배치 실패 처리)")
         void rejectBatch_ApprovedCancel_FailsInBatch() {
-            String orderItemId = seedOrderItem("order-rej-app-001");
+            Long orderItemId = seedOrderItem("order-rej-app-001");
             cancelRepository.save(
                     CancelJpaEntityFixtures.approvedEntity(
                             "cancel-approved-001", orderItemId, 10L));
@@ -397,7 +396,7 @@ class CancelCommandE2ETest extends E2ETestBase {
         @Tag("P0")
         @DisplayName("[C22-1] 존재하는 cancelId에 메모 등록 성공")
         void addMemo_ExistingCancel_Returns201() {
-            String orderItemId = seedOrderItem("order-memo-001");
+            Long orderItemId = seedOrderItem("order-memo-001");
             cancelRepository.save(
                     CancelJpaEntityFixtures.requestedEntity("cancel-memo-001", orderItemId, 10L));
 
@@ -451,7 +450,7 @@ class CancelCommandE2ETest extends E2ETestBase {
 
     // ===== Helper 메서드 =====
 
-    private Map<String, Object> createSellerCancelRequest(String orderItemId) {
+    private Map<String, Object> createSellerCancelRequest(Long orderItemId) {
         return Map.of(
                 "items",
                 List.of(Map.of("orderId", orderItemId, "cancelQty", 1)),

@@ -56,7 +56,8 @@ public final class OrderApiFixtures {
     private OrderApiFixtures() {}
 
     // ===== 상수 =====
-    public static final String DEFAULT_ORDER_ITEM_ID = "01940001-0000-7000-8000-000000000001";
+    public static final long DEFAULT_ORDER_ITEM_ID = 1001L;
+    public static final String DEFAULT_ORDER_ITEM_ID_STR = String.valueOf(DEFAULT_ORDER_ITEM_ID);
     public static final String DEFAULT_ORDER_ID = "01900000-0000-7000-0000-000000000001";
     public static final String DEFAULT_ORDER_NUMBER = "ORD-20260101-0001";
     public static final String DEFAULT_ORDER_STATUS = "PREPARING";
@@ -326,7 +327,7 @@ public final class OrderApiFixtures {
 
     public static ProductOrderApiResponse productOrderApiResponse() {
         return new ProductOrderApiResponse(
-                DEFAULT_ORDER_ITEM_ID,
+                DEFAULT_ORDER_ITEM_ID_STR,
                 "ORD-20260101-0001-001",
                 100L,
                 200L,
@@ -405,7 +406,7 @@ public final class OrderApiFixtures {
 
     public static OrderListApiResponseV4 orderListApiResponseV4() {
         return new OrderListApiResponseV4(
-                DEFAULT_ORDER_ITEM_ID,
+                DEFAULT_ORDER_ITEM_ID_STR,
                 "ORD-20260101-0001-001",
                 new OrderListApiResponseV4.BuyerInfoApiResponse(
                         DEFAULT_BUYER_NAME, DEFAULT_BUYER_EMAIL, DEFAULT_BUYER_PHONE),
@@ -466,7 +467,7 @@ public final class OrderApiFixtures {
     public static CancelInfoApiResponse cancelInfoApiResponse() {
         return new CancelInfoApiResponse(
                 String.valueOf(3001L),
-                DEFAULT_ORDER_ITEM_ID,
+                DEFAULT_ORDER_ITEM_ID_STR,
                 DEFAULT_CANCEL_NUMBER,
                 "COMPLETED",
                 1,
@@ -483,7 +484,7 @@ public final class OrderApiFixtures {
     public static ClaimInfoApiResponse claimInfoApiResponse() {
         return new ClaimInfoApiResponse(
                 String.valueOf(4001L),
-                DEFAULT_ORDER_ITEM_ID,
+                DEFAULT_ORDER_ITEM_ID_STR,
                 DEFAULT_CLAIM_NUMBER,
                 "REFUND",
                 "IN_PROGRESS",

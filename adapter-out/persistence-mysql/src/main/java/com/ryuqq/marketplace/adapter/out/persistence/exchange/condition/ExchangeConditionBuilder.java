@@ -31,11 +31,11 @@ public class ExchangeConditionBuilder {
         return sellerId != null ? exchange.sellerId.eq(sellerId) : null;
     }
 
-    public BooleanExpression orderItemIdEq(String orderItemId) {
+    public BooleanExpression orderItemIdEq(Long orderItemId) {
         return exchange.orderItemId.eq(orderItemId);
     }
 
-    public BooleanExpression orderItemIdIn(List<String> orderItemIds) {
+    public BooleanExpression orderItemIdIn(List<Long> orderItemIds) {
         return orderItemIds != null && !orderItemIds.isEmpty()
                 ? exchange.orderItemId.in(orderItemIds)
                 : null;

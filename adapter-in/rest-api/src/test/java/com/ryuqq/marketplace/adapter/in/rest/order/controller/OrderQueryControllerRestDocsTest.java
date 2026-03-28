@@ -50,7 +50,7 @@ import org.springframework.test.web.servlet.MockMvc;
 class OrderQueryControllerRestDocsTest {
 
     private static final String BASE_URL = OrderAdminEndpoints.ORDERS;
-    private static final String ORDER_ITEM_ID = OrderApiFixtures.DEFAULT_ORDER_ITEM_ID;
+    private static final String ORDER_ITEM_ID = OrderApiFixtures.DEFAULT_ORDER_ITEM_ID_STR;
 
     @Autowired private MockMvc mockMvc;
 
@@ -435,7 +435,8 @@ class OrderQueryControllerRestDocsTest {
             // given
             ProductOrderDetailResult detailResult = OrderApiFixtures.productOrderDetailResult();
 
-            given(getOrderDetailUseCase.execute(ORDER_ITEM_ID)).willReturn(detailResult);
+            given(getOrderDetailUseCase.execute(OrderApiFixtures.DEFAULT_ORDER_ITEM_ID))
+                    .willReturn(detailResult);
             given(mapper.toDetailResponseV4(any(ProductOrderDetailResult.class)))
                     .willAnswer(
                             inv -> {

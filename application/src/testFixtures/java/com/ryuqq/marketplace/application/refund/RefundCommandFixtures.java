@@ -26,7 +26,7 @@ public final class RefundCommandFixtures {
 
     // ===== 기본 상수 =====
     private static final String DEFAULT_REFUND_CLAIM_ID = "01900000-0000-7000-8000-000000000010";
-    private static final String DEFAULT_ORDER_ITEM_ID = "01940001-0000-7000-8000-000000000001";
+    private static final Long DEFAULT_ORDER_ITEM_ID = 1001L;
     private static final String DEFAULT_PROCESSED_BY = "admin@marketplace.com";
     private static final String DEFAULT_REQUESTED_BY = "customer@marketplace.com";
     private static final long DEFAULT_SELLER_ID = 10L;
@@ -48,7 +48,7 @@ public final class RefundCommandFixtures {
                 DEFAULT_ORDER_ITEM_ID, 1, RefundReasonType.CHANGE_OF_MIND, "단순 변심입니다.");
     }
 
-    public static RefundRequestItem refundRequestItem(String orderItemId, int refundQty) {
+    public static RefundRequestItem refundRequestItem(Long orderItemId, int refundQty) {
         return new RefundRequestItem(orderItemId, refundQty, RefundReasonType.DEFECTIVE, null);
     }
 

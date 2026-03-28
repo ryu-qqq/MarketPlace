@@ -142,10 +142,8 @@ class CancelOutboxCommandAdapterTest {
             // given
             CancelOutbox outbox1 = CancelFixtures.pendingCancelOutbox();
             CancelOutbox outbox2 = CancelFixtures.pendingCancelOutbox();
-            CancelOutboxJpaEntity entity1 =
-                    CancelOutboxJpaEntityFixtures.pendingEntity(1L, "item-001");
-            CancelOutboxJpaEntity entity2 =
-                    CancelOutboxJpaEntityFixtures.pendingEntity(2L, "item-002");
+            CancelOutboxJpaEntity entity1 = CancelOutboxJpaEntityFixtures.pendingEntity(1L, 1001L);
+            CancelOutboxJpaEntity entity2 = CancelOutboxJpaEntityFixtures.pendingEntity(2L, 1002L);
             List<CancelOutbox> outboxes = List.of(outbox1, outbox2);
 
             given(mapper.toEntity(outbox1)).willReturn(entity1);
@@ -168,10 +166,8 @@ class CancelOutboxCommandAdapterTest {
             // given
             CancelOutbox outbox1 = CancelFixtures.pendingCancelOutbox();
             CancelOutbox outbox2 = CancelFixtures.pendingCancelOutbox();
-            CancelOutboxJpaEntity entity1 =
-                    CancelOutboxJpaEntityFixtures.pendingEntity(1L, "item-001");
-            CancelOutboxJpaEntity entity2 =
-                    CancelOutboxJpaEntityFixtures.pendingEntity(2L, "item-002");
+            CancelOutboxJpaEntity entity1 = CancelOutboxJpaEntityFixtures.pendingEntity(1L, 1001L);
+            CancelOutboxJpaEntity entity2 = CancelOutboxJpaEntityFixtures.pendingEntity(2L, 1002L);
             CancelOutboxJpaEntity savedEntity1 = CancelOutboxJpaEntityFixtures.completedEntity();
             CancelOutboxJpaEntity savedEntity2 = CancelOutboxJpaEntityFixtures.completedEntity();
             List<CancelOutbox> outboxes = List.of(outbox1, outbox2);

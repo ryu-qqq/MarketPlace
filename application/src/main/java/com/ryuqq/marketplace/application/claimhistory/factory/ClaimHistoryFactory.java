@@ -21,7 +21,7 @@ public class ClaimHistoryFactory {
     public ClaimHistory createStatusChange(
             ClaimType claimType,
             String claimId,
-            String orderItemId,
+            Long orderItemId,
             String fromStatus,
             String toStatus,
             String actorId,
@@ -41,7 +41,7 @@ public class ClaimHistoryFactory {
     public ClaimHistory createStatusChangeBySystem(
             ClaimType claimType,
             String claimId,
-            String orderItemId,
+            Long orderItemId,
             String fromStatus,
             String toStatus) {
         return ClaimHistory.forStatusChange(
@@ -59,7 +59,7 @@ public class ClaimHistoryFactory {
     public ClaimHistory createStatusChangeBySystemWithQty(
             ClaimType claimType,
             String claimId,
-            String orderItemId,
+            Long orderItemId,
             String fromStatus,
             String toStatus,
             int quantity) {
@@ -79,7 +79,7 @@ public class ClaimHistoryFactory {
     public ClaimHistory createManualMemo(
             ClaimType claimType,
             String claimId,
-            String orderItemId,
+            Long orderItemId,
             String message,
             String actorId,
             String actorName) {

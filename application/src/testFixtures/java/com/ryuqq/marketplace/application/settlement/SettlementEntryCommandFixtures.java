@@ -21,7 +21,7 @@ public final class SettlementEntryCommandFixtures {
 
     // ===== 기본 상수 =====
     public static final long DEFAULT_SELLER_ID = 100L;
-    public static final String DEFAULT_ORDER_ITEM_ID = "oi-test-001";
+    public static final Long DEFAULT_ORDER_ITEM_ID = 1001L;
     public static final String DEFAULT_CLAIM_ID = "claim-test-001";
     public static final int DEFAULT_SALES_AMOUNT = 50000;
     public static final int DEFAULT_COMMISSION_RATE = 1000; // 10%
@@ -36,14 +36,13 @@ public final class SettlementEntryCommandFixtures {
                 DEFAULT_COMMISSION_RATE);
     }
 
-    public static CreateSalesEntryCommand createSalesEntryCommand(
-            String orderItemId, long sellerId) {
+    public static CreateSalesEntryCommand createSalesEntryCommand(Long orderItemId, long sellerId) {
         return new CreateSalesEntryCommand(
                 orderItemId, sellerId, DEFAULT_SALES_AMOUNT, DEFAULT_COMMISSION_RATE);
     }
 
     public static CreateSalesEntryCommand createSalesEntryCommand(
-            String orderItemId, long sellerId, int salesAmount, int commissionRate) {
+            Long orderItemId, long sellerId, int salesAmount, int commissionRate) {
         return new CreateSalesEntryCommand(orderItemId, sellerId, salesAmount, commissionRate);
     }
 
@@ -76,7 +75,7 @@ public final class SettlementEntryCommandFixtures {
     }
 
     public static CreateReversalEntryCommand createReversalEntryCommand(
-            String orderItemId, long sellerId, String claimId, String claimType) {
+            Long orderItemId, long sellerId, String claimId, String claimType) {
         return new CreateReversalEntryCommand(
                 orderItemId,
                 sellerId,

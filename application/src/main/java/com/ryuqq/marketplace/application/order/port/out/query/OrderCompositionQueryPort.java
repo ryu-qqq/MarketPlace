@@ -57,34 +57,34 @@ public interface OrderCompositionQueryPort {
      * @param orderItemIds 주문 상품 ID 목록
      * @return orderItemId 키의 취소 결과 맵
      */
-    Map<String, List<OrderCancelResult>> findCancelsByItemIds(List<String> orderItemIds);
+    Map<Long, List<OrderCancelResult>> findCancelsByItemIds(List<Long> orderItemIds);
 
     /**
      * orderItemId별 클레임 내역 조회.
      *
-     * @param orderItemIds 주문 상품 ID 목록 (UUIDv7)
+     * @param orderItemIds 주문 상품 ID 목록
      * @return orderItemId 키의 클레임 결과 맵
      */
-    Map<String, List<OrderClaimResult>> findClaimsByItemIds(List<String> orderItemIds);
+    Map<Long, List<OrderClaimResult>> findClaimsByItemIds(List<Long> orderItemIds);
 
     /**
      * orderItemId 목록으로 주문 아이템 정보 일괄 조회.
      *
-     * @param orderItemIds 주문 상품 ID 목록 (UUIDv7)
+     * @param orderItemIds 주문 상품 ID 목록
      * @return orderItemId 키의 주문 아이템 결과 맵
      */
-    Map<String, OrderItemResult> findOrderItemsByIds(List<String> orderItemIds);
+    Map<Long, OrderItemResult> findOrderItemsByIds(List<Long> orderItemIds);
 
     // ==================== V5 상품주문 상세 ====================
 
     /** 상품주문 상세 단건 조회 (item + order + payment를 한 쿼리로 조회). */
-    Optional<ProductOrderDetailData> findProductOrderDetail(String orderItemId);
+    Optional<ProductOrderDetailData> findProductOrderDetail(Long orderItemId);
 
     /** 상품주문 단건 취소 목록 조회. */
-    List<OrderCancelResult> findCancelsByOrderItemId(String orderItemId);
+    List<OrderCancelResult> findCancelsByOrderItemId(Long orderItemId);
 
     /** 상품주문 단건 클레임 목록 조회. */
-    List<OrderClaimResult> findClaimsByOrderItemId(String orderItemId);
+    List<OrderClaimResult> findClaimsByOrderItemId(Long orderItemId);
 
     /** 주문 타임라인 조회. */
     List<OrderHistoryResult> findHistoriesByOrderId(String orderId);

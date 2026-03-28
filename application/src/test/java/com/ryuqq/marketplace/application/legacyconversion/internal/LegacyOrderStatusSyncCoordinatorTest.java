@@ -4,7 +4,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.never;
 
 import com.ryuqq.marketplace.application.legacyconversion.dto.bundle.LegacyOrderStatusSyncBundle;
 import com.ryuqq.marketplace.application.legacyconversion.dto.result.LegacyOrderCompositeResult;
@@ -69,12 +68,10 @@ class LegacyOrderStatusSyncCoordinatorTest {
 
             // 레거시 상태: ORDER_PROCESSING → READY
             LegacyOrderCompositeResult composite = createComposite("ORDER_PROCESSING");
-            given(compositeReadManager.fetchOrderComposite(LEGACY_ORDER_ID))
-                    .willReturn(composite);
+            given(compositeReadManager.fetchOrderComposite(LEGACY_ORDER_ID)).willReturn(composite);
             given(statusMapper.isEligibleForMigration("ORDER_PROCESSING")).willReturn(true);
             given(statusMapper.resolve("ORDER_PROCESSING"))
-                    .willReturn(
-                            LegacyOrderStatusMapper.OrderStatusResolution.normalOrder(null));
+                    .willReturn(LegacyOrderStatusMapper.OrderStatusResolution.normalOrder(null));
 
             // market DB: OrderItem READY (reconstitutedOrder default)
             Order order = OrderFixtures.reconstitutedOrder();
@@ -102,8 +99,7 @@ class LegacyOrderStatusSyncCoordinatorTest {
 
             // 레거시 상태: DELIVERY_PENDING → CONFIRMED
             LegacyOrderCompositeResult composite = createComposite("DELIVERY_PENDING");
-            given(compositeReadManager.fetchOrderComposite(LEGACY_ORDER_ID))
-                    .willReturn(composite);
+            given(compositeReadManager.fetchOrderComposite(LEGACY_ORDER_ID)).willReturn(composite);
             given(statusMapper.isEligibleForMigration("DELIVERY_PENDING")).willReturn(true);
             given(statusMapper.resolve("DELIVERY_PENDING"))
                     .willReturn(
@@ -142,8 +138,7 @@ class LegacyOrderStatusSyncCoordinatorTest {
             LegacyOrderConversionOutbox outbox = createOutbox();
 
             LegacyOrderCompositeResult composite = createComposite("ORDER_FAILED");
-            given(compositeReadManager.fetchOrderComposite(LEGACY_ORDER_ID))
-                    .willReturn(composite);
+            given(compositeReadManager.fetchOrderComposite(LEGACY_ORDER_ID)).willReturn(composite);
             given(statusMapper.isEligibleForMigration("ORDER_FAILED")).willReturn(false);
 
             // when
@@ -182,12 +177,7 @@ class LegacyOrderStatusSyncCoordinatorTest {
 
     private LegacyOrderIdMapping createMapping() {
         return LegacyOrderIdMapping.forNew(
-                LEGACY_ORDER_ID,
-                LEGACY_PAYMENT_ID,
-                INTERNAL_ORDER_ID,
-                1L,
-                "SETOF",
-                NOW);
+                LEGACY_ORDER_ID, LEGACY_PAYMENT_ID, INTERNAL_ORDER_ID, 1L, "SETOF", NOW);
     }
 
     private LegacyOrderConversionOutbox createOutbox() {

@@ -11,7 +11,7 @@ package com.ryuqq.marketplace.application.settlement.entry.dto.command;
  * @param commissionRate 수수료율 (basis point)
  */
 public record CreateReversalEntryCommand(
-        String orderItemId,
+        Long orderItemId,
         long sellerId,
         String claimId,
         String claimType,

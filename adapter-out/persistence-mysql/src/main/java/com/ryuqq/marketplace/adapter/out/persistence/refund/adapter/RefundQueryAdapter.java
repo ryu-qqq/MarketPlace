@@ -43,7 +43,7 @@ public class RefundQueryAdapter implements RefundQueryPort {
     }
 
     @Override
-    public Optional<RefundClaim> findByOrderItemId(String orderItemId) {
+    public Optional<RefundClaim> findByOrderItemId(Long orderItemId) {
         return repository
                 .findByOrderItemId(orderItemId)
                 .map(
@@ -53,7 +53,7 @@ public class RefundQueryAdapter implements RefundQueryPort {
     }
 
     @Override
-    public List<RefundClaim> findAllByOrderItemId(String orderItemId) {
+    public List<RefundClaim> findAllByOrderItemId(Long orderItemId) {
         return repository.findAllByOrderItemId(orderItemId).stream()
                 .map(
                         entity ->
@@ -63,7 +63,7 @@ public class RefundQueryAdapter implements RefundQueryPort {
     }
 
     @Override
-    public List<RefundClaim> findByOrderItemIds(List<String> orderItemIds) {
+    public List<RefundClaim> findByOrderItemIds(List<Long> orderItemIds) {
         return repository.findByOrderItemIds(orderItemIds).stream()
                 .map(
                         entity ->

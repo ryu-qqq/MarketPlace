@@ -33,7 +33,7 @@ public class ExternalOrderItemMappingQueryDslRepository {
         return Optional.ofNullable(entity);
     }
 
-    public List<ExternalOrderItemMappingJpaEntity> findByOrderItemIdIn(List<String> orderItemIds) {
+    public List<ExternalOrderItemMappingJpaEntity> findByOrderItemIdIn(List<Long> orderItemIds) {
         return queryFactory.selectFrom(mapping).where(mapping.orderItemId.in(orderItemIds)).fetch();
     }
 }

@@ -35,8 +35,8 @@ public class ExternalOrderItemMappingJpaEntity {
     @Column(name = "external_product_order_id", nullable = false, length = 50)
     private String externalProductOrderId;
 
-    @Column(name = "order_item_id", nullable = false, length = 36)
-    private String orderItemId;
+    @Column(name = "order_item_id", nullable = false)
+    private Long orderItemId;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
@@ -50,7 +50,7 @@ public class ExternalOrderItemMappingJpaEntity {
             String channelCode,
             String externalOrderId,
             String externalProductOrderId,
-            String orderItemId,
+            Long orderItemId,
             Instant createdAt) {
         this.id = id;
         this.salesChannelId = salesChannelId;
@@ -67,7 +67,7 @@ public class ExternalOrderItemMappingJpaEntity {
             String channelCode,
             String externalOrderId,
             String externalProductOrderId,
-            String orderItemId,
+            Long orderItemId,
             Instant createdAt) {
         return new ExternalOrderItemMappingJpaEntity(
                 id,
@@ -99,7 +99,7 @@ public class ExternalOrderItemMappingJpaEntity {
         return externalProductOrderId;
     }
 
-    public String getOrderItemId() {
+    public Long getOrderItemId() {
         return orderItemId;
     }
 

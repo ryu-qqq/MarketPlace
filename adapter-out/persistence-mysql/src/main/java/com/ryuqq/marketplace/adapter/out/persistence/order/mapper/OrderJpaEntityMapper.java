@@ -167,7 +167,7 @@ public class OrderJpaEntityMapper {
             List<OrderItemJpaEntity> itemEntities,
             List<OrderItemHistoryJpaEntity> historyEntities) {
         // orderItemId 기준으로 histories 그룹핑
-        Map<String, List<OrderItemHistoryJpaEntity>> historiesByItemId =
+        Map<Long, List<OrderItemHistoryJpaEntity>> historiesByItemId =
                 historyEntities.stream()
                         .collect(Collectors.groupingBy(OrderItemHistoryJpaEntity::getOrderItemId));
 

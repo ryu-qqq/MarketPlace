@@ -40,7 +40,7 @@ public class ExchangeBatchValidator {
     }
 
     /** 해당 OrderItem에 진행 중인 Refund/Exchange 클레임이 있는지 확인. */
-    public boolean hasActiveClaim(String orderItemId) {
+    public boolean hasActiveClaim(Long orderItemId) {
         boolean hasActiveRefund =
                 refundReadManager
                         .findByOrderItemId(orderItemId)

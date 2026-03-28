@@ -349,7 +349,7 @@ class ExchangeApiMapperTest {
             AddClaimHistoryMemoCommand command =
                     mapper.toAddMemoCommand(
                             exchangeClaimId,
-                            "order-item-001",
+                            1001L,
                             ExchangeApiFixtures.addMemoRequest(),
                             new MarketAccessChecker.ActorInfo(sellerId, actorName));
 
@@ -493,7 +493,7 @@ class ExchangeApiMapperTest {
                     .isEqualTo(ExchangeApiFixtures.DEFAULT_EXCHANGE_CLAIM_ID);
             assertThat(response.claimInfo().claimNumber())
                     .isEqualTo(ExchangeApiFixtures.DEFAULT_CLAIM_NUMBER);
-            assertThat(response.orderId()).isEqualTo(ExchangeApiFixtures.DEFAULT_ORDER_ITEM_ID);
+            assertThat(response.orderId()).isEqualTo(ExchangeApiFixtures.DEFAULT_ORDER_ITEM_ID_STR);
             assertThat(response.claimInfo().sellerId())
                     .isEqualTo(ExchangeApiFixtures.DEFAULT_SELLER_ID);
             assertThat(response.claimInfo().exchangeQty())

@@ -95,7 +95,7 @@ public class ExecuteShipmentOutboxService implements ExecuteShipmentOutboxUseCas
         ExternalOrderItemMapping mapping =
                 mappingReadManager.findByOrderItemId(outbox.orderItemIdValue());
         if (mapping == null) {
-            throw new ExternalMappingNotFoundException(outbox.orderItemIdValue());
+            throw new ExternalMappingNotFoundException(String.valueOf(outbox.orderItemIdValue()));
         }
         return mapping;
     }

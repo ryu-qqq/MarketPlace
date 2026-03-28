@@ -39,7 +39,8 @@ public class OrderItemCommandAdapter implements OrderItemCommandPort {
                             },
                             () ->
                                     itemRepository.save(
-                                            mapper.toOrderItemEntity(item, item.idValue())));
+                                            mapper.toOrderItemEntity(
+                                                    item, String.valueOf(item.idValue()))));
             itemHistoryRepository.saveAll(mapper.toOrderItemHistoryEntities(item.histories()));
         }
     }

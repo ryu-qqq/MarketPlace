@@ -118,7 +118,7 @@ class ShipmentQueryAdapterTest {
         @DisplayName("존재하는 orderItemId로 조회 시 Domain을 반환합니다")
         void findByOrderItemId_WithExistingOrderItemId_ReturnsDomain() {
             // given
-            String orderItemId = "01940001-0000-7000-8000-000000000001";
+            Long orderItemId = 1001L;
             ShipmentJpaEntity entity =
                     ShipmentJpaEntityFixtures.readyEntityWithOrderItemId(
                             ShipmentJpaEntityFixtures.DEFAULT_ID, orderItemId);
@@ -140,7 +140,7 @@ class ShipmentQueryAdapterTest {
         @DisplayName("존재하지 않는 orderItemId로 조회 시 빈 Optional을 반환합니다")
         void findByOrderItemId_WithNonExistingOrderItemId_ReturnsEmpty() {
             // given
-            String orderItemId = "01940001-0000-7000-8000-000000000999";
+            Long orderItemId = 9999L;
             given(queryDslRepository.findByOrderItemId(orderItemId)).willReturn(Optional.empty());
 
             // when

@@ -165,7 +165,7 @@ class ClaimHistoryReadManagerTest {
         @DisplayName("주문 아이템 ID로 해당 이력 목록을 반환한다")
         void findByOrderItemId_ValidOrderItemId_ReturnsHistories() {
             // given
-            String orderItemId = ClaimHistoryFixtures.DEFAULT_ORDER_ITEM_ID;
+            Long orderItemId = ClaimHistoryFixtures.DEFAULT_ORDER_ITEM_ID;
             List<ClaimHistory> expected =
                     List.of(
                             ClaimHistoryFixtures.cancelStatusChangeHistory(),
@@ -186,7 +186,7 @@ class ClaimHistoryReadManagerTest {
         @DisplayName("이력이 없는 주문 아이템 조회 시 빈 목록을 반환한다")
         void findByOrderItemId_NoHistories_ReturnsEmptyList() {
             // given
-            String orderItemId = "order-item-999";
+            Long orderItemId = 999L;
 
             given(queryPort.findByOrderItemId(orderItemId)).willReturn(List.of());
 
@@ -229,8 +229,7 @@ class ClaimHistoryReadManagerTest {
         @DisplayName("조회 결과가 없으면 빈 목록을 반환한다")
         void findByCriteria_NoResults_ReturnsEmptyList() {
             // given
-            ClaimHistoryPageCriteria criteria =
-                    ClaimHistoryPageCriteria.defaultOf("order-item-999");
+            ClaimHistoryPageCriteria criteria = ClaimHistoryPageCriteria.defaultOf(999L);
 
             given(queryPort.findByCriteria(criteria)).willReturn(List.of());
 
@@ -290,8 +289,7 @@ class ClaimHistoryReadManagerTest {
         @DisplayName("이력이 없으면 0을 반환한다")
         void countByCriteria_NoResults_ReturnsZero() {
             // given
-            ClaimHistoryPageCriteria criteria =
-                    ClaimHistoryPageCriteria.defaultOf("order-item-999");
+            ClaimHistoryPageCriteria criteria = ClaimHistoryPageCriteria.defaultOf(999L);
 
             given(queryPort.countByCriteria(criteria)).willReturn(0L);
 

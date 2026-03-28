@@ -26,7 +26,7 @@ public record SettlementEntryListResult(
         String entryStatus,
         long sellerId,
         String entryType,
-        String orderItemId,
+        Long orderItemId,
         int salesAmount,
         int commissionRate,
         int commissionAmount,

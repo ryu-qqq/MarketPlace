@@ -62,7 +62,8 @@ public class CancelOutbox {
     public static CancelOutbox forNew(
             OrderItemId orderItemId, CancelOutboxType outboxType, String payload, Instant now) {
         CancelOutboxIdempotencyKey idempotencyKey =
-                CancelOutboxIdempotencyKey.generate(orderItemId.value(), outboxType, now);
+                CancelOutboxIdempotencyKey.generate(
+                        String.valueOf(orderItemId.value()), outboxType, now);
         return new CancelOutbox(
                 CancelOutboxId.forNew(),
                 orderItemId,
@@ -211,7 +212,7 @@ public class CancelOutbox {
         return orderItemId;
     }
 
-    public String orderItemIdValue() {
+    public Long orderItemIdValue() {
         return orderItemId.value();
     }
 

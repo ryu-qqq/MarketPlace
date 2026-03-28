@@ -33,7 +33,7 @@ class SettlementEntryTest {
         @DisplayName("판매 Entry 생성 시 PENDING 상태로 시작한다")
         void createSalesEntry() {
             EntryAmounts amounts = EntryAmounts.calculate(Money.of(50000), 1000);
-            EntrySourceReference source = EntrySourceReference.forSales("oi-001");
+            EntrySourceReference source = EntrySourceReference.forSales(1001L);
 
             SettlementEntry entry =
                     SettlementEntry.forSales(
@@ -47,7 +47,7 @@ class SettlementEntryTest {
             assertThat(entry.status()).isEqualTo(EntryStatus.PENDING);
             assertThat(entry.entryType()).isEqualTo(EntryType.SALES);
             assertThat(entry.sellerId()).isEqualTo(SELLER_ID);
-            assertThat(entry.source().orderItemId()).isEqualTo("oi-001");
+            assertThat(entry.source().orderItemId()).isEqualTo(1001L);
             assertThat(entry.reversalOfEntryId()).isNull();
             assertThat(entry.settlementId()).isNull();
             assertThat(entry.pollEvents()).hasSize(1);
@@ -63,7 +63,7 @@ class SettlementEntryTest {
         void createCancelReversalEntry() {
             EntryAmounts amounts = EntryAmounts.calculate(Money.of(30000), 1000);
             EntrySourceReference source =
-                    EntrySourceReference.forClaim("oi-001", "cancel-001", "CANCEL");
+                    EntrySourceReference.forClaim(1001L, "cancel-001", "CANCEL");
             SettlementEntryId originalId = SettlementEntryId.generate();
 
             SettlementEntry entry =
@@ -143,7 +143,7 @@ class SettlementEntryTest {
 
     private SettlementEntry createSalesEntry() {
         EntryAmounts amounts = EntryAmounts.calculate(Money.of(50000), 1000);
-        EntrySourceReference source = EntrySourceReference.forSales("oi-001");
+        EntrySourceReference source = EntrySourceReference.forSales(1001L);
         return SettlementEntry.forSales(
                 SettlementEntryId.generate(),
                 SELLER_ID,

@@ -151,7 +151,7 @@ class RefundReadManagerTest {
         @DisplayName("OrderItemId로 RefundClaim을 반환한다")
         void findByOrderItemId_ExistingOrderItemId_ReturnsRefundClaim() {
             // given
-            String orderItemId = "01940001-0000-7000-8000-000000000001";
+            Long orderItemId = 1001L;
             RefundClaim expected = RefundFixtures.requestedRefundClaim();
 
             given(queryPort.findByOrderItemId(orderItemId)).willReturn(Optional.of(expected));
@@ -168,7 +168,7 @@ class RefundReadManagerTest {
         @DisplayName("OrderItemId에 해당하는 RefundClaim이 없으면 빈 Optional을 반환한다")
         void findByOrderItemId_NonExistingOrderItemId_ReturnsEmpty() {
             // given
-            String orderItemId = "00000000-0000-7000-8000-000000000099";
+            Long orderItemId = 9999L;
 
             given(queryPort.findByOrderItemId(orderItemId)).willReturn(Optional.empty());
 

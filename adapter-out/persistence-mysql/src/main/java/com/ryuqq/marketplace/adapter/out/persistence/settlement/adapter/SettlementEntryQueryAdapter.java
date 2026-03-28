@@ -48,7 +48,7 @@ public class SettlementEntryQueryAdapter implements SettlementEntryQueryPort {
     }
 
     @Override
-    public List<SettlementEntry> findByOrderItemId(String orderItemId) {
+    public List<SettlementEntry> findByOrderItemId(Long orderItemId) {
         return repository.findByOrderItemId(orderItemId).stream().map(mapper::toDomain).toList();
     }
 

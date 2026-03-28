@@ -150,16 +150,16 @@ class ShipmentExceptionTest {
         @DisplayName("orderItemId를 포함한 메시지로 ExternalMappingNotFoundException을 생성한다")
         void createWithOrderItemId() {
             // given
-            String orderItemId = "01940001-0000-7000-8000-000000000001";
+            Long orderItemId = 1001L;
 
             // when
             ExternalMappingNotFoundException exception =
-                    new ExternalMappingNotFoundException(orderItemId);
+                    new ExternalMappingNotFoundException(String.valueOf(orderItemId));
 
             // then
             assertThat(exception.code()).isEqualTo("SHP-005");
             assertThat(exception.httpStatus()).isEqualTo(404);
-            assertThat(exception.getMessage()).contains(orderItemId);
+            assertThat(exception.getMessage()).contains(String.valueOf(orderItemId));
         }
 
         @Test

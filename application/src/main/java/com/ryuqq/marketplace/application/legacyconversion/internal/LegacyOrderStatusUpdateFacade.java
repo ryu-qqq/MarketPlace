@@ -34,8 +34,6 @@ import com.ryuqq.marketplace.domain.shipment.id.ShipmentId;
 import com.ryuqq.marketplace.domain.shipment.id.ShipmentNumber;
 import com.ryuqq.marketplace.domain.shipment.outbox.aggregate.ShipmentOutbox;
 import com.ryuqq.marketplace.domain.shipment.outbox.vo.ShipmentOutboxType;
-import com.ryuqq.marketplace.domain.shipment.vo.ShipmentMethod;
-import com.ryuqq.marketplace.domain.shipment.vo.ShipmentMethodType;
 import com.ryuqq.marketplace.domain.shipment.vo.ShipmentStatus;
 import java.time.Instant;
 import java.util.Optional;
@@ -53,8 +51,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 public class LegacyOrderStatusUpdateFacade {
 
-    private static final Logger log =
-            LoggerFactory.getLogger(LegacyOrderStatusUpdateFacade.class);
+    private static final Logger log = LoggerFactory.getLogger(LegacyOrderStatusUpdateFacade.class);
 
     private static final String LEGACY_SYNC_ACTOR = "LEGACY_STATUS_SYNC";
 
@@ -134,8 +131,7 @@ public class LegacyOrderStatusUpdateFacade {
     /**
      * OrderItem 상태 전환을 적용합니다.
      *
-     * <p>현재 상태에서 목표 상태로의 전환 경로를 결정하고, 도메인 메서드를 호출합니다.
-     * 전환 불가능한 경우 (이미 전환된 상태 등) 로그만 남기고 건너뜁니다.
+     * <p>현재 상태에서 목표 상태로의 전환 경로를 결정하고, 도메인 메서드를 호출합니다. 전환 불가능한 경우 (이미 전환된 상태 등) 로그만 남기고 건너뜁니다.
      */
     private void applyOrderItemTransition(
             OrderItem orderItem,
@@ -166,8 +162,7 @@ public class LegacyOrderStatusUpdateFacade {
             }
         }
 
-        if (resolution.needsShipment()
-                && currentStatus == OrderItemStatus.READY) {
+        if (resolution.needsShipment() && currentStatus == OrderItemStatus.READY) {
             orderItem.confirm(LEGACY_SYNC_ACTOR, now);
         }
     }
@@ -180,8 +175,7 @@ public class LegacyOrderStatusUpdateFacade {
             LegacyOrderCompositeResult composite,
             Instant now) {
 
-        Optional<Shipment> existingShipment =
-                shipmentReadManager.findByOrderItemId(orderItemId);
+        Optional<Shipment> existingShipment = shipmentReadManager.findByOrderItemId(orderItemId);
 
         if (existingShipment.isEmpty()) {
             Shipment shipment =
@@ -193,8 +187,7 @@ public class LegacyOrderStatusUpdateFacade {
             shipmentCommandManager.persist(shipment);
 
             ShipmentOutbox outbox =
-                    ShipmentOutbox.forNew(
-                            orderItemId, ShipmentOutboxType.CONFIRM, "{}", now);
+                    ShipmentOutbox.forNew(orderItemId, ShipmentOutboxType.CONFIRM, "{}", now);
             shipmentOutboxCommandManager.persist(outbox);
         }
 
@@ -205,16 +198,14 @@ public class LegacyOrderStatusUpdateFacade {
 
             String payload = buildShipPayload(composite);
             ShipmentOutbox shipOutbox =
-                    ShipmentOutbox.forNew(
-                            orderItemId, ShipmentOutboxType.SHIP, payload, now);
+                    ShipmentOutbox.forNew(orderItemId, ShipmentOutboxType.SHIP, payload, now);
             shipmentOutboxCommandManager.persist(shipOutbox);
         }
 
         // 배송 완료 상태인 경우 DELIVER Outbox 생성
         if (targetShipmentStatus == ShipmentStatus.DELIVERED) {
             ShipmentOutbox deliverOutbox =
-                    ShipmentOutbox.forNew(
-                            orderItemId, ShipmentOutboxType.DELIVER, "{}", now);
+                    ShipmentOutbox.forNew(orderItemId, ShipmentOutboxType.DELIVER, "{}", now);
             shipmentOutboxCommandManager.persist(deliverOutbox);
         }
     }
@@ -256,8 +247,7 @@ public class LegacyOrderStatusUpdateFacade {
                         ? CancelOutboxType.APPROVE
                         : CancelOutboxType.SELLER_CANCEL;
 
-        CancelOutbox outbox =
-                CancelOutbox.forNew(orderItem.id(), outboxType, "{}", now);
+        CancelOutbox outbox = CancelOutbox.forNew(orderItem.id(), outboxType, "{}", now);
         cancelOutboxCommandManager.persist(outbox);
     }
 
@@ -292,8 +282,7 @@ public class LegacyOrderStatusUpdateFacade {
         refundClaimCommandManager.persist(refundClaim);
 
         RefundOutboxType outboxType = resolveRefundOutboxType(refundStatus);
-        RefundOutbox outbox =
-                RefundOutbox.forNew(orderItem.id(), outboxType, "{}", now);
+        RefundOutbox outbox = RefundOutbox.forNew(orderItem.id(), outboxType, "{}", now);
         refundOutboxCommandManager.persist(outbox);
     }
 
@@ -309,10 +298,8 @@ public class LegacyOrderStatusUpdateFacade {
     }
 
     private String buildShipPayload(LegacyOrderCompositeResult composite) {
-        String companyCode =
-                composite.companyCode() != null ? composite.companyCode() : "";
-        String invoiceNo =
-                composite.invoiceNo() != null ? composite.invoiceNo() : "";
+        String companyCode = composite.companyCode() != null ? composite.companyCode() : "";
+        String invoiceNo = composite.invoiceNo() != null ? composite.invoiceNo() : "";
         return String.format(
                 "{\"companyCode\":\"%s\",\"invoiceNo\":\"%s\"}", companyCode, invoiceNo);
     }

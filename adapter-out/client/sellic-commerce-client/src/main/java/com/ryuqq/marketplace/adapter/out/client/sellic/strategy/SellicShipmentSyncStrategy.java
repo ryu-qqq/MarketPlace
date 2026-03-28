@@ -137,7 +137,7 @@ public class SellicShipmentSyncStrategy implements ShipmentSyncStrategy {
                 sellicCourierCode);
     }
 
-    private String resolveExternalOrderId(String orderItemId) {
+    private String resolveExternalOrderId(Long orderItemId) {
         return mappingQueryPort
                 .findByOrderItemId(orderItemId)
                 .map(m -> m.externalProductOrderId())

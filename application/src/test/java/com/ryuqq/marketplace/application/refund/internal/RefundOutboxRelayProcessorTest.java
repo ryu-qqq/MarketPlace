@@ -48,7 +48,7 @@ class RefundOutboxRelayProcessorTest {
             RefundOutbox outbox = Mockito.mock(RefundOutbox.class);
             Instant now = Instant.now();
             given(outbox.idValue()).willReturn(1L);
-            given(outbox.orderItemIdValue()).willReturn("01940001-0000-7000-8000-000000000001");
+            given(outbox.orderItemIdValue()).willReturn(1001L);
             given(outbox.outboxType()).willReturn(RefundOutboxType.REQUEST);
             given(commandFactory.createOutboxChangeContext(1L))
                     .willReturn(new StatusChangeContext<>(1L, now));
@@ -72,7 +72,7 @@ class RefundOutboxRelayProcessorTest {
             RefundOutbox freshOutbox = Mockito.mock(RefundOutbox.class);
             Instant now = Instant.now();
             given(outbox.idValue()).willReturn(1L);
-            given(outbox.orderItemIdValue()).willReturn("01940001-0000-7000-8000-000000000001");
+            given(outbox.orderItemIdValue()).willReturn(1001L);
             given(outbox.outboxType()).willReturn(RefundOutboxType.REQUEST);
             given(commandFactory.createOutboxChangeContext(1L))
                     .willReturn(new StatusChangeContext<>(1L, now));
@@ -101,7 +101,7 @@ class RefundOutboxRelayProcessorTest {
             RefundOutbox freshOutbox = Mockito.mock(RefundOutbox.class);
             Instant now = Instant.now();
             given(outbox.idValue()).willReturn(1L);
-            given(outbox.orderItemIdValue()).willReturn("01940001-0000-7000-8000-000000000001");
+            given(outbox.orderItemIdValue()).willReturn(1001L);
             given(commandFactory.createOutboxChangeContext(1L))
                     .willReturn(new StatusChangeContext<>(1L, now));
             willThrow(new RuntimeException("DB 저장 실패")).given(outboxCommandManager).persist(outbox);

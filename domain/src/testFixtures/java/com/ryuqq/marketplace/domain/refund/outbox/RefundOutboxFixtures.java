@@ -40,7 +40,7 @@ public final class RefundOutboxFixtures {
 
     public static RefundOutboxIdempotencyKey defaultIdempotencyKey() {
         return RefundOutboxIdempotencyKey.generate(
-                RefundFixtures.defaultOrderItemId().value(),
+                String.valueOf(RefundFixtures.defaultOrderItemId().value()),
                 RefundOutboxType.REQUEST,
                 Instant.ofEpochMilli(1700000000000L));
     }

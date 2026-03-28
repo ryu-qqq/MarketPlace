@@ -163,7 +163,7 @@ public class OrderCommandFactory {
                         cmd.deliveryRequest());
 
         return OrderItem.forNew(
-                OrderItemId.forNew(idGeneratorPort.generate()),
+                OrderItemId.forNew(idGeneratorPort.generateLong()),
                 OrderItemNumber.generate(orderNumber, sequence),
                 internalProduct,
                 externalProduct,

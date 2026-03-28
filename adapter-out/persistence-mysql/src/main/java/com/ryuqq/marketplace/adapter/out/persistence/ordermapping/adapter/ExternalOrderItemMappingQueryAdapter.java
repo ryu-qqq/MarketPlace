@@ -34,12 +34,12 @@ public class ExternalOrderItemMappingQueryAdapter implements ExternalOrderItemMa
 
     @Override
     public List<ExternalOrderItemMapping> findByOrderItemIds(List<OrderItemId> orderItemIds) {
-        List<String> ids = orderItemIds.stream().map(OrderItemId::value).toList();
+        List<Long> ids = orderItemIds.stream().map(OrderItemId::value).toList();
         return queryDslRepository.findByOrderItemIdIn(ids).stream().map(mapper::toDomain).toList();
     }
 
     @Override
-    public Optional<ExternalOrderItemMapping> findByOrderItemId(String orderItemId) {
+    public Optional<ExternalOrderItemMapping> findByOrderItemId(Long orderItemId) {
         return queryDslRepository.findByOrderItemIdIn(List.of(orderItemId)).stream()
                 .findFirst()
                 .map(mapper::toDomain);

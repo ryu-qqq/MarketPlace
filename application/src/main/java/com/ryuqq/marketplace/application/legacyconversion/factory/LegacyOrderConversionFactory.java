@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.application.legacyconversion.factory;
 
+import com.ryuqq.marketplace.application.common.port.out.IdGeneratorPort;
 import com.ryuqq.marketplace.application.legacyconversion.dto.bundle.LegacyOrderConversionBundle;
 import com.ryuqq.marketplace.application.legacyconversion.dto.result.LegacyOrderCompositeResult;
 import com.ryuqq.marketplace.application.legacyconversion.dto.result.LegacyOrderHistoryEntry;
@@ -65,6 +66,12 @@ import org.springframework.stereotype.Component;
 @SuppressWarnings({"PMD.ExcessiveImports", "PMD.GodClass"})
 public class LegacyOrderConversionFactory {
 
+    private final IdGeneratorPort idGeneratorPort;
+
+    public LegacyOrderConversionFactory(IdGeneratorPort idGeneratorPort) {
+        this.idGeneratorPort = idGeneratorPort;
+    }
+
     private static final String LEGACY_ACTOR = "LEGACY_MIGRATION";
     private static final long DEFAULT_SHOP_ID = 0L;
 
@@ -105,7 +112,7 @@ public class LegacyOrderConversionFactory {
             Instant now) {
 
         String orderId = UUID.randomUUID().toString();
-        String orderItemId = UUID.randomUUID().toString();
+        Long orderItemId = idGeneratorPort.generateLong();
         OrderNumber orderNumber = OrderNumber.generate();
 
         Order order =
@@ -151,7 +158,7 @@ public class LegacyOrderConversionFactory {
 
     private Order buildOrder(
             String orderId,
-            String orderItemId,
+            Long orderItemId,
             OrderNumber orderNumber,
             LegacyOrderCompositeResult composite,
             LegacyOrderChannelResolver.ChannelResolution channel,
@@ -188,7 +195,7 @@ public class LegacyOrderConversionFactory {
     }
 
     private OrderItem buildOrderItem(
-            String orderItemId,
+            Long orderItemId,
             OrderNumber orderNumber,
             LegacyOrderCompositeResult composite,
             LegacyOrderStatusMapper.OrderStatusResolution statusResolution,
@@ -288,7 +295,7 @@ public class LegacyOrderConversionFactory {
     // === Shipment 빌드 ===
 
     private Shipment buildShipment(
-            String orderItemId,
+            Long orderItemId,
             LegacyOrderCompositeResult composite,
             LegacyOrderStatusMapper.OrderStatusResolution statusResolution,
             Instant now) {
@@ -379,7 +386,7 @@ public class LegacyOrderConversionFactory {
     // === Cancel 빌드 ===
 
     private Cancel buildCancel(
-            String orderItemId,
+            Long orderItemId,
             LegacyOrderCompositeResult composite,
             LegacyOrderStatusMapper.OrderStatusResolution statusResolution,
             Instant now) {
@@ -473,7 +480,7 @@ public class LegacyOrderConversionFactory {
     // === RefundClaim 빌드 ===
 
     private RefundClaim buildRefund(
-            String orderItemId,
+            Long orderItemId,
             LegacyOrderCompositeResult composite,
             LegacyOrderStatusMapper.OrderStatusResolution statusResolution,
             Instant now) {

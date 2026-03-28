@@ -17,7 +17,7 @@ public final class CancelOutboxJpaEntityFixtures {
 
     // ===== 기본 상수 =====
     public static final Long DEFAULT_ID = 1L;
-    public static final String DEFAULT_ORDER_ITEM_ID = "01900000-0000-7000-0000-000000000010";
+    public static final Long DEFAULT_ORDER_ITEM_ID = 1001L;
     public static final String DEFAULT_OUTBOX_TYPE = "APPROVE";
     public static final String DEFAULT_STATUS_PENDING = "PENDING";
     public static final String DEFAULT_STATUS_PROCESSING = "PROCESSING";
@@ -51,7 +51,7 @@ public final class CancelOutboxJpaEntityFixtures {
     }
 
     /** PENDING 상태 Entity 생성 (ID 지정). */
-    public static CancelOutboxJpaEntity pendingEntity(Long id, String orderItemId) {
+    public static CancelOutboxJpaEntity pendingEntity(Long id, Long orderItemId) {
         Instant now = Instant.now();
         String idempotencyKey = "COBO:" + orderItemId + ":APPROVE:" + now.toEpochMilli();
         return CancelOutboxJpaEntity.create(

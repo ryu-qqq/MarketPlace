@@ -22,7 +22,7 @@ public final class ClaimSyncFixtures {
     // ===== 기본 상수 =====
     public static final String DEFAULT_EXTERNAL_ORDER_ID = "EXT-ORD-20260218-001";
     public static final String DEFAULT_EXTERNAL_PRODUCT_ORDER_ID = "EXT-PO-20260218-001";
-    public static final String DEFAULT_ORDER_ITEM_ID = "01940001-0000-7000-8000-000000000001";
+    public static final Long DEFAULT_ORDER_ITEM_ID = 1001L;
     public static final long DEFAULT_SALES_CHANNEL_ID = 1L;
 
     // ===== ExternalClaimPayload - CANCEL =====
@@ -459,7 +459,7 @@ public final class ClaimSyncFixtures {
                 Instant.now());
     }
 
-    public static ExternalOrderItemMapping mappingWithOrderItemId(String orderItemId) {
+    public static ExternalOrderItemMapping mappingWithOrderItemId(Long orderItemId) {
         return ExternalOrderItemMapping.reconstitute(
                 ExternalOrderItemMappingId.of(1L),
                 DEFAULT_SALES_CHANNEL_ID,

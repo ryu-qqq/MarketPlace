@@ -125,7 +125,7 @@ class ShipmentQueryApiMapperTest {
             assertThat(response.shipment().shipmentNumber())
                     .isEqualTo(ShipmentApiFixtures.DEFAULT_SHIPMENT_NUMBER);
             assertThat(response.productOrder().orderItemId())
-                    .isEqualTo(ShipmentApiFixtures.DEFAULT_ORDER_ITEM_ID);
+                    .isEqualTo(ShipmentApiFixtures.DEFAULT_ORDER_ITEM_ID_STR);
             assertThat(response.shipment().status()).isEqualTo(ShipmentApiFixtures.DEFAULT_STATUS);
             assertThat(response.shipment().trackingNumber())
                     .isEqualTo(ShipmentApiFixtures.DEFAULT_TRACKING_NUMBER);
@@ -214,7 +214,7 @@ class ShipmentQueryApiMapperTest {
             assertThat(response.shipment().shipmentNumber())
                     .isEqualTo(ShipmentApiFixtures.DEFAULT_SHIPMENT_NUMBER);
             assertThat(response.productOrder().orderItemId())
-                    .isEqualTo(ShipmentApiFixtures.DEFAULT_ORDER_ITEM_ID);
+                    .isEqualTo(ShipmentApiFixtures.DEFAULT_ORDER_ITEM_ID_STR);
             assertThat(response.shipment().status()).isEqualTo(ShipmentApiFixtures.DEFAULT_STATUS);
             assertThat(response.shipment().trackingNumber())
                     .isEqualTo(ShipmentApiFixtures.DEFAULT_TRACKING_NUMBER);

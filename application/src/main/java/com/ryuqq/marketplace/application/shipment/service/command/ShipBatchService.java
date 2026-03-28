@@ -47,7 +47,7 @@ public class ShipBatchService implements ShipBatchUseCase {
         List<UpdateContext<OrderItemId, ShipmentShipData>> contexts =
                 commandFactory.createShipContexts(resolvedCommand);
 
-        Map<String, ShipBatchItem> itemMap =
+        Map<Long, ShipBatchItem> itemMap =
                 resolvedItems.stream()
                         .collect(Collectors.toMap(ShipBatchItem::orderItemId, item -> item));
 

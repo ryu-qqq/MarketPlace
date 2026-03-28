@@ -47,7 +47,8 @@ public final class CancelApiFixtures {
     // ===== 상수 =====
     public static final String DEFAULT_CANCEL_ID = "01940001-0000-7000-8000-000000000001";
     public static final String DEFAULT_CANCEL_NUMBER = "CAN-20250101-001";
-    public static final String DEFAULT_ORDER_ITEM_ID = "01940001-0000-7000-8000-000000000099";
+    public static final long DEFAULT_ORDER_ITEM_ID = 1001L;
+    public static final String DEFAULT_ORDER_ITEM_ID_STR = String.valueOf(DEFAULT_ORDER_ITEM_ID);
     public static final String DEFAULT_CANCEL_STATUS = "REQUESTED";
     public static final String DEFAULT_CANCEL_TYPE = "BUYER_CANCEL";
     public static final String DEFAULT_REASON_TYPE = "OUT_OF_STOCK";
@@ -62,8 +63,8 @@ public final class CancelApiFixtures {
     public static SellerCancelBatchApiRequest sellerCancelBatchRequest() {
         List<SellerCancelItemApiRequest> items =
                 List.of(
-                        sellerCancelItemRequest("01940001-0000-7000-8000-000000000001"),
-                        sellerCancelItemRequest("01940001-0000-7000-8000-000000000002"));
+                        sellerCancelItemRequest(DEFAULT_ORDER_ITEM_ID_STR),
+                        sellerCancelItemRequest("1002"));
         return new SellerCancelBatchApiRequest(items, cancelReasonRequest(), DEFAULT_REASON_DETAIL);
     }
 
@@ -278,7 +279,7 @@ public final class CancelApiFixtures {
         return new CancelListApiResponse(
                 cancelId,
                 DEFAULT_CANCEL_NUMBER,
-                DEFAULT_ORDER_ITEM_ID,
+                DEFAULT_ORDER_ITEM_ID_STR,
                 1,
                 DEFAULT_CANCEL_TYPE,
                 DEFAULT_CANCEL_STATUS,
@@ -311,7 +312,7 @@ public final class CancelApiFixtures {
 
     public static CancelDetailApiResponse detailApiResponse(String cancelId) {
         return new CancelDetailApiResponse(
-                DEFAULT_ORDER_ITEM_ID,
+                DEFAULT_ORDER_ITEM_ID_STR,
                 null,
                 new CancelListItemApiResponseV4.CancelInfoV4(
                         cancelId,
@@ -344,7 +345,7 @@ public final class CancelApiFixtures {
 
     public static CancelDetailApiResponse detailApiResponseWithoutRefund(String cancelId) {
         return new CancelDetailApiResponse(
-                DEFAULT_ORDER_ITEM_ID,
+                DEFAULT_ORDER_ITEM_ID_STR,
                 null,
                 new CancelListItemApiResponseV4.CancelInfoV4(
                         cancelId,

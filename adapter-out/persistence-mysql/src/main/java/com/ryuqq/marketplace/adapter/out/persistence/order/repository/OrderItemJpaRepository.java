@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 /** OrderItem JPA Repository (save 용). */
-public interface OrderItemJpaRepository extends JpaRepository<OrderItemJpaEntity, String> {
+public interface OrderItemJpaRepository extends JpaRepository<OrderItemJpaEntity, Long> {
 
     /**
      * 상태별 주문상품 카운트 조회.

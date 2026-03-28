@@ -26,14 +26,13 @@ import com.ryuqq.marketplace.application.legacyconversion.dto.result.LegacyOrder
 import com.ryuqq.marketplace.application.legacyconversion.internal.LegacyOrderConversionCoordinator;
 import com.ryuqq.marketplace.application.legacyconversion.port.out.query.LegacyOrderCompositeQueryPort;
 import com.ryuqq.marketplace.application.order.port.out.query.OrderQueryPort;
-import com.ryuqq.marketplace.domain.legacyconversion.aggregate.LegacyOrderConversionOutbox;
-import com.ryuqq.marketplace.domain.legacyconversion.id.LegacyOrderConversionOutboxId;
-import com.ryuqq.marketplace.domain.legacyconversion.vo.LegacyConversionOutboxStatus;
 import com.ryuqq.marketplace.domain.common.vo.Address;
 import com.ryuqq.marketplace.domain.common.vo.Email;
 import com.ryuqq.marketplace.domain.common.vo.Money;
 import com.ryuqq.marketplace.domain.common.vo.PhoneNumber;
 import com.ryuqq.marketplace.domain.legacyconversion.aggregate.LegacyOrderConversionOutbox;
+import com.ryuqq.marketplace.domain.legacyconversion.id.LegacyOrderConversionOutboxId;
+import com.ryuqq.marketplace.domain.legacyconversion.vo.LegacyConversionOutboxStatus;
 import com.ryuqq.marketplace.domain.order.aggregate.Order;
 import com.ryuqq.marketplace.domain.order.aggregate.OrderItem;
 import com.ryuqq.marketplace.domain.order.id.OrderId;
@@ -104,7 +103,7 @@ class LegacyOrderStatusSyncContainerE2ETest extends ContainerLegacyE2ETestBase {
     private static final Instant NOW = Instant.now();
 
     private String orderId;
-    private String orderItemId;
+    private Long orderItemId;
 
     @BeforeEach
     void cleanUp() {
@@ -123,7 +122,8 @@ class LegacyOrderStatusSyncContainerE2ETest extends ContainerLegacyE2ETestBase {
     class ConfirmSyncTest {
 
         @Test
-        @DisplayName("레거시 DELIVERY_PENDING 상태 변경 시 OrderItem CONFIRMED + Shipment + ShipmentOutbox 생성")
+        @DisplayName(
+                "레거시 DELIVERY_PENDING 상태 변경 시 OrderItem CONFIRMED + Shipment + ShipmentOutbox 생성")
         void sync_DeliveryPending_CreatesShipmentAndConfirmsOrderItem() {
             // Arrange: market DB에 READY 상태 Order 생성
             setupOrderInDb(OrderItemStatus.READY);
@@ -295,13 +295,7 @@ class LegacyOrderStatusSyncContainerE2ETest extends ContainerLegacyE2ETestBase {
     private void setupMappingInDb() {
         LegacyOrderIdMappingJpaEntity mapping =
                 LegacyOrderIdMappingJpaEntity.create(
-                        null,
-                        LEGACY_ORDER_ID,
-                        LEGACY_PAYMENT_ID,
-                        orderId,
-                        1L,
-                        "SETOF",
-                        NOW);
+                        null, LEGACY_ORDER_ID, LEGACY_PAYMENT_ID, orderId, 1L, "SETOF", NOW);
         mappingJpaRepository.save(mapping);
     }
 
@@ -313,8 +307,7 @@ class LegacyOrderStatusSyncContainerE2ETest extends ContainerLegacyE2ETestBase {
 
     private void mockLegacyCompositeWithInvoice(
             String orderStatus, String companyCode, String invoiceNo) {
-        LegacyOrderCompositeResult composite =
-                createComposite(orderStatus, companyCode, invoiceNo);
+        LegacyOrderCompositeResult composite = createComposite(orderStatus, companyCode, invoiceNo);
         given(legacyOrderCompositeQueryPort.fetchOrderComposite(LEGACY_ORDER_ID))
                 .willReturn(Optional.of(composite));
     }
@@ -323,8 +316,7 @@ class LegacyOrderStatusSyncContainerE2ETest extends ContainerLegacyE2ETestBase {
         Order order = buildDomainOrder(status);
         given(orderQueryPort.findById(OrderId.of(orderId))).willReturn(Optional.of(order));
         given(orderQueryPort.findByOrderNumber(any())).willReturn(Optional.empty());
-        given(orderQueryPort.existsByExternalOrderNo(any(Long.class), any()))
-                .willReturn(false);
+        given(orderQueryPort.existsByExternalOrderNo(any(Long.class), any())).willReturn(false);
         given(orderQueryPort.findByCriteria(any(OrderSearchCriteria.class)))
                 .willReturn(Collections.emptyList());
         given(orderQueryPort.countByCriteria(any(OrderSearchCriteria.class))).willReturn(0L);
@@ -342,8 +334,7 @@ class LegacyOrderStatusSyncContainerE2ETest extends ContainerLegacyE2ETestBase {
                         Email.of("buyer@example.com"),
                         PhoneNumber.of("010-1234-5678"));
         PaymentInfo paymentInfo =
-                PaymentInfo.of(
-                        PaymentNumber.of("PAY-TEST-001"), "CARD", Money.of(20000), NOW);
+                PaymentInfo.of(PaymentNumber.of("PAY-TEST-001"), "CARD", Money.of(20000), NOW);
         ExternalOrderReference externalRef =
                 ExternalOrderReference.of(1L, 0L, "SETOF", "SETOF", "EXT-001", NOW);
         InternalProductReference internalProduct =
@@ -352,7 +343,12 @@ class LegacyOrderStatusSyncContainerE2ETest extends ContainerLegacyE2ETestBase {
                 ExternalProductSnapshot.of("EXT-P-001", null, "상품", "옵션", null);
         ExternalOrderItemPrice price =
                 ExternalOrderItemPrice.of(
-                        Money.of(10000), 1, Money.of(10000), Money.zero(), Money.zero(), Money.of(10000));
+                        Money.of(10000),
+                        1,
+                        Money.of(10000),
+                        Money.zero(),
+                        Money.zero(),
+                        Money.of(10000));
         ReceiverInfo receiverInfo =
                 ReceiverInfo.of(
                         "김수령",

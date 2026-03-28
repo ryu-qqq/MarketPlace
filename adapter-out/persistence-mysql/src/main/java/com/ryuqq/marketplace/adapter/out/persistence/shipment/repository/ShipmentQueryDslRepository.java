@@ -44,7 +44,7 @@ public class ShipmentQueryDslRepository {
         return Optional.ofNullable(entity);
     }
 
-    public Optional<ShipmentJpaEntity> findByOrderItemId(String orderItemId) {
+    public Optional<ShipmentJpaEntity> findByOrderItemId(Long orderItemId) {
         ShipmentJpaEntity entity =
                 queryFactory
                         .selectFrom(shipment)
@@ -55,7 +55,7 @@ public class ShipmentQueryDslRepository {
         return Optional.ofNullable(entity);
     }
 
-    public List<ShipmentJpaEntity> findByOrderItemIds(List<String> orderItemIds) {
+    public List<ShipmentJpaEntity> findByOrderItemIds(List<Long> orderItemIds) {
         return queryFactory
                 .selectFrom(shipment)
                 .where(conditionBuilder.orderItemIdIn(orderItemIds), conditionBuilder.notDeleted())
@@ -123,7 +123,7 @@ public class ShipmentQueryDslRepository {
      *
      * @return orderItemId 목록 (페이징 적용)
      */
-    public List<String> findFulfillmentOrderItemIds(ShipmentSearchCriteria criteria) {
+    public List<Long> findFulfillmentOrderItemIds(ShipmentSearchCriteria criteria) {
         return queryFactory
                 .select(orderItemJpaEntity.id)
                 .from(orderItemJpaEntity)
@@ -204,7 +204,13 @@ public class ShipmentQueryDslRepository {
             return orderItemJpaEntity.externalProductName.like(word);
         }
         return switch (criteria.searchField()) {
-            case ORDER_ID -> orderItemJpaEntity.id.eq(criteria.searchWord().trim());
+            case ORDER_ID -> {
+                try {
+                    yield orderItemJpaEntity.id.eq(Long.parseLong(criteria.searchWord().trim()));
+                } catch (NumberFormatException e) {
+                    yield null;
+                }
+            }
             case TRACKING_NUMBER -> shipment.trackingNumber.like(word);
             case CUSTOMER_NAME -> orderJpaEntity.buyerName.like(word);
             case CUSTOMER_PHONE -> orderJpaEntity.buyerPhone.like(word);

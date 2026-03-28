@@ -196,7 +196,7 @@ class OrderQueryApiMapperTest {
 
             // then
             assertThat(response.productOrder().orderItemId())
-                    .isEqualTo(OrderApiFixtures.DEFAULT_ORDER_ITEM_ID);
+                    .isEqualTo(OrderApiFixtures.DEFAULT_ORDER_ITEM_ID_STR);
             assertThat(response.productOrder().productGroupName())
                     .isEqualTo(OrderApiFixtures.DEFAULT_PRODUCT_GROUP_NAME);
             assertThat(response.productOrder().skuCode())
@@ -329,7 +329,7 @@ class OrderQueryApiMapperTest {
 
             // then
             assertThat(response).isNotNull();
-            assertThat(response.orderId()).isEqualTo(OrderApiFixtures.DEFAULT_ORDER_ITEM_ID);
+            assertThat(response.orderId()).isEqualTo(OrderApiFixtures.DEFAULT_ORDER_ITEM_ID_STR);
             assertThat(response.buyerInfo()).isNotNull();
             assertThat(response.histories()).isNotEmpty();
             assertThat(response.cancelIds()).isNotEmpty();
@@ -424,7 +424,7 @@ class OrderQueryApiMapperTest {
 
             // then
             assertThat(response).isNotNull();
-            assertThat(response.orderId()).isEqualTo(OrderApiFixtures.DEFAULT_ORDER_ITEM_ID);
+            assertThat(response.orderId()).isEqualTo(OrderApiFixtures.DEFAULT_ORDER_ITEM_ID_STR);
             assertThat(response.orderNumber()).isEqualTo("ORD-20250115-0001-001");
             assertThat(response.buyerInfo()).isNotNull();
             assertThat(response.buyerInfo().buyerName())
@@ -482,7 +482,7 @@ class OrderQueryApiMapperTest {
                 "orderItemId와 SearchOrderClaimHistoriesApiRequest를 ClaimHistoryPageCriteria로 변환한다")
         void toClaimHistoryCriteria_ConvertsRequest_ReturnsCriteria() {
             // given
-            String orderItemId = OrderApiFixtures.DEFAULT_ORDER_ITEM_ID;
+            String orderItemId = OrderApiFixtures.DEFAULT_ORDER_ITEM_ID_STR;
             SearchOrderClaimHistoriesApiRequest request =
                     OrderApiFixtures.searchClaimHistoriesRequest();
 
@@ -490,7 +490,7 @@ class OrderQueryApiMapperTest {
             ClaimHistoryPageCriteria criteria = mapper.toClaimHistoryCriteria(orderItemId, request);
 
             // then
-            assertThat(criteria.orderItemId()).isEqualTo(orderItemId);
+            assertThat(criteria.orderItemId()).isEqualTo(Long.parseLong(orderItemId));
             assertThat(criteria.claimType()).isNull();
             assertThat(criteria.page()).isZero();
             assertThat(criteria.size()).isEqualTo(20);
@@ -500,7 +500,7 @@ class OrderQueryApiMapperTest {
         @DisplayName("claimType 필터가 있으면 올바르게 변환된다")
         void toClaimHistoryCriteria_WithClaimTypeFilter_FilterApplied() {
             // given
-            String orderItemId = OrderApiFixtures.DEFAULT_ORDER_ITEM_ID;
+            String orderItemId = OrderApiFixtures.DEFAULT_ORDER_ITEM_ID_STR;
             SearchOrderClaimHistoriesApiRequest request =
                     OrderApiFixtures.searchClaimHistoriesRequest("CANCEL", 0, 10);
 
@@ -516,7 +516,7 @@ class OrderQueryApiMapperTest {
         @DisplayName("page/size가 null이면 기본값(0, 20)으로 변환된다")
         void toClaimHistoryCriteria_NullPageSize_UsesDefaults() {
             // given
-            String orderItemId = OrderApiFixtures.DEFAULT_ORDER_ITEM_ID;
+            String orderItemId = OrderApiFixtures.DEFAULT_ORDER_ITEM_ID_STR;
             SearchOrderClaimHistoriesApiRequest request =
                     new SearchOrderClaimHistoriesApiRequest(null, null, null);
 
@@ -532,7 +532,7 @@ class OrderQueryApiMapperTest {
         @DisplayName("hasClaimTypeFilter()가 claimType 존재 여부를 올바르게 반환한다")
         void toClaimHistoryCriteria_HasClaimTypeFilter_ReflectsFilterState() {
             // given
-            String orderItemId = OrderApiFixtures.DEFAULT_ORDER_ITEM_ID;
+            String orderItemId = OrderApiFixtures.DEFAULT_ORDER_ITEM_ID_STR;
             SearchOrderClaimHistoriesApiRequest withFilter =
                     OrderApiFixtures.searchClaimHistoriesRequest("ORDER", 0, 20);
             SearchOrderClaimHistoriesApiRequest withoutFilter =

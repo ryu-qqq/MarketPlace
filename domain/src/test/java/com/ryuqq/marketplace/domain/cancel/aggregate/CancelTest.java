@@ -78,7 +78,7 @@ class CancelTest {
                     Cancel.forBuyerCancel(
                             id,
                             number,
-                            OrderItemId.of("01940001-0000-7000-8000-000000000001"),
+                            OrderItemId.of(1001L),
                             10L,
                             2,
                             CancelFixtures.defaultCancelReason(),
@@ -88,8 +88,7 @@ class CancelTest {
             // then
             assertThat(cancel.id()).isEqualTo(id);
             assertThat(cancel.cancelNumber()).isEqualTo(number);
-            assertThat(cancel.orderItemId())
-                    .isEqualTo(OrderItemId.of("01940001-0000-7000-8000-000000000001"));
+            assertThat(cancel.orderItemId()).isEqualTo(OrderItemId.of(1001L));
             assertThat(cancel.cancelQty()).isEqualTo(2);
             assertThat(cancel.requestedBy()).isEqualTo("buyer@marketplace.com");
             assertThat(cancel.requestedAt()).isEqualTo(now);
@@ -105,7 +104,7 @@ class CancelTest {
                                     Cancel.forBuyerCancel(
                                             CancelFixtures.defaultCancelId(),
                                             CancelFixtures.defaultCancelNumber(),
-                                            OrderItemId.of("01940001-0000-7000-8000-000000000001"),
+                                            OrderItemId.of(1001L),
                                             10L,
                                             0,
                                             CancelFixtures.defaultCancelReason(),
@@ -124,7 +123,7 @@ class CancelTest {
                                     Cancel.forBuyerCancel(
                                             CancelFixtures.defaultCancelId(),
                                             CancelFixtures.defaultCancelNumber(),
-                                            OrderItemId.of("01940001-0000-7000-8000-000000000001"),
+                                            OrderItemId.of(1001L),
                                             10L,
                                             -1,
                                             CancelFixtures.defaultCancelReason(),
@@ -183,7 +182,7 @@ class CancelTest {
                     Cancel.forSellerCancel(
                             CancelFixtures.defaultCancelId(),
                             CancelFixtures.defaultCancelNumber(),
-                            OrderItemId.of("01940001-0000-7000-8000-000000000001"),
+                            OrderItemId.of(1001L),
                             10L,
                             2,
                             CancelFixtures.cancelReason(CancelReasonType.OUT_OF_STOCK),
@@ -542,8 +541,7 @@ class CancelTest {
             Cancel cancel = CancelFixtures.requestedCancel();
 
             // then
-            assertThat(cancel.orderItemId())
-                    .isEqualTo(OrderItemId.of("01940001-0000-7000-8000-000000000001"));
+            assertThat(cancel.orderItemId()).isEqualTo(OrderItemId.of(1001L));
             assertThat(cancel.cancelQty()).isEqualTo(2);
         }
     }

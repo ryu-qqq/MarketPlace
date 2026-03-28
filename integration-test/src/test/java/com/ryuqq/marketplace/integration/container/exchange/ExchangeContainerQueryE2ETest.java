@@ -102,7 +102,7 @@ class ExchangeContainerQueryE2ETest extends ContainerE2ETestBase {
             String orderId = "order-exchange-summary-001";
             orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
             OrderItemJpaEntity item = OrderItemJpaEntityFixtures.defaultItem(orderId);
-            String orderItemId = orderItemRepository.save(item).getId();
+            Long orderItemId = orderItemRepository.save(item).getId();
 
             exchangeClaimRepository.save(
                     ExchangeClaimJpaEntityFixtures.requestedEntityWithOrderItemId(
@@ -161,7 +161,7 @@ class ExchangeContainerQueryE2ETest extends ContainerE2ETestBase {
             String orderId = "order-exchange-list-001";
             orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
             OrderItemJpaEntity item = OrderItemJpaEntityFixtures.defaultItem(orderId);
-            String orderItemId = orderItemRepository.save(item).getId();
+            Long orderItemId = orderItemRepository.save(item).getId();
 
             exchangeClaimRepository.save(
                     ExchangeClaimJpaEntityFixtures.requestedEntityWithOrderItemId(
@@ -187,7 +187,7 @@ class ExchangeContainerQueryE2ETest extends ContainerE2ETestBase {
             String orderId = "order-exchange-filter-001";
             orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
             OrderItemJpaEntity item = OrderItemJpaEntityFixtures.defaultItem(orderId);
-            String orderItemId = orderItemRepository.save(item).getId();
+            Long orderItemId = orderItemRepository.save(item).getId();
 
             exchangeClaimRepository.save(
                     ExchangeClaimJpaEntityFixtures.requestedEntityWithOrderItemId(
@@ -229,7 +229,7 @@ class ExchangeContainerQueryE2ETest extends ContainerE2ETestBase {
             String orderId = "order-exchange-page-001";
             orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
             OrderItemJpaEntity item = OrderItemJpaEntityFixtures.defaultItem(orderId);
-            String orderItemId = orderItemRepository.save(item).getId();
+            Long orderItemId = orderItemRepository.save(item).getId();
 
             exchangeClaimRepository.save(
                     ExchangeClaimJpaEntityFixtures.requestedEntityWithOrderItemId(
@@ -261,7 +261,7 @@ class ExchangeContainerQueryE2ETest extends ContainerE2ETestBase {
             String orderId = "order-exchange-detail-001";
             orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
             OrderItemJpaEntity item = OrderItemJpaEntityFixtures.defaultItem(orderId);
-            String orderItemId = orderItemRepository.save(item).getId();
+            Long orderItemId = orderItemRepository.save(item).getId();
 
             String exchangeId = "exchange-detail-001";
             exchangeClaimRepository.save(

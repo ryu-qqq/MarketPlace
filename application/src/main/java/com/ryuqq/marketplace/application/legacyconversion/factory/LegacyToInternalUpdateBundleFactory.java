@@ -20,7 +20,6 @@ import com.ryuqq.marketplace.domain.notice.aggregate.NoticeField;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productgroup.vo.ImageType;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionInputType;
-import com.ryuqq.marketplace.domain.productgroup.vo.OptionType;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupName;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupUpdateData;
 import java.time.Instant;

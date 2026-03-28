@@ -35,7 +35,7 @@ public final class ExchangeFixtures {
 
     // ===== 기본 상수 =====
     private static final String DEFAULT_CLAIM_ID = "01900000-0000-7000-0000-000000000001";
-    private static final String DEFAULT_ORDER_ITEM_ID = "01900000-0000-7000-0000-000000000010";
+    private static final long DEFAULT_ORDER_ITEM_ID = 1001L;
     private static final long DEFAULT_SELLER_ID = 100L;
     private static final int DEFAULT_EXCHANGE_QTY = 1;
     private static final String DEFAULT_REQUESTED_BY = "buyer@example.com";

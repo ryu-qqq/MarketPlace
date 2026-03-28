@@ -102,7 +102,7 @@ class RefundContainerQueryE2ETest extends ContainerE2ETestBase {
             String orderId = "order-refund-summary-001";
             orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
             OrderItemJpaEntity item = OrderItemJpaEntityFixtures.defaultItem(orderId);
-            String orderItemId = orderItemRepository.save(item).getId();
+            Long orderItemId = orderItemRepository.save(item).getId();
 
             refundClaimRepository.save(
                     RefundClaimJpaEntityFixtures.requestedEntity(
@@ -161,7 +161,7 @@ class RefundContainerQueryE2ETest extends ContainerE2ETestBase {
             String orderId = "order-refund-list-001";
             orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
             OrderItemJpaEntity item = OrderItemJpaEntityFixtures.defaultItem(orderId);
-            String orderItemId = orderItemRepository.save(item).getId();
+            Long orderItemId = orderItemRepository.save(item).getId();
 
             refundClaimRepository.save(
                     RefundClaimJpaEntityFixtures.requestedEntity(
@@ -187,7 +187,7 @@ class RefundContainerQueryE2ETest extends ContainerE2ETestBase {
             String orderId = "order-refund-filter-001";
             orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
             OrderItemJpaEntity item = OrderItemJpaEntityFixtures.defaultItem(orderId);
-            String orderItemId = orderItemRepository.save(item).getId();
+            Long orderItemId = orderItemRepository.save(item).getId();
 
             refundClaimRepository.save(
                     RefundClaimJpaEntityFixtures.requestedEntity(
@@ -229,7 +229,7 @@ class RefundContainerQueryE2ETest extends ContainerE2ETestBase {
             String orderId = "order-refund-page-001";
             orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
             OrderItemJpaEntity item = OrderItemJpaEntityFixtures.defaultItem(orderId);
-            String orderItemId = orderItemRepository.save(item).getId();
+            Long orderItemId = orderItemRepository.save(item).getId();
 
             refundClaimRepository.save(
                     RefundClaimJpaEntityFixtures.requestedEntity(
@@ -261,7 +261,7 @@ class RefundContainerQueryE2ETest extends ContainerE2ETestBase {
             String orderId = "order-refund-detail-001";
             orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
             OrderItemJpaEntity item = OrderItemJpaEntityFixtures.defaultItem(orderId);
-            String orderItemId = orderItemRepository.save(item).getId();
+            Long orderItemId = orderItemRepository.save(item).getId();
 
             String refundId = "refund-detail-001";
             refundClaimRepository.save(

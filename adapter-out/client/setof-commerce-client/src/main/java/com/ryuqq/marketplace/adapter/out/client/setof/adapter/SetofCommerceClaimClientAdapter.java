@@ -48,7 +48,7 @@ public class SetofCommerceClaimClientAdapter {
 
     // ===== 주문 =====
 
-    public void confirmOrder(Shop shop, String orderItemId) {
+    public void confirmOrder(Shop shop, Long orderItemId) {
         executeWithTokenRefresh(
                 shop,
                 token -> {
@@ -58,7 +58,7 @@ public class SetofCommerceClaimClientAdapter {
         log.info("세토프 주문 확인 완료: orderItemId={}", orderItemId);
     }
 
-    public void readyToShip(Shop shop, String orderItemId) {
+    public void readyToShip(Shop shop, Long orderItemId) {
         executeWithTokenRefresh(
                 shop,
                 token -> {
