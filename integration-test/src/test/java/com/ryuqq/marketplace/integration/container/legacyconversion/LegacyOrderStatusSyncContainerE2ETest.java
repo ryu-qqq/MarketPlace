@@ -295,7 +295,7 @@ class LegacyOrderStatusSyncContainerE2ETest extends ContainerLegacyE2ETestBase {
     private void setupMappingInDb() {
         LegacyOrderIdMappingJpaEntity mapping =
                 LegacyOrderIdMappingJpaEntity.create(
-                        null, LEGACY_ORDER_ID, LEGACY_PAYMENT_ID, orderId, 1L, "SETOF", NOW);
+                        null, LEGACY_ORDER_ID, LEGACY_PAYMENT_ID, orderId, 1001L, 1L, "SETOF", NOW);
         mappingJpaRepository.save(mapping);
     }
 

@@ -177,7 +177,7 @@ class LegacyOrderStatusSyncCoordinatorTest {
 
     private LegacyOrderIdMapping createMapping() {
         return LegacyOrderIdMapping.forNew(
-                LEGACY_ORDER_ID, LEGACY_PAYMENT_ID, INTERNAL_ORDER_ID, 1L, "SETOF", NOW);
+                LEGACY_ORDER_ID, LEGACY_PAYMENT_ID, INTERNAL_ORDER_ID, 1001L, 1L, "SETOF", NOW);
     }
 
     private LegacyOrderConversionOutbox createOutbox() {

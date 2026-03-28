@@ -32,6 +32,7 @@ public final class LegacyOrderIdMappingJpaEntityFixtures {
                 DEFAULT_LEGACY_ORDER_ID,
                 DEFAULT_LEGACY_PAYMENT_ID,
                 DEFAULT_INTERNAL_ORDER_ID,
+                1001L,
                 DEFAULT_SALES_CHANNEL_ID,
                 DEFAULT_CHANNEL_NAME,
                 Instant.now());
@@ -44,6 +45,7 @@ public final class LegacyOrderIdMappingJpaEntityFixtures {
                 DEFAULT_LEGACY_ORDER_ID,
                 DEFAULT_LEGACY_PAYMENT_ID,
                 DEFAULT_INTERNAL_ORDER_ID,
+                1001L,
                 DEFAULT_SALES_CHANNEL_ID,
                 DEFAULT_CHANNEL_NAME,
                 Instant.now());
@@ -57,6 +59,7 @@ public final class LegacyOrderIdMappingJpaEntityFixtures {
                 DEFAULT_LEGACY_ORDER_ID + seq,
                 DEFAULT_LEGACY_PAYMENT_ID + seq,
                 DEFAULT_INTERNAL_ORDER_ID + seq,
+                1001L + seq,
                 DEFAULT_SALES_CHANNEL_ID,
                 DEFAULT_CHANNEL_NAME,
                 Instant.now());
@@ -70,6 +73,7 @@ public final class LegacyOrderIdMappingJpaEntityFixtures {
                 legacyOrderId,
                 DEFAULT_LEGACY_PAYMENT_ID + seq,
                 DEFAULT_INTERNAL_ORDER_ID + seq,
+                1001L + seq,
                 DEFAULT_SALES_CHANNEL_ID,
                 DEFAULT_CHANNEL_NAME,
                 Instant.now());
@@ -84,6 +88,7 @@ public final class LegacyOrderIdMappingJpaEntityFixtures {
                 DEFAULT_LEGACY_ORDER_ID + seq,
                 DEFAULT_LEGACY_PAYMENT_ID + seq,
                 internalOrderId,
+                1001L,
                 DEFAULT_SALES_CHANNEL_ID,
                 DEFAULT_CHANNEL_NAME,
                 Instant.now());

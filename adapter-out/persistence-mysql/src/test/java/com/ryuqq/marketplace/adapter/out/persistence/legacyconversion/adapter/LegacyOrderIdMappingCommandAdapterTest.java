@@ -46,7 +46,7 @@ class LegacyOrderIdMappingCommandAdapterTest {
         return LegacyOrderIdMapping.forNew(
                 LegacyOrderIdMappingJpaEntityFixtures.DEFAULT_LEGACY_ORDER_ID,
                 LegacyOrderIdMappingJpaEntityFixtures.DEFAULT_LEGACY_PAYMENT_ID,
-                LegacyOrderIdMappingJpaEntityFixtures.DEFAULT_INTERNAL_ORDER_ID,
+                LegacyOrderIdMappingJpaEntityFixtures.DEFAULT_INTERNAL_ORDER_ID, 1001L,
                 LegacyOrderIdMappingJpaEntityFixtures.DEFAULT_SALES_CHANNEL_ID,
                 LegacyOrderIdMappingJpaEntityFixtures.DEFAULT_CHANNEL_NAME,
                 Instant.now());

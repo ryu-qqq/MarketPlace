@@ -117,6 +117,7 @@ class LegacyOrderConversionCoordinatorSyncTest {
                 LEGACY_ORDER_ID,
                 LEGACY_PAYMENT_ID,
                 "01900000-0000-7000-8000-000000000001",
+                1001L,
                 1L,
                 "SETOF",
                 NOW);
