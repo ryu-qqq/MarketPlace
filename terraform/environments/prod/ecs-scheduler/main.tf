@@ -445,7 +445,12 @@ module "ecs_service" {
     { name = "SES_SIGN_UP_BASE_URL", value = "https://oms.set-of.com" },
     # Legacy DB
     { name = "LEGACY_DB_NAME", value = "luxurydb" },
-    { name = "LEGACY_DB_USERNAME", value = "admin" }
+    { name = "LEGACY_DB_USERNAME", value = "admin" },
+    # Legacy Order Conversion Scheduler
+    { name = "SCHEDULER_JOBS_LEGACY_ORDER_CONVERSION_SEEDER_ENABLED", value = "true" },
+    { name = "SCHEDULER_JOBS_LEGACY_ORDER_CONVERSION_SEEDER_CRON", value = "*/30 * * * * *" },
+    { name = "SCHEDULER_JOBS_LEGACY_ORDER_CONVERSION_ENABLED", value = "true" },
+    { name = "SCHEDULER_JOBS_LEGACY_ORDER_CONVERSION_CRON", value = "*/30 * * * * *" }
   ]
 
   # Container Secrets
