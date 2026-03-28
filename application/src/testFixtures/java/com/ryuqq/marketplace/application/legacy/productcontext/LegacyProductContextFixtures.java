@@ -37,18 +37,18 @@ public final class LegacyProductContextFixtures {
                         LEGACY_PRODUCT_ID_1, ProductId.of(INTERNAL_PRODUCT_ID_1),
                         LEGACY_PRODUCT_ID_2, ProductId.of(INTERNAL_PRODUCT_ID_2));
         return new ResolvedLegacyProductIds(
-                ProductGroupId.of(INTERNAL_PRODUCT_GROUP_ID), productIdMap);
+                LEGACY_PRODUCT_GROUP_ID, ProductGroupId.of(INTERNAL_PRODUCT_GROUP_ID), productIdMap);
     }
 
     public static ResolvedLegacyProductIds resolvedLegacyProductIdsEmpty() {
         return new ResolvedLegacyProductIds(
-                ProductGroupId.of(INTERNAL_PRODUCT_GROUP_ID), Map.of());
+                LEGACY_PRODUCT_GROUP_ID, ProductGroupId.of(INTERNAL_PRODUCT_GROUP_ID), Map.of());
     }
 
     public static ResolvedLegacyProductIds resolvedLegacyProductIds(
             long internalProductGroupId, Map<Long, ProductId> productIdMap) {
         return new ResolvedLegacyProductIds(
-                ProductGroupId.of(internalProductGroupId), productIdMap);
+                internalProductGroupId, ProductGroupId.of(internalProductGroupId), productIdMap);
     }
 
     // ===== UpdateProductsCommand Fixtures =====

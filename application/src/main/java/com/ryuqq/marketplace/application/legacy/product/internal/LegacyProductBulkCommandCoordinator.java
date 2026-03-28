@@ -55,11 +55,18 @@ public class LegacyProductBulkCommandCoordinator {
         productCommandManager.persistAll(products);
     }
 
-    /** 상품그룹 내 모든 Product를 품절 처리합니다 (SOLD_OUT + 재고 0). */
+    /**
+     * 상품그룹 내 모든 Product를 품절 처리합니다 (SOLD_OUT + 재고 0).
+     *
+     * <p>레거시 호환: INACTIVE 상품은 먼저 ACTIVE로 전이 후 SOLD_OUT 처리합니다.
+     */
     @Transactional
     public void markSoldOutAll(ProductGroupId productGroupId, Instant now) {
         List<Product> products = productReadManager.findByProductGroupId(productGroupId);
         for (Product product : products) {
+            if (!product.status().isActive()) {
+                product.activate(now);
+            }
             product.markSoldOut(now);
             product.updateStock(0, now);
         }

@@ -61,7 +61,7 @@ public class LegacyProductGroupFromMarketAssembler {
         }
 
         return new LegacyProductGroupDetailResult(
-                resolved.resolvedProductGroupId().value(),
+                resolved.requestProductGroupId(),
                 composite.productGroupName(),
                 composite.sellerId(),
                 composite.sellerName(),

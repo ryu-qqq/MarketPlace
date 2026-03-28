@@ -28,7 +28,7 @@ class ResolvedLegacyProductIdsTest {
 
             // when
             ResolvedLegacyProductIds resolved =
-                    new ResolvedLegacyProductIds(productGroupId, productIdMap);
+                    new ResolvedLegacyProductIds(1L, productGroupId, productIdMap);
 
             // then
             assertThat(resolved.resolvedProductGroupId()).isEqualTo(productGroupId);
@@ -45,7 +45,7 @@ class ResolvedLegacyProductIdsTest {
 
             // when
             ResolvedLegacyProductIds resolved =
-                    new ResolvedLegacyProductIds(productGroupId, mutableMap);
+                    new ResolvedLegacyProductIds(1L, productGroupId, mutableMap);
 
             // 원본 수정
             mutableMap.put(999L, ProductId.of(888L));
@@ -66,7 +66,7 @@ class ResolvedLegacyProductIdsTest {
             ProductGroupId productGroupId = ProductGroupId.of(1L);
             Map<Long, ProductId> productIdMap = Map.of(100L, ProductId.of(200L));
             ResolvedLegacyProductIds resolved =
-                    new ResolvedLegacyProductIds(productGroupId, productIdMap);
+                    new ResolvedLegacyProductIds(1L, productGroupId, productIdMap);
 
             // when
             ProductId result = resolved.resolveProductId(100L);
@@ -82,7 +82,7 @@ class ResolvedLegacyProductIdsTest {
             ProductGroupId productGroupId = ProductGroupId.of(1L);
             Map<Long, ProductId> productIdMap = Map.of(100L, ProductId.of(200L));
             ResolvedLegacyProductIds resolved =
-                    new ResolvedLegacyProductIds(productGroupId, productIdMap);
+                    new ResolvedLegacyProductIds(1L, productGroupId, productIdMap);
 
             // when: 매핑되지 않은 레거시 ID 999L 사용
             ProductId result = resolved.resolveProductId(999L);
@@ -106,7 +106,7 @@ class ResolvedLegacyProductIdsTest {
                             100L, ProductId.of(200L),
                             101L, ProductId.of(201L));
             ResolvedLegacyProductIds resolved =
-                    new ResolvedLegacyProductIds(productGroupId, productIdMap);
+                    new ResolvedLegacyProductIds(1L, productGroupId, productIdMap);
 
             // when
             Map<Long, Long> reversed = resolved.reverseProductIdMap();
@@ -121,7 +121,7 @@ class ResolvedLegacyProductIdsTest {
         void reverseProductIdMap_EmptyMap() {
             // given
             ResolvedLegacyProductIds resolved =
-                    new ResolvedLegacyProductIds(ProductGroupId.of(1L), Map.of());
+                    new ResolvedLegacyProductIds(1L, ProductGroupId.of(1L), Map.of());
 
             // when
             Map<Long, Long> reversed = resolved.reverseProductIdMap();
@@ -143,9 +143,9 @@ class ResolvedLegacyProductIdsTest {
             Map<Long, ProductId> productIdMap = Map.of(100L, ProductId.of(200L));
 
             ResolvedLegacyProductIds vo1 =
-                    new ResolvedLegacyProductIds(productGroupId, productIdMap);
+                    new ResolvedLegacyProductIds(1L, productGroupId, productIdMap);
             ResolvedLegacyProductIds vo2 =
-                    new ResolvedLegacyProductIds(productGroupId, productIdMap);
+                    new ResolvedLegacyProductIds(1L, productGroupId, productIdMap);
 
             // then
             assertThat(vo1).isEqualTo(vo2);
@@ -159,9 +159,9 @@ class ResolvedLegacyProductIdsTest {
             Map<Long, ProductId> productIdMap = Map.of(100L, ProductId.of(200L));
 
             ResolvedLegacyProductIds vo1 =
-                    new ResolvedLegacyProductIds(ProductGroupId.of(1L), productIdMap);
+                    new ResolvedLegacyProductIds(1L, ProductGroupId.of(1L), productIdMap);
             ResolvedLegacyProductIds vo2 =
-                    new ResolvedLegacyProductIds(ProductGroupId.of(2L), productIdMap);
+                    new ResolvedLegacyProductIds(1L, ProductGroupId.of(2L), productIdMap);
 
             // then
             assertThat(vo1).isNotEqualTo(vo2);

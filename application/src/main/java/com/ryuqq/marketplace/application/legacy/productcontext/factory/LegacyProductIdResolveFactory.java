@@ -48,7 +48,8 @@ public class LegacyProductIdResolveFactory {
                                 Collectors.toMap(
                                         Map.Entry::getKey, e -> ProductId.of(e.getValue())));
 
-        return new ResolvedLegacyProductIds(ProductGroupId.of(resolvedGroupId), productIdMap);
+        return new ResolvedLegacyProductIds(
+                legacyProductGroupId, ProductGroupId.of(resolvedGroupId), productIdMap);
     }
 
     /**

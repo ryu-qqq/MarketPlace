@@ -14,7 +14,9 @@ import java.util.stream.Collectors;
  * @param productIdMap 레거시 productId → market productId 매핑
  */
 public record ResolvedLegacyProductIds(
-        ProductGroupId resolvedProductGroupId, Map<Long, ProductId> productIdMap) {
+        long requestProductGroupId,
+        ProductGroupId resolvedProductGroupId,
+        Map<Long, ProductId> productIdMap) {
 
     public ResolvedLegacyProductIds {
         productIdMap = Map.copyOf(productIdMap);
