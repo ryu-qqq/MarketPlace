@@ -50,7 +50,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @DisplayName("LegacyNoticeCommandController REST Docs 테스트")
 class LegacyNoticeCommandControllerRestDocsTest {
 
-    private static final String BASE_URL = "/api/v1/legacy/product/group/{productGroupId}/notice";
+    private static final String BASE_URL = "/api/v1/product/group/{productGroupId}/notice";
     private static final long PRODUCT_GROUP_ID = LegacyNoticeApiFixtures.DEFAULT_PRODUCT_GROUP_ID;
 
     @Autowired private MockMvc mockMvc;

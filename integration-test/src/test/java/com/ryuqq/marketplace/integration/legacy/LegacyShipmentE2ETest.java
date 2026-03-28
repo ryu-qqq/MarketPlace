@@ -12,7 +12,7 @@ import org.springframework.http.HttpStatus;
 /**
  * 레거시 배송(택배사) API E2E 테스트.
  *
- * <p>테스트 대상: GET /api/v1/legacy/shipment/company-codes - 택배사 코드 목록 조회
+ * <p>테스트 대상: GET /api/v1/shipment/company-codes - 택배사 코드 목록 조회
  *
  * <p>인증 필요 엔드포인트. 레거시 DB(luxurydb)에서 code_group_id=2 로 조회합니다. H2 테스트 환경에서는 레거시 테이블이 없으므로 빈 목록을
  * 반환합니다.
@@ -26,10 +26,10 @@ import org.springframework.http.HttpStatus;
 @DisplayName("레거시 배송(택배사) API E2E 테스트")
 class LegacyShipmentE2ETest extends LegacyE2ETestBase {
 
-    private static final String COMPANY_CODES_URL = "/api/v1/legacy/shipment/company-codes";
+    private static final String COMPANY_CODES_URL = "/api/v1/shipment/company-codes";
 
     @Nested
-    @DisplayName("GET /api/v1/legacy/shipment/company-codes - 택배사 코드 목록 조회")
+    @DisplayName("GET /api/v1/shipment/company-codes - 택배사 코드 목록 조회")
     class GetCompanyCodesTest {
 
         @Test
@@ -50,7 +50,7 @@ class LegacyShipmentE2ETest extends LegacyE2ETestBase {
     }
 
     @Nested
-    @DisplayName("GET /api/v1/legacy/shipment/company-codes - 인증 실패 시나리오")
+    @DisplayName("GET /api/v1/shipment/company-codes - 인증 실패 시나리오")
     class GetCompanyCodesAuthTest {
 
         @Test

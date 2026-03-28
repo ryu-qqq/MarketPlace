@@ -59,7 +59,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @DisplayName("LegacyProductGroupCommandController REST Docs 테스트")
 class LegacyProductGroupCommandControllerRestDocsTest {
 
-    private static final String BASE_URL = "/api/v1/legacy/product/group";
+    private static final String BASE_URL = "/api/v1/product/group";
     private static final String ID_URL = BASE_URL + "/{productGroupId}";
     private static final String DISPLAY_YN_URL = ID_URL + "/display-yn";
     private static final String OUT_STOCK_URL = ID_URL + "/out-stock";

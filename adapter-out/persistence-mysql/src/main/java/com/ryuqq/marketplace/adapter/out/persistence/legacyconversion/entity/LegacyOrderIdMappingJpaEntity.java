@@ -34,6 +34,9 @@ public class LegacyOrderIdMappingJpaEntity {
     @Column(name = "internal_order_id", nullable = false)
     private String internalOrderId;
 
+    @Column(name = "internal_order_item_id")
+    private Long internalOrderItemId;
+
     @Column(name = "sales_channel_id", nullable = false)
     private long salesChannelId;
 
@@ -50,6 +53,7 @@ public class LegacyOrderIdMappingJpaEntity {
             long legacyOrderId,
             long legacyPaymentId,
             String internalOrderId,
+            Long internalOrderItemId,
             long salesChannelId,
             String channelName,
             Instant createdAt) {
@@ -57,6 +61,7 @@ public class LegacyOrderIdMappingJpaEntity {
         this.legacyOrderId = legacyOrderId;
         this.legacyPaymentId = legacyPaymentId;
         this.internalOrderId = internalOrderId;
+        this.internalOrderItemId = internalOrderItemId;
         this.salesChannelId = salesChannelId;
         this.channelName = channelName;
         this.createdAt = createdAt;
@@ -67,6 +72,7 @@ public class LegacyOrderIdMappingJpaEntity {
             long legacyOrderId,
             long legacyPaymentId,
             String internalOrderId,
+            Long internalOrderItemId,
             long salesChannelId,
             String channelName,
             Instant createdAt) {
@@ -75,6 +81,7 @@ public class LegacyOrderIdMappingJpaEntity {
                 legacyOrderId,
                 legacyPaymentId,
                 internalOrderId,
+                internalOrderItemId,
                 salesChannelId,
                 channelName,
                 createdAt);
@@ -94,6 +101,10 @@ public class LegacyOrderIdMappingJpaEntity {
 
     public String getInternalOrderId() {
         return internalOrderId;
+    }
+
+    public Long getInternalOrderItemId() {
+        return internalOrderItemId;
     }
 
     public long getSalesChannelId() {

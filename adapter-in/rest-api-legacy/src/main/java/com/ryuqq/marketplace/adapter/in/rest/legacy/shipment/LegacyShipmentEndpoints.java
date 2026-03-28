@@ -5,7 +5,7 @@ public final class LegacyShipmentEndpoints {
 
     private LegacyShipmentEndpoints() {}
 
-    private static final String BASE = "/api/v1/legacy";
+    private static final String BASE = "/api/v1";
 
     public static final String COMPANY_CODES = BASE + "/shipment/company-codes";
 }

@@ -5,7 +5,7 @@ public final class LegacyNoticeEndpoints {
 
     private LegacyNoticeEndpoints() {}
 
-    private static final String BASE = "/api/v1/legacy";
+    private static final String BASE = "/api/v1";
 
     public static final String PRODUCT_GROUP_ID = BASE + "/product/group/{productGroupId}";
     public static final String NOTICE = PRODUCT_GROUP_ID + "/notice";

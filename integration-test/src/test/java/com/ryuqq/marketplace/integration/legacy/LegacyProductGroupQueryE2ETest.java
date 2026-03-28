@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 /**
  * 레거시 상품그룹 조회 API E2E 테스트.
  *
- * <p>테스트 대상: GET /api/v1/legacy/product/group/{productGroupId} - 레거시 상품그룹 상세 조회
+ * <p>테스트 대상: GET /api/v1/product/group/{productGroupId} - 레거시 상품그룹 상세 조회
  *
  * <p>접근 제어: {@code @PreAuthorize("@legacyAccess.isProductOwnerOrMaster(#productGroupId)")}
  *
@@ -25,10 +25,10 @@ import org.springframework.http.HttpStatus;
 @DisplayName("레거시 상품그룹 조회 API E2E 테스트")
 class LegacyProductGroupQueryE2ETest extends LegacyE2ETestBase {
 
-    private static final String PRODUCT_GROUP_URL = "/api/v1/legacy/product/group";
+    private static final String PRODUCT_GROUP_URL = "/api/v1/product/group";
 
     @Nested
-    @DisplayName("GET /api/v1/legacy/product/group/{productGroupId} - MASTER 역할 접근")
+    @DisplayName("GET /api/v1/product/group/{productGroupId} - MASTER 역할 접근")
     class GetProductGroupDetailMasterTest {
 
         @Test
@@ -56,7 +56,7 @@ class LegacyProductGroupQueryE2ETest extends LegacyE2ETestBase {
     }
 
     @Nested
-    @DisplayName("GET /api/v1/legacy/product/group/{productGroupId} - 인증 실패 시나리오")
+    @DisplayName("GET /api/v1/product/group/{productGroupId} - 인증 실패 시나리오")
     class GetProductGroupDetailAuthTest {
 
         @Test

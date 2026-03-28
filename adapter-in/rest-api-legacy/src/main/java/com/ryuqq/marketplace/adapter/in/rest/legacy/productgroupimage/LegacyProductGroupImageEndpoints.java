@@ -5,7 +5,7 @@ public final class LegacyProductGroupImageEndpoints {
 
     private LegacyProductGroupImageEndpoints() {}
 
-    private static final String BASE = "/api/v1/legacy";
+    private static final String BASE = "/api/v1";
 
     public static final String PRODUCT_GROUP_ID = BASE + "/product/group/{productGroupId}";
     public static final String IMAGES = PRODUCT_GROUP_ID + "/images";

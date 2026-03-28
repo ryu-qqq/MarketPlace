@@ -5,7 +5,7 @@ public final class LegacyProductEndpoints {
 
     private LegacyProductEndpoints() {}
 
-    private static final String BASE = "/api/v1/legacy";
+    private static final String BASE = "/api/v1";
 
     public static final String PRODUCT_GROUP = BASE + "/product/group";
     public static final String PRODUCT_GROUP_ID = PRODUCT_GROUP + "/{productGroupId}";

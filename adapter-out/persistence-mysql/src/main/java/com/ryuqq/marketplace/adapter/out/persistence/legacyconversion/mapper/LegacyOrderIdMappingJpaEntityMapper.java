@@ -23,6 +23,7 @@ public class LegacyOrderIdMappingJpaEntityMapper {
                 domain.legacyOrderId(),
                 domain.legacyPaymentId(),
                 domain.internalOrderId(),
+                domain.internalOrderItemId(),
                 domain.salesChannelId(),
                 domain.channelName(),
                 domain.createdAt());
@@ -38,6 +39,7 @@ public class LegacyOrderIdMappingJpaEntityMapper {
                 entity.getLegacyOrderId(),
                 entity.getLegacyPaymentId(),
                 entity.getInternalOrderId(),
+                entity.getInternalOrderItemId(),
                 entity.getSalesChannelId(),
                 entity.getChannelName(),
                 entity.getCreatedAt());

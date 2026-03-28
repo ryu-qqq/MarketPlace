@@ -66,23 +66,23 @@ class LegacyJwtAuthenticationFilterTest {
     class ShouldNotFilterTest {
 
         @Test
-        @DisplayName("레거시 경로가 아닌 요청은 필터링 안 함")
-        void nonLegacyPath_ShouldNotFilter() {
-            request.setRequestURI("/api/v1/market/products");
+        @DisplayName("API 경로가 아닌 요청은 필터링 안 함")
+        void nonApiPath_ShouldNotFilter() {
+            request.setRequestURI("/actuator/health");
             assertThat(filter.shouldNotFilter(request)).isTrue();
         }
 
         @Test
-        @DisplayName("레거시 인증 경로는 필터링 안 함")
+        @DisplayName("인증 경로는 필터링 안 함")
         void authPath_ShouldNotFilter() {
             request.setRequestURI("/api/v1/legacy/auth/authentication");
             assertThat(filter.shouldNotFilter(request)).isTrue();
         }
 
         @Test
-        @DisplayName("레거시 API 경로는 필터링 함")
-        void legacyApiPath_ShouldFilter() {
-            request.setRequestURI("/api/v1/legacy/product/group");
+        @DisplayName("API 경로는 필터링 함")
+        void apiPath_ShouldFilter() {
+            request.setRequestURI("/api/v1/product/group");
             assertThat(filter.shouldNotFilter(request)).isFalse();
         }
     }
@@ -94,7 +94,7 @@ class LegacyJwtAuthenticationFilterTest {
         @Test
         @DisplayName("Bearer 토큰에 sellerId가 있으면 DB 조회 없이 인증 세팅")
         void validBearerToken_WithSellerId_SetsAuthentication() throws Exception {
-            request.setRequestURI("/api/v1/legacy/product/group");
+            request.setRequestURI("/api/v1/product/group");
             request.addHeader("Authorization", "Bearer " + VALID_TOKEN);
 
             given(tokenManager.isValid(VALID_TOKEN)).willReturn(true);
@@ -114,7 +114,7 @@ class LegacyJwtAuthenticationFilterTest {
         @Test
         @DisplayName("API-KEY 헤더로도 인증 가능")
         void apiKeyHeader_SetsAuthentication() throws Exception {
-            request.setRequestURI("/api/v1/legacy/product/group");
+            request.setRequestURI("/api/v1/product/group");
             request.addHeader("API-KEY", VALID_TOKEN);
 
             given(tokenManager.isValid(VALID_TOKEN)).willReturn(true);
@@ -135,7 +135,7 @@ class LegacyJwtAuthenticationFilterTest {
         @Test
         @DisplayName("sellerId가 0이면 이메일로 DB 조회하여 sellerId 해소")
         void legacyToken_NoSellerId_LooksUpFromDb() throws Exception {
-            request.setRequestURI("/api/v1/legacy/product/group");
+            request.setRequestURI("/api/v1/product/group");
             request.addHeader("Authorization", "Bearer " + VALID_TOKEN);
 
             given(tokenManager.isValid(VALID_TOKEN)).willReturn(true);
@@ -155,7 +155,7 @@ class LegacyJwtAuthenticationFilterTest {
         @Test
         @DisplayName("sellerId=0이고 role도 null이면 둘 다 DB에서 조회")
         void legacyToken_NoSellerIdNoRole_LooksUpBothFromDb() throws Exception {
-            request.setRequestURI("/api/v1/legacy/product/group");
+            request.setRequestURI("/api/v1/product/group");
             request.addHeader("Authorization", "Bearer " + VALID_TOKEN);
 
             given(tokenManager.isValid(VALID_TOKEN)).willReturn(true);
@@ -187,7 +187,7 @@ class LegacyJwtAuthenticationFilterTest {
         @Test
         @DisplayName("만료된 토큰이지만 리프레시 토큰이 유효하면 인증 통과")
         void expiredToken_ValidRefresh_SetsAuthentication() throws Exception {
-            request.setRequestURI("/api/v1/legacy/product/group");
+            request.setRequestURI("/api/v1/product/group");
             request.addHeader("Authorization", "Bearer " + EXPIRED_TOKEN);
 
             given(tokenManager.isValid(EXPIRED_TOKEN)).willReturn(false);
@@ -206,7 +206,7 @@ class LegacyJwtAuthenticationFilterTest {
         @Test
         @DisplayName("만료된 토큰이고 리프레시 토큰도 없으면 인증 안 됨")
         void expiredToken_NoRefresh_NoAuthentication() throws Exception {
-            request.setRequestURI("/api/v1/legacy/product/group");
+            request.setRequestURI("/api/v1/product/group");
             request.addHeader("Authorization", "Bearer " + EXPIRED_TOKEN);
 
             given(tokenManager.isValid(EXPIRED_TOKEN)).willReturn(false);
@@ -223,7 +223,7 @@ class LegacyJwtAuthenticationFilterTest {
         @Test
         @DisplayName("만료된 토큰이고 리프레시 토큰도 만료됐으면 인증 안 됨")
         void expiredToken_ExpiredRefresh_NoAuthentication() throws Exception {
-            request.setRequestURI("/api/v1/legacy/product/group");
+            request.setRequestURI("/api/v1/product/group");
             request.addHeader("Authorization", "Bearer " + EXPIRED_TOKEN);
 
             given(tokenManager.isValid(EXPIRED_TOKEN)).willReturn(false);
@@ -245,7 +245,7 @@ class LegacyJwtAuthenticationFilterTest {
         @Test
         @DisplayName("토큰이 없으면 인증 없이 통과")
         void noToken_NoAuthentication() throws Exception {
-            request.setRequestURI("/api/v1/legacy/product/group");
+            request.setRequestURI("/api/v1/product/group");
 
             filter.doFilterInternal(request, response, filterChain);
 

@@ -47,7 +47,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @DisplayName("LegacyProductGroupImageCommandController REST Docs 테스트")
 class LegacyProductGroupImageCommandControllerRestDocsTest {
 
-    private static final String BASE_URL = "/api/v1/legacy/product/group/{productGroupId}/images";
+    private static final String BASE_URL = "/api/v1/product/group/{productGroupId}/images";
     private static final long PRODUCT_GROUP_ID = LegacyImageApiFixtures.DEFAULT_PRODUCT_GROUP_ID;
 
     @Autowired private MockMvc mockMvc;

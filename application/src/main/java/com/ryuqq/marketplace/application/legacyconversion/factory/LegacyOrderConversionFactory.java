@@ -147,6 +147,7 @@ public class LegacyOrderConversionFactory {
                         composite.legacyOrderId(),
                         legacyPaymentId,
                         orderId,
+                        orderItemId,
                         channel.salesChannelId(),
                         channel.channelName(),
                         now);

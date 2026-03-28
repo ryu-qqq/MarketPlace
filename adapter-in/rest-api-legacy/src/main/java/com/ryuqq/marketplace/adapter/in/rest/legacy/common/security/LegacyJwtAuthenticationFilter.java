@@ -31,7 +31,7 @@ public class LegacyJwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
     private static final String API_KEY_HEADER = "API-KEY";
-    private static final String LEGACY_PATH_PREFIX = "/api/v1/legacy/";
+    private static final String LEGACY_PATH_PREFIX = "/api/v1/";
     private static final String AUTH_PATH = "/api/v1/legacy/auth/";
 
     private final LegacyTokenManager tokenManager;

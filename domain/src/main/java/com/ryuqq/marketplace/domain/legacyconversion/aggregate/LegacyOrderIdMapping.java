@@ -14,6 +14,7 @@ public class LegacyOrderIdMapping {
     private final long legacyOrderId;
     private final long legacyPaymentId;
     private final String internalOrderId;
+    private final Long internalOrderItemId;
     private final long salesChannelId;
     private final String channelName;
     private final Instant createdAt;
@@ -23,6 +24,7 @@ public class LegacyOrderIdMapping {
             long legacyOrderId,
             long legacyPaymentId,
             String internalOrderId,
+            Long internalOrderItemId,
             long salesChannelId,
             String channelName,
             Instant createdAt) {
@@ -30,6 +32,7 @@ public class LegacyOrderIdMapping {
         this.legacyOrderId = legacyOrderId;
         this.legacyPaymentId = legacyPaymentId;
         this.internalOrderId = internalOrderId;
+        this.internalOrderItemId = internalOrderItemId;
         this.salesChannelId = salesChannelId;
         this.channelName = channelName;
         this.createdAt = createdAt;
@@ -39,6 +42,7 @@ public class LegacyOrderIdMapping {
             long legacyOrderId,
             long legacyPaymentId,
             String internalOrderId,
+            Long internalOrderItemId,
             long salesChannelId,
             String channelName,
             Instant now) {
@@ -47,6 +51,7 @@ public class LegacyOrderIdMapping {
                 legacyOrderId,
                 legacyPaymentId,
                 internalOrderId,
+                internalOrderItemId,
                 salesChannelId,
                 channelName,
                 now);
@@ -57,6 +62,7 @@ public class LegacyOrderIdMapping {
             long legacyOrderId,
             long legacyPaymentId,
             String internalOrderId,
+            Long internalOrderItemId,
             long salesChannelId,
             String channelName,
             Instant createdAt) {
@@ -65,6 +71,7 @@ public class LegacyOrderIdMapping {
                 legacyOrderId,
                 legacyPaymentId,
                 internalOrderId,
+                internalOrderItemId,
                 salesChannelId,
                 channelName,
                 createdAt);
@@ -93,6 +100,10 @@ public class LegacyOrderIdMapping {
 
     public String internalOrderId() {
         return internalOrderId;
+    }
+
+    public Long internalOrderItemId() {
+        return internalOrderItemId;
     }
 
     public long salesChannelId() {

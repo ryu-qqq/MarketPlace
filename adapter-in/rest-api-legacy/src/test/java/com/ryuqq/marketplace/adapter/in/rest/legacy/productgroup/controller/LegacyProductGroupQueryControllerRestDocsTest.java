@@ -43,7 +43,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @DisplayName("LegacyProductGroupQueryController REST Docs 테스트")
 class LegacyProductGroupQueryControllerRestDocsTest {
 
-    private static final String BASE_URL = "/api/v1/legacy/product/group/{productGroupId}";
+    private static final String BASE_URL = "/api/v1/product/group/{productGroupId}";
     private static final long PRODUCT_GROUP_ID =
             LegacyProductGroupApiFixtures.DEFAULT_PRODUCT_GROUP_ID;
 

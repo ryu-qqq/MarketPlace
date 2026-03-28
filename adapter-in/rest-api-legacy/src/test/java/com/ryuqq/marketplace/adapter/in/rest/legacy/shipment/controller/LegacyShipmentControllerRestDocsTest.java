@@ -39,7 +39,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @DisplayName("LegacyShipmentController REST Docs 테스트")
 class LegacyShipmentControllerRestDocsTest {
 
-    private static final String BASE_URL = "/api/v1/legacy/shipment/company-codes";
+    private static final String BASE_URL = "/api/v1/shipment/company-codes";
 
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;
