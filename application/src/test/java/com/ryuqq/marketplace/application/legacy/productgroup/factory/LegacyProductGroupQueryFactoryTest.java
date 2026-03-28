@@ -241,19 +241,21 @@ class LegacyProductGroupQueryFactoryTest {
         }
 
         @Test
-        @DisplayName("카테고리 ID 목록이 표준 SearchParams에 반영된다")
+        @DisplayName("카테고리 ID 목록이 resolve 후 표준 SearchParams에 반영된다")
         void toStandardSearchParams_WithCategoryIds_ReflectsInResult() {
             // given
             List<Long> categoryIds = List.of(200L, 201L);
             LegacyProductGroupSearchParams params =
                     LegacyProductGroupQueryFixtures.searchParamsWithCategory(200L)
                             .withCategoryIds(categoryIds);
+            org.mockito.BDDMockito.given(categoryIdResolver.resolve(200L)).willReturn(300L);
+            org.mockito.BDDMockito.given(categoryIdResolver.resolve(201L)).willReturn(301L);
 
             // when
             ProductGroupSearchParams result = sut.toStandardSearchParams(params);
 
             // then
-            assertThat(result.categoryIds()).containsExactlyInAnyOrderElementsOf(categoryIds);
+            assertThat(result.categoryIds()).containsExactlyInAnyOrder(300L, 301L);
         }
 
         @Test

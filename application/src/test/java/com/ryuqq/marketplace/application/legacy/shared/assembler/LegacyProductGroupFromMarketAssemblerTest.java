@@ -49,7 +49,7 @@ class LegacyProductGroupFromMarketAssemblerTest {
 
             // then
             assertThat(result).isNotNull();
-            assertThat(result.productGroupId()).isEqualTo(resolved.resolvedProductGroupId().value());
+            assertThat(result.productGroupId()).isEqualTo(resolved.requestProductGroupId());
             assertThat(result.productGroupName()).isEqualTo(composite.productGroupName());
             assertThat(result.sellerId()).isEqualTo(composite.sellerId());
             assertThat(result.brandId()).isEqualTo(composite.brandId());

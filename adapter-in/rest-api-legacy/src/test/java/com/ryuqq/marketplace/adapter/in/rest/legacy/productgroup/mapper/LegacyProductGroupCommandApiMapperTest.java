@@ -134,7 +134,7 @@ class LegacyProductGroupCommandApiMapperTest {
     class ToNoticeCommandTest {
 
         @Test
-        @DisplayName("productGroupId가 0L이면 noticeCategoryId도 0이고 빈 entries를 반환한다")
+        @DisplayName("productGroupId가 0L이면 LEGACY_DEFAULT noticeCategoryId와 빈 entries를 반환한다")
         void toNoticeCommand_ZeroProductGroupId_ReturnsEmptyEntries() {
             // given
             long productGroupId = 0L;
@@ -144,7 +144,8 @@ class LegacyProductGroupCommandApiMapperTest {
 
             // then
             assertThat(command.productGroupId()).isEqualTo(0L);
-            assertThat(command.noticeCategoryId()).isEqualTo(0L);
+            assertThat(command.noticeCategoryId())
+                    .isEqualTo(com.ryuqq.marketplace.domain.legacy.notice.vo.LegacyNoticeFieldMapping.LEGACY_NOTICE_CATEGORY_ID);
             assertThat(command.entries()).isEmpty();
         }
 
@@ -153,10 +154,6 @@ class LegacyProductGroupCommandApiMapperTest {
         void toNoticeCommand_NullRequest_ReturnsEmptyEntries() {
             // given
             long productGroupId = LegacyProductGroupApiFixtures.DEFAULT_PRODUCT_GROUP_ID;
-            NoticeCategory noticeCategory = org.mockito.Mockito.mock(NoticeCategory.class);
-            org.mockito.BDDMockito.given(noticeCategory.id())
-                    .willReturn(com.ryuqq.marketplace.domain.notice.id.NoticeCategoryId.of(1L));
-            given(legacyNoticeCategoryResolver.resolve(anyLong())).willReturn(noticeCategory);
 
             // when
             var command = mapper.toNoticeCommand(productGroupId, null);
