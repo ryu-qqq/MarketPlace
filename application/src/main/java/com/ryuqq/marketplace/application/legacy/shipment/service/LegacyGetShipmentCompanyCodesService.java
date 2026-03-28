@@ -1,45 +1,31 @@
 package com.ryuqq.marketplace.application.legacy.shipment.service;
 
-import com.ryuqq.marketplace.application.legacy.commoncode.manager.LegacyCommonCodeReadManager;
+import com.ryuqq.marketplace.application.commoncode.manager.CommonCodeReadManager;
 import com.ryuqq.marketplace.application.legacy.shipment.port.in.LegacyGetShipmentCompanyCodesUseCase;
 import com.ryuqq.marketplace.domain.commoncode.aggregate.CommonCode;
-import com.ryuqq.marketplace.domain.commoncode.id.CommonCodeId;
-import com.ryuqq.marketplace.domain.commoncodetype.id.CommonCodeTypeId;
-import com.ryuqq.marketplace.domain.legacy.commoncode.aggregate.LegacyCommonCode;
-import java.time.Instant;
+import com.ryuqq.marketplace.domain.commoncode.query.CommonCodeSearchCriteria;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
-/** 레거시 택배사 코드 목록 조회 서비스. */
+/**
+ * 레거시 택배사 코드 목록 조회 서비스.
+ *
+ * <p>market 스키마의 common_codes (COURIER_CODE_LEGACY 타입)에서 조회합니다.
+ */
 @Service
 public class LegacyGetShipmentCompanyCodesService implements LegacyGetShipmentCompanyCodesUseCase {
 
-    private static final Long SHIPMENT_COMPANY_CODE_GROUP_ID = 2L;
+    private static final String COURIER_CODE_LEGACY = "COURIER_CODE_LEGACY";
 
-    private final LegacyCommonCodeReadManager legacyCommonCodeReadManager;
+    private final CommonCodeReadManager commonCodeReadManager;
 
-    public LegacyGetShipmentCompanyCodesService(
-            LegacyCommonCodeReadManager legacyCommonCodeReadManager) {
-        this.legacyCommonCodeReadManager = legacyCommonCodeReadManager;
+    public LegacyGetShipmentCompanyCodesService(CommonCodeReadManager commonCodeReadManager) {
+        this.commonCodeReadManager = commonCodeReadManager;
     }
 
     @Override
     public List<CommonCode> execute() {
-        return legacyCommonCodeReadManager.getByCodeGroupId(SHIPMENT_COMPANY_CODE_GROUP_ID).stream()
-                .map(this::toCommonCode)
-                .toList();
-    }
-
-    private CommonCode toCommonCode(LegacyCommonCode legacy) {
-        return CommonCode.reconstitute(
-                CommonCodeId.of(legacy.id()),
-                CommonCodeTypeId.of(legacy.codeGroupId()),
-                legacy.codeDetail(),
-                legacy.codeDetailDisplayName(),
-                legacy.displayOrder() != null ? legacy.displayOrder() : 0,
-                true,
-                null,
-                Instant.now(),
-                Instant.now());
+        return commonCodeReadManager.findByCriteria(
+                CommonCodeSearchCriteria.defaultOf(COURIER_CODE_LEGACY));
     }
 }

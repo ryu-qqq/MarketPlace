@@ -2,27 +2,33 @@ package com.ryuqq.marketplace.application.legacy.productgroup.factory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.ryuqq.marketplace.application.legacy.productcontext.resolver.LegacyBrandIdResolver;
+import com.ryuqq.marketplace.application.legacy.productcontext.resolver.LegacyCategoryIdResolver;
+import com.ryuqq.marketplace.application.legacy.productcontext.resolver.LegacySellerIdResolver;
 import com.ryuqq.marketplace.application.legacy.productgroup.LegacyProductGroupQueryFixtures;
 import com.ryuqq.marketplace.application.legacy.productgroup.dto.query.LegacyProductGroupSearchParams;
 import com.ryuqq.marketplace.application.productgroup.dto.query.ProductGroupSearchParams;
 import com.ryuqq.marketplace.domain.legacy.productgroup.query.LegacyProductGroupSearchCriteria;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @Tag("unit")
+@ExtendWith(MockitoExtension.class)
 @DisplayName("LegacyProductGroupQueryFactory 단위 테스트")
 class LegacyProductGroupQueryFactoryTest {
 
-    private LegacyProductGroupQueryFactory sut;
+    @InjectMocks private LegacyProductGroupQueryFactory sut;
 
-    @BeforeEach
-    void setUp() {
-        sut = new LegacyProductGroupQueryFactory();
-    }
+    @Mock private LegacySellerIdResolver sellerIdResolver;
+    @Mock private LegacyBrandIdResolver brandIdResolver;
+    @Mock private LegacyCategoryIdResolver categoryIdResolver;
 
     @Nested
     @DisplayName("createCriteria() - 검색 파라미터를 Criteria로 변환")
