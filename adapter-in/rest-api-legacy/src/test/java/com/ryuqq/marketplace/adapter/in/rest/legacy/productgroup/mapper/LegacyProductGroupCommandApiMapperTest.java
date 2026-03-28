@@ -45,7 +45,8 @@ class LegacyProductGroupCommandApiMapperTest {
                         legacyNoticeCategoryResolver,
                         legacyImageCommandApiMapper,
                         legacyDescriptionCommandApiMapper,
-                        legacyOptionCommandApiMapper);
+                        legacyOptionCommandApiMapper,
+                        new com.ryuqq.marketplace.adapter.in.rest.legacy.product.validator.LegacyOptionValidator());
     }
 
     @Nested

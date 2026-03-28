@@ -84,8 +84,8 @@ class CategoryGroupTest {
     }
 
     @Test
-    @DisplayName("모든 CategoryGroup 값이 12개 존재한다")
+    @DisplayName("모든 CategoryGroup 값이 13개 존재한다")
     void hasExpectedValues() {
-        assertThat(CategoryGroup.values()).hasSize(12);
+        assertThat(CategoryGroup.values()).hasSize(13);
     }
 }

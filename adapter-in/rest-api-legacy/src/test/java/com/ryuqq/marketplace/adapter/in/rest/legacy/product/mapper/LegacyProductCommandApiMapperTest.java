@@ -27,7 +27,8 @@ class LegacyProductCommandApiMapperTest {
 
     @BeforeEach
     void setUp() {
-        mapper = new LegacyProductCommandApiMapper();
+        mapper = new LegacyProductCommandApiMapper(
+                new com.ryuqq.marketplace.adapter.in.rest.legacy.product.validator.LegacyOptionValidator());
     }
 
     @Nested
