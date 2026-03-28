@@ -44,7 +44,10 @@ public enum CategoryGroup {
     BABY_KIDS,
 
     /** 기타 재화 - 기본 고시정보 적용 */
-    ETC;
+    ETC,
+
+    /** 레거시 전용 - 고정 9개 필드 (material, color, size, maker, origin 등) */
+    LEGACY_DEFAULT;
 
     /**
      * 문자열로부터 CategoryGroup 변환.

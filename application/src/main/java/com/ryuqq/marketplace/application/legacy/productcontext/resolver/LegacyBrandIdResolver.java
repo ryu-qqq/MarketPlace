@@ -24,14 +24,14 @@ public class LegacyBrandIdResolver {
     }
 
     public long resolve(long legacyBrandId) {
-        // TODO: 매핑 테이블 조회 구현 후 주석 해제
-        // Optional<Long> internalBrandId =
-        //         mappingResolver.resolveInternalBrandId(
-        //                 SETOF_SOURCE_ID, String.valueOf(legacyBrandId));
-        // if (internalBrandId.isPresent()) {
-        //     return internalBrandId.get();
-        // }
-        // log.warn("레거시 브랜드 ID 매핑 실패. 원본 ID 사용: legacyBrandId={}", legacyBrandId);
-        return legacyBrandId;
+        return mappingResolver
+                .resolveInternalBrandId(SETOF_SOURCE_ID, String.valueOf(legacyBrandId))
+                .orElseGet(
+                        () -> {
+                            log.warn(
+                                    "레거시 브랜드 ID 매핑 실패. 원본 ID 사용: legacyBrandId={}",
+                                    legacyBrandId);
+                            return legacyBrandId;
+                        });
     }
 }

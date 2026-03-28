@@ -24,14 +24,14 @@ public class LegacyCategoryIdResolver {
     }
 
     public long resolve(long legacyCategoryId) {
-        // TODO: 매핑 테이블 조회 구현 후 주석 해제
-        // Optional<Long> internalCategoryId =
-        //         mappingResolver.resolveInternalCategoryId(
-        //                 SETOF_SOURCE_ID, String.valueOf(legacyCategoryId));
-        // if (internalCategoryId.isPresent()) {
-        //     return internalCategoryId.get();
-        // }
-        // log.warn("레거시 카테고리 ID 매핑 실패. 원본 ID 사용: legacyCategoryId={}", legacyCategoryId);
-        return legacyCategoryId;
+        return mappingResolver
+                .resolveInternalCategoryId(SETOF_SOURCE_ID, String.valueOf(legacyCategoryId))
+                .orElseGet(
+                        () -> {
+                            log.warn(
+                                    "레거시 카테고리 ID 매핑 실패. 원본 ID 사용: legacyCategoryId={}",
+                                    legacyCategoryId);
+                            return legacyCategoryId;
+                        });
     }
 }

@@ -12,7 +12,7 @@
 --   washingMethod, yearMonth, assuranceStandard, asPhone
 -- ============================================================
 
-INSERT INTO notice_category (id, code, name_ko, name_en, target_category_group, active)
+INSERT IGNORE INTO notice_category (id, code, name_ko, name_en, target_category_group, active)
 VALUES (100, 'LEGACY_DEFAULT', '레거시 기본 고시정보', 'Legacy Default Notice', 'LEGACY_DEFAULT', 1);
 
 INSERT INTO notice_field (id, notice_category_id, field_code, field_name, required, sort_order) VALUES

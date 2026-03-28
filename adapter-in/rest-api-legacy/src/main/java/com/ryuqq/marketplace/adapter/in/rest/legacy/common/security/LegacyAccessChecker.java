@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.adapter.in.rest.legacy.common.security;
 
+import com.ryuqq.marketplace.application.legacy.productcontext.resolver.LegacySellerIdResolver;
 import com.ryuqq.marketplace.application.legacy.productgroup.port.in.query.ResolveLegacyProductGroupSellerIdUseCase;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
@@ -30,10 +31,13 @@ public class LegacyAccessChecker {
     private static final String MASTER_ROLE = "MASTER";
 
     private final ResolveLegacyProductGroupSellerIdUseCase resolveLegacyProductGroupSellerIdUseCase;
+    private final LegacySellerIdResolver sellerIdResolver;
 
     public LegacyAccessChecker(
-            ResolveLegacyProductGroupSellerIdUseCase resolveLegacyProductGroupSellerIdUseCase) {
+            ResolveLegacyProductGroupSellerIdUseCase resolveLegacyProductGroupSellerIdUseCase,
+            LegacySellerIdResolver sellerIdResolver) {
         this.resolveLegacyProductGroupSellerIdUseCase = resolveLegacyProductGroupSellerIdUseCase;
+        this.sellerIdResolver = sellerIdResolver;
     }
 
     /**
@@ -95,10 +99,11 @@ public class LegacyAccessChecker {
             return true;
         }
 
-        long currentSellerId = LegacyAuthContextHolder.getSellerId();
+        long legacySellerId = LegacyAuthContextHolder.getSellerId();
+        long internalSellerId = sellerIdResolver.resolve(legacySellerId);
         Optional<Long> productSellerId =
                 resolveLegacyProductGroupSellerIdUseCase.execute(productGroupId);
 
-        return productSellerId.isPresent() && productSellerId.get() == currentSellerId;
+        return productSellerId.isPresent() && productSellerId.get() == internalSellerId;
     }
 }

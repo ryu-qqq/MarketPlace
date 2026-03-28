@@ -219,7 +219,9 @@ public class LegacyProductGroupCommandApiMapper {
                                 i -> {
                                     var img = request.productImageList().get(i);
                                     return new RegisterProductGroupCommand.ImageCommand(
-                                            img.type(), img.originUrl(), i);
+                                            convertLegacyImageType(img.type()),
+                                            img.originUrl(),
+                                            i);
                                 })
                         .toList();
 
@@ -263,6 +265,12 @@ public class LegacyProductGroupCommandApiMapper {
                 notice);
     }
 
+    /** 레거시 이미지 타입(MAIN, DETAIL) → 표준 이미지 타입(THUMBNAIL, DETAIL) 변환. */
+    private String convertLegacyImageType(String legacyImageType) {
+        if ("MAIN".equals(legacyImageType)) return "THUMBNAIL";
+        return "DETAIL";
+    }
+
     /** 레거시 옵션 타입(OPTION_ONE, OPTION_TWO, SINGLE) → 표준 옵션 타입(SINGLE, COMBINATION, NONE) 변환. */
     private String convertLegacyOptionType(String legacyOptionType) {
         return com.ryuqq.marketplace.domain.legacy.productgroup.vo.OptionType.valueOf(
@@ -294,7 +302,7 @@ public class LegacyProductGroupCommandApiMapper {
                             .toList();
             result.add(
                     new RegisterProductGroupCommand.OptionGroupCommand(
-                            entry.getKey(), null, "SELECT", valueCommands));
+                            entry.getKey(), null, "PREDEFINED", valueCommands));
         }
         return result;
     }
@@ -363,7 +371,9 @@ public class LegacyProductGroupCommandApiMapper {
                                         i -> {
                                             var img = request.productImageList().get(i);
                                             return new UpdateProductGroupFullCommand.ImageCommand(
-                                                    img.type(), img.originUrl(), i);
+                                                    convertLegacyImageType(img.type()),
+                                                    img.originUrl(),
+                                                    i);
                                         })
                                 .toList()
                         : List.of();
