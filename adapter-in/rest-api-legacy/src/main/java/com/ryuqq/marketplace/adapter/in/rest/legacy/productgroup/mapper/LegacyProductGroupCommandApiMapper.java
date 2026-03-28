@@ -238,7 +238,10 @@ public class LegacyProductGroupCommandApiMapper {
                                                 (int) request.price().currentPrice(),
                                                 opt.quantity(),
                                                 0,
-                                                List.of()))
+                                                opt.options().stream()
+                                                        .map(d -> new SelectedOption(
+                                                                d.optionName(), d.optionValue()))
+                                                        .toList()))
                         .toList();
 
         RegisterProductGroupCommand.DescriptionCommand description =
