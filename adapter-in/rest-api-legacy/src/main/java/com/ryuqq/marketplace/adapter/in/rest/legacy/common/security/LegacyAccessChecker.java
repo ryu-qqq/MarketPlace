@@ -74,7 +74,8 @@ public class LegacyAccessChecker {
         if (isMaster()) {
             return null;
         }
-        return LegacyAuthContextHolder.getSellerId();
+        long legacySellerId = LegacyAuthContextHolder.getSellerId();
+        return sellerIdResolver.resolve(legacySellerId);
     }
 
     /**
