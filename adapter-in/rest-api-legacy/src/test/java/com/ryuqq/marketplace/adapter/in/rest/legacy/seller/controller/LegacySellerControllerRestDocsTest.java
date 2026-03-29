@@ -1,7 +1,5 @@
 package com.ryuqq.marketplace.adapter.in.rest.legacy.seller.controller;
 
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
@@ -11,17 +9,13 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ryuqq.marketplace.adapter.in.rest.common.error.ErrorMapperRegistry;
 import com.ryuqq.marketplace.adapter.in.rest.common.security.MarketAccessChecker;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.common.security.LegacyAuthContext;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.common.security.LegacyAuthContextHolder;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.seller.LegacySellerApiFixtures;
-import com.ryuqq.marketplace.adapter.in.rest.legacy.seller.dto.response.LegacySellerResponse;
-import com.ryuqq.marketplace.adapter.in.rest.legacy.seller.mapper.LegacySellerQueryApiMapper;
-import com.ryuqq.marketplace.application.legacy.auth.dto.result.LegacySellerAuthResult;
-import com.ryuqq.marketplace.application.legacy.auth.manager.LegacySellerAuthCompositeReadManager;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -42,15 +36,21 @@ import org.springframework.test.web.servlet.MockMvc;
 @DisplayName("LegacySellerController REST Docs 테스트")
 class LegacySellerControllerRestDocsTest {
 
-    private static final String BASE_URL = "/api/v1/legacy/seller";
+    private static final String BASE_URL = "/api/v1/seller";
 
     @Autowired private MockMvc mockMvc;
-    @Autowired private ObjectMapper objectMapper;
 
-    @MockitoBean private LegacySellerAuthCompositeReadManager sellerAuthReadManager;
-    @MockitoBean private LegacySellerQueryApiMapper legacySellerQueryApiMapper;
     @MockitoBean private MarketAccessChecker accessChecker;
     @MockitoBean private ErrorMapperRegistry errorMapperRegistry;
+
+    @BeforeEach
+    void setUp() {
+        LegacyAuthContextHolder.setContext(
+                new LegacyAuthContext(
+                        LegacySellerApiFixtures.DEFAULT_SELLER_ID,
+                        LegacySellerApiFixtures.DEFAULT_EMAIL,
+                        "SELLER"));
+    }
 
     @AfterEach
     void tearDown() {
@@ -64,19 +64,6 @@ class LegacySellerControllerRestDocsTest {
         @Test
         @DisplayName("현재 인증된 셀러 정보 조회 성공")
         void getCurrentSeller_Success() throws Exception {
-            // given
-            LegacyAuthContextHolder.setContext(
-                    new LegacyAuthContext(
-                            LegacySellerApiFixtures.DEFAULT_SELLER_ID,
-                            "seller@test.com",
-                            "SELLER"));
-
-            LegacySellerAuthResult result = LegacySellerApiFixtures.legacySellerAuthResult();
-            LegacySellerResponse response = LegacySellerApiFixtures.sellerResponse();
-
-            given(sellerAuthReadManager.getByEmail(eq("seller@test.com"))).willReturn(result);
-            given(legacySellerQueryApiMapper.toSellerResponse(result)).willReturn(response);
-
             // when & then
             mockMvc.perform(RestDocumentationRequestBuilders.get(BASE_URL))
                     .andExpect(status().isOk())
@@ -86,8 +73,11 @@ class LegacySellerControllerRestDocsTest {
                     .andExpect(
                             jsonPath("$.data.email").value(LegacySellerApiFixtures.DEFAULT_EMAIL))
                     .andExpect(
-                            jsonPath("$.data.roleType")
-                                    .value(LegacySellerApiFixtures.DEFAULT_ROLE_TYPE))
+                            jsonPath("$.data.passwordHash").value(""))
+                    .andExpect(
+                            jsonPath("$.data.roleType").value("SELLER"))
+                    .andExpect(
+                            jsonPath("$.data.approvalStatus").value("APPROVED"))
                     .andExpect(jsonPath("$.response.status").value(200))
                     .andExpect(jsonPath("$.response.message").value("success"))
                     .andDo(
@@ -123,24 +113,18 @@ class LegacySellerControllerRestDocsTest {
         @DisplayName("다른 셀러 정보도 올바르게 조회된다")
         void getCurrentSeller_DifferentSeller_Success() throws Exception {
             // given
+            LegacyAuthContextHolder.clear();
             LegacyAuthContextHolder.setContext(
-                    new LegacyAuthContext(99L, "other@test.com", "SELLER"));
-
-            LegacySellerAuthResult result =
-                    LegacySellerApiFixtures.legacySellerAuthResult(
-                            99L, "other@test.com", "hashed", "ADMIN", "APPROVED");
-            LegacySellerResponse response =
-                    LegacySellerApiFixtures.sellerResponse(
-                            99L, "other@test.com", "hashed", "ADMIN", "APPROVED");
-
-            given(sellerAuthReadManager.getByEmail(eq("other@test.com"))).willReturn(result);
-            given(legacySellerQueryApiMapper.toSellerResponse(result)).willReturn(response);
+                    new LegacyAuthContext(99L, "other@test.com", "ADMIN"));
 
             // when & then
             mockMvc.perform(RestDocumentationRequestBuilders.get(BASE_URL))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.sellerId").value(99L))
-                    .andExpect(jsonPath("$.data.email").value("other@test.com"));
+                    .andExpect(jsonPath("$.data.email").value("other@test.com"))
+                    .andExpect(jsonPath("$.data.passwordHash").value(""))
+                    .andExpect(jsonPath("$.data.roleType").value("ADMIN"))
+                    .andExpect(jsonPath("$.data.approvalStatus").value("APPROVED"));
         }
     }
 }

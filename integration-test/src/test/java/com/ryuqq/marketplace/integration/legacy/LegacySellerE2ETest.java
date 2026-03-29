@@ -12,7 +12,7 @@ import org.springframework.http.HttpStatus;
 /**
  * 레거시 셀러 API E2E 테스트.
  *
- * <p>테스트 대상: GET /api/v1/legacy/seller - 현재 인증된 셀러 정보 조회
+ * <p>테스트 대상: GET /api/v1/seller - 현재 인증된 셀러 정보 조회
  *
  * <p>인증 필요 엔드포인트. Stub 토큰 기반 인증 시 sellerId=10 이 사용됩니다.
  *
@@ -28,13 +28,13 @@ import org.springframework.http.HttpStatus;
 @DisplayName("레거시 셀러 API E2E 테스트")
 class LegacySellerE2ETest extends LegacyE2ETestBase {
 
-    private static final String SELLER_URL = "/api/v1/legacy/seller";
+    private static final String SELLER_URL = "/api/v1/seller";
 
     /** Stub 토큰이 반환하는 sellerId. StubLegacyTokenClient.extractSellerId() 반환값과 동일해야 합니다. */
     static final long STUB_SELLER_ID = 10L;
 
     @Nested
-    @DisplayName("GET /api/v1/legacy/seller - 현재 셀러 정보 조회")
+    @DisplayName("GET /api/v1/seller - 현재 셀러 정보 조회")
     class GetCurrentSellerTest {
 
         @Test
@@ -56,7 +56,7 @@ class LegacySellerE2ETest extends LegacyE2ETestBase {
     }
 
     @Nested
-    @DisplayName("GET /api/v1/legacy/seller - 인증 실패 시나리오")
+    @DisplayName("GET /api/v1/seller - 인증 실패 시나리오")
     class GetCurrentSellerAuthTest {
 
         @Test

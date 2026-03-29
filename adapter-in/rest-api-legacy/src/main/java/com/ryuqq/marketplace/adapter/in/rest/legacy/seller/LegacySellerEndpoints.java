@@ -5,7 +5,7 @@ public final class LegacySellerEndpoints {
 
     private LegacySellerEndpoints() {}
 
-    private static final String BASE = "/api/v1/legacy";
+    private static final String BASE = "/api/v1";
 
     public static final String SELLER = BASE + "/seller";
 }
