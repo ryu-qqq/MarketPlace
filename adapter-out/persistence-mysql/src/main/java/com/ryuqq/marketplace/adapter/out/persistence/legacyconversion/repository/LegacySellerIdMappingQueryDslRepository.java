@@ -64,7 +64,7 @@ public class LegacySellerIdMappingQueryDslRepository {
                         .select(legacySellerIdMappingJpaEntity.legacySellerId)
                         .from(legacySellerIdMappingJpaEntity)
                         .where(legacySellerIdMappingJpaEntity.internalSellerId.eq(internalSellerId))
-                        .fetchOne();
+                        .fetchFirst();
         return Optional.ofNullable(legacySellerId);
     }
 }
