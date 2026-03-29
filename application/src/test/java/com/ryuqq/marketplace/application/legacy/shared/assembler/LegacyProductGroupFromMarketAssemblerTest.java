@@ -196,7 +196,7 @@ class LegacyProductGroupFromMarketAssemblerTest {
             int size = 20;
 
             // when
-            LegacyProductGroupPageResult result = sut.toPageResult(pageResult, page, size);
+            LegacyProductGroupPageResult result = sut.toPageResult(pageResult, java.util.Map.of(), page, size);
 
             // then
             assertThat(result).isNotNull();
@@ -216,7 +216,7 @@ class LegacyProductGroupFromMarketAssemblerTest {
             int size = 20;
 
             // when
-            LegacyProductGroupPageResult result = sut.toPageResult(emptyPageResult, page, size);
+            LegacyProductGroupPageResult result = sut.toPageResult(emptyPageResult, java.util.Map.of(), page, size);
 
             // then
             assertThat(result.items()).isEmpty();

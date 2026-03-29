@@ -9,6 +9,8 @@ import com.ryuqq.marketplace.application.legacy.shared.dto.result.LegacyProductG
 import com.ryuqq.marketplace.application.legacy.shared.dto.result.LegacyProductGroupDetailResult.LegacyOptionMappingResult;
 import com.ryuqq.marketplace.application.legacy.shared.dto.result.LegacyProductGroupDetailResult.LegacyProductResult;
 import com.ryuqq.marketplace.application.product.dto.response.ProductDetailResult;
+import com.ryuqq.marketplace.application.product.dto.response.ProductOptionMappingResult;
+import com.ryuqq.marketplace.application.product.dto.response.ProductResult;
 import com.ryuqq.marketplace.application.product.dto.response.ResolvedProductOptionResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupListCompositeResult;
@@ -103,16 +105,22 @@ public class LegacyProductGroupFromMarketAssembler {
 
     /** 표준 목록 조회 결과 → 레거시 목록 결과. PK를 레거시 PK로 역매핑합니다. */
     public LegacyProductGroupPageResult toPageResult(
-            ProductGroupPageResult pageResult, int page, int size) {
+            ProductGroupPageResult pageResult,
+            Map<Long, List<ProductResult>> productsMap,
+            int page,
+            int size) {
         List<LegacyProductGroupDetailResult> items =
-                pageResult.results().stream().map(this::toListDetailResult).toList();
+                pageResult.results().stream()
+                        .map(r -> toListDetailResult(r, productsMap.getOrDefault(r.id(), List.of())))
+                        .toList();
         return new LegacyProductGroupPageResult(
                 items, pageResult.pageMeta().totalElements(), page, size);
     }
 
     private LegacyProductGroupDetailResult toListDetailResult(
-            ProductGroupListCompositeResult item) {
+            ProductGroupListCompositeResult item, List<ProductResult> products) {
         long legacyProductGroupId = productIdResolver.reverseResolveProductGroupId(item.id());
+        List<LegacyProductResult> legacyProducts = toLegacyProductsFromResults(products);
         return new LegacyProductGroupDetailResult(
                 legacyProductGroupId,
                 item.productGroupName(),
@@ -145,7 +153,34 @@ public class LegacyProductGroupFromMarketAssembler {
                         : List.of(),
                 "",
                 new LegacyDeliveryResult("", 0, 0, "", "", 0, ""),
-                List.of());
+                legacyProducts);
+    }
+
+    private List<LegacyProductResult> toLegacyProductsFromResults(List<ProductResult> products) {
+        return products.stream()
+                .map(
+                        p -> {
+                            long legacyProductId =
+                                    productIdResolver.reverseResolveProductId(p.id());
+                            List<LegacyOptionMappingResult> options =
+                                    p.optionMappings().stream()
+                                            .map(this::toOptionMappingFromResult)
+                                            .toList();
+                            return new LegacyProductResult(
+                                    legacyProductId,
+                                    p.stockQuantity(),
+                                    "SOLD_OUT".equals(p.status()),
+                                    options);
+                        })
+                .toList();
+    }
+
+    private LegacyOptionMappingResult toOptionMappingFromResult(ProductOptionMappingResult opt) {
+        return new LegacyOptionMappingResult(
+                0L,
+                opt.sellerOptionValueId() != null ? opt.sellerOptionValueId() : 0L,
+                safe(opt.optionGroupName()),
+                safe(opt.optionValueName()));
     }
 
     private String toLegacyOptionType(String optionType) {

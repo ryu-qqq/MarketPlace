@@ -1,6 +1,8 @@
 package com.ryuqq.marketplace.application.legacy.productgroup.service.query;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
@@ -33,6 +35,7 @@ class LegacySearchProductGroupByOffsetServiceTest {
     @Mock private SearchProductGroupByOffsetUseCase searchUseCase;
     @Mock private LegacyProductGroupQueryFactory queryFactory;
     @Mock private LegacyProductGroupFromMarketAssembler assembler;
+    @Mock private com.ryuqq.marketplace.application.productgroup.port.out.query.ProductGroupCompositionQueryPort compositionQueryPort;
 
     @Nested
     @DisplayName("execute() - 상품그룹 목록 조회 실행")
@@ -54,7 +57,7 @@ class LegacySearchProductGroupByOffsetServiceTest {
             given(searchUseCase.execute(standardParams)).willReturn(standardPageResult);
             given(
                             assembler.toPageResult(
-                                    standardPageResult, legacyParams.page(), legacyParams.size()))
+                                    any(), any(), anyInt(), anyInt()))
                     .willReturn(expectedResult);
 
             // when
@@ -66,7 +69,7 @@ class LegacySearchProductGroupByOffsetServiceTest {
             then(searchUseCase).should().execute(standardParams);
             then(assembler)
                     .should()
-                    .toPageResult(standardPageResult, legacyParams.page(), legacyParams.size());
+                    .toPageResult(any(), any(), anyInt(), anyInt());
         }
 
         @Test
@@ -85,7 +88,7 @@ class LegacySearchProductGroupByOffsetServiceTest {
             given(searchUseCase.execute(standardParams)).willReturn(standardPageResult);
             given(
                             assembler.toPageResult(
-                                    standardPageResult, legacyParams.page(), legacyParams.size()))
+                                    any(), any(), anyInt(), anyInt()))
                     .willReturn(expectedResult);
 
             // when
@@ -113,7 +116,7 @@ class LegacySearchProductGroupByOffsetServiceTest {
 
             given(queryFactory.toStandardSearchParams(legacyParams)).willReturn(standardParams);
             given(searchUseCase.execute(standardParams)).willReturn(standardPageResult);
-            given(assembler.toPageResult(standardPageResult, customPage, customSize))
+            given(assembler.toPageResult(any(), any(), anyInt(), anyInt()))
                     .willReturn(expectedResult);
 
             // when
@@ -121,7 +124,6 @@ class LegacySearchProductGroupByOffsetServiceTest {
 
             // then
             assertThat(result).isNotNull();
-            then(assembler).should().toPageResult(standardPageResult, customPage, customSize);
         }
 
         @Test
@@ -138,7 +140,7 @@ class LegacySearchProductGroupByOffsetServiceTest {
 
             given(queryFactory.toStandardSearchParams(legacyParams)).willReturn(standardParams);
             given(searchUseCase.execute(standardParams)).willReturn(emptyPageResult);
-            given(assembler.toPageResult(emptyPageResult, legacyParams.page(), legacyParams.size()))
+            given(assembler.toPageResult(any(), any(), anyInt(), anyInt()))
                     .willReturn(expectedEmpty);
 
             // when

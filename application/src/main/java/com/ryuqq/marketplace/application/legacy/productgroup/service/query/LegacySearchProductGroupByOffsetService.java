@@ -5,9 +5,13 @@ import com.ryuqq.marketplace.application.legacy.productgroup.dto.response.Legacy
 import com.ryuqq.marketplace.application.legacy.productgroup.factory.LegacyProductGroupQueryFactory;
 import com.ryuqq.marketplace.application.legacy.productgroup.port.in.query.LegacySearchProductGroupByOffsetUseCase;
 import com.ryuqq.marketplace.application.legacy.shared.assembler.LegacyProductGroupFromMarketAssembler;
+import com.ryuqq.marketplace.application.product.dto.response.ProductResult;
 import com.ryuqq.marketplace.application.productgroup.dto.query.ProductGroupSearchParams;
 import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupPageResult;
 import com.ryuqq.marketplace.application.productgroup.port.in.query.SearchProductGroupByOffsetUseCase;
+import com.ryuqq.marketplace.application.productgroup.port.out.query.ProductGroupCompositionQueryPort;
+import java.util.List;
+import java.util.Map;
 import org.springframework.stereotype.Service;
 
 /**
@@ -22,20 +26,32 @@ public class LegacySearchProductGroupByOffsetService
     private final SearchProductGroupByOffsetUseCase searchUseCase;
     private final LegacyProductGroupQueryFactory queryFactory;
     private final LegacyProductGroupFromMarketAssembler assembler;
+    private final ProductGroupCompositionQueryPort compositionQueryPort;
 
     public LegacySearchProductGroupByOffsetService(
             SearchProductGroupByOffsetUseCase searchUseCase,
             LegacyProductGroupQueryFactory queryFactory,
-            LegacyProductGroupFromMarketAssembler assembler) {
+            LegacyProductGroupFromMarketAssembler assembler,
+            ProductGroupCompositionQueryPort compositionQueryPort) {
         this.searchUseCase = searchUseCase;
         this.queryFactory = queryFactory;
         this.assembler = assembler;
+        this.compositionQueryPort = compositionQueryPort;
     }
 
     @Override
     public LegacyProductGroupPageResult execute(LegacyProductGroupSearchParams params) {
         ProductGroupSearchParams standardParams = queryFactory.toStandardSearchParams(params);
         ProductGroupPageResult pageResult = searchUseCase.execute(standardParams);
-        return assembler.toPageResult(pageResult, params.page(), params.size());
+
+        List<Long> productGroupIds =
+                pageResult.results().stream()
+                        .map(r -> r.id())
+                        .toList();
+
+        Map<Long, List<ProductResult>> productsMap =
+                compositionQueryPort.findProductsWithOptionNamesByProductGroupIds(productGroupIds);
+
+        return assembler.toPageResult(pageResult, productsMap, params.page(), params.size());
     }
 }
