@@ -171,8 +171,7 @@ public class LegacyOrderConversionFactory {
         OrderId id = OrderId.forNew(orderId);
         BuyerInfo buyerInfo = buildBuyerInfo(composite);
         PaymentInfo paymentInfo = buildPaymentInfo(composite);
-        long shopId =
-                resolvedIds.internalSellerId() != null ? resolvedIds.internalSellerId() : 0L;
+        long shopId = resolvedIds.internalSellerId() != null ? resolvedIds.internalSellerId() : 0L;
         ExternalOrderReference externalRef =
                 ExternalOrderReference.of(
                         channel.salesChannelId(),

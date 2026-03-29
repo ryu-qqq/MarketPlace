@@ -9,7 +9,9 @@ import org.springframework.stereotype.Component;
 
 /** 외부 QnA 동기화 전략이 없을 때 사용하는 No-op 구현체. */
 @Component
-@ConditionalOnMissingBean(value = QnaAnswerSyncStrategy.class, ignored = NoOpQnaAnswerSyncStrategy.class)
+@ConditionalOnMissingBean(
+        value = QnaAnswerSyncStrategy.class,
+        ignored = NoOpQnaAnswerSyncStrategy.class)
 public class NoOpQnaAnswerSyncStrategy implements QnaAnswerSyncStrategy {
 
     private static final Logger log = LoggerFactory.getLogger(NoOpQnaAnswerSyncStrategy.class);

@@ -36,8 +36,7 @@ public class LegacyOrderConversionScheduler {
         this.recoverTimeoutUseCase = recoverTimeoutUseCase;
     }
 
-    @Scheduled(
-            fixedDelayString = "${scheduler.jobs.legacy-order-conversion.fixed-delay:10000}")
+    @Scheduled(fixedDelayString = "${scheduler.jobs.legacy-order-conversion.fixed-delay:10000}")
     @SchedulerJob("LegacyOrderConversion-ConvertPending")
     public int convertPendingOutboxes() {
         log.info("레거시 주문 변환 스케줄러 시작");

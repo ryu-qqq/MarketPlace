@@ -45,7 +45,8 @@ public class LegacyOrderConversionSeederScheduler {
         this.lockManager = lockManager;
     }
 
-    @Scheduled(fixedDelayString = "${scheduler.jobs.legacy-order-conversion-seeder.fixed-delay:10000}")
+    @Scheduled(
+            fixedDelayString = "${scheduler.jobs.legacy-order-conversion-seeder.fixed-delay:10000}")
     @SchedulerJob("LegacyOrderConversion-Seeder")
     public int seedPendingOutboxes() {
         return lockManager.executeWithLock(this::doSeed, 0);
