@@ -1,7 +1,9 @@
 package com.ryuqq.marketplace.application.legacy.qna.service;
 
 import com.ryuqq.marketplace.application.brand.manager.BrandReadManager;
+import com.ryuqq.marketplace.application.legacy.order.resolver.LegacyOrderIdResolver;
 import com.ryuqq.marketplace.application.legacy.productcontext.resolver.LegacyProductIdResolver;
+import com.ryuqq.marketplace.application.order.port.in.query.GetOrderDetailUseCase;
 import com.ryuqq.marketplace.application.legacy.qna.dto.query.LegacyQnaSearchParams;
 import com.ryuqq.marketplace.application.legacy.qna.dto.result.LegacyQnaDetailResult;
 import com.ryuqq.marketplace.application.legacy.qna.dto.result.LegacyQnaPageResult;
@@ -40,18 +42,24 @@ public class LegacyQnaListQueryService implements LegacyQnaListQueryUseCase {
     private final ProductGroupReadManager productGroupReadManager;
     private final LegacyProductIdResolver productIdResolver;
     private final BrandReadManager brandReadManager;
+    private final LegacyOrderIdResolver orderIdResolver;
+    private final GetOrderDetailUseCase getOrderDetailUseCase;
 
     public LegacyQnaListQueryService(
             GetQnaListUseCase getQnaListUseCase,
             SellerReadManager sellerReadManager,
             ProductGroupReadManager productGroupReadManager,
             LegacyProductIdResolver productIdResolver,
-            BrandReadManager brandReadManager) {
+            BrandReadManager brandReadManager,
+            LegacyOrderIdResolver orderIdResolver,
+            GetOrderDetailUseCase getOrderDetailUseCase) {
         this.getQnaListUseCase = getQnaListUseCase;
         this.sellerReadManager = sellerReadManager;
         this.productGroupReadManager = productGroupReadManager;
         this.productIdResolver = productIdResolver;
         this.brandReadManager = brandReadManager;
+        this.orderIdResolver = orderIdResolver;
+        this.getOrderDetailUseCase = getOrderDetailUseCase;
     }
 
     @Override
@@ -125,10 +133,30 @@ public class LegacyQnaListQueryService implements LegacyQnaListQueryUseCase {
         Long internalPgId = legacyToInternalPgMap.getOrDefault(r.productGroupId(), r.productGroupId());
         ProductGroup pg = pgMap.get(internalPgId);
         String pgName = pg != null ? pg.productGroupName().value() : "";
+        String mainImageUrl = "";
         Long brandId = pg != null ? pg.brandId().value() : 0L;
         String brandName = brandNameMap.getOrDefault(brandId, "");
+
+        // 주문문의: 상품 정보가 없으면 주문에서 보충
+        if (pgName.isEmpty() && r.orderId() != null && r.orderId() > 0) {
+            try {
+                var mapping = orderIdResolver.resolve(r.orderId());
+                if (mapping.isPresent()) {
+                    var detail = getOrderDetailUseCase.execute(mapping.get().internalOrderItemId());
+                    var product = detail.productOrder();
+                    if (product != null) {
+                        pgName = product.productGroupName() != null ? product.productGroupName() : "";
+                        mainImageUrl = product.mainImageUrl() != null ? product.mainImageUrl() : "";
+                        brandName = product.brandName() != null ? product.brandName() : "";
+                        brandId = product.brandId() != null ? product.brandId() : 0L;
+                    }
+                }
+            } catch (Exception ignored) {
+            }
+        }
+
         return LegacyQnaFromMarketAssembler.toDetailResult(
-                r, sellerName, pgName, "", brandId, brandName);
+                r, sellerName, pgName, mainImageUrl, brandId, brandName);
     }
 
     private QnaSearchCondition toSearchCondition(LegacyQnaSearchParams params) {
