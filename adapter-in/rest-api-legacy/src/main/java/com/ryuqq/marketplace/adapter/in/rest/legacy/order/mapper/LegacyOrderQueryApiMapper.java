@@ -186,7 +186,7 @@ public class LegacyOrderQueryApiMapper {
 
     private List<OrderHistoryInfo> toOrderHistoryInfos(List<LegacyOrderHistoryResult> histories) {
         if (histories == null) {
-            return List.of();
+            return null;
         }
         if (histories.isEmpty()) {
             return List.of();
