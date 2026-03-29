@@ -1,6 +1,8 @@
 package com.ryuqq.marketplace.domain.order.id;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -24,5 +26,13 @@ public record OrderNumber(String value) {
         String date = LocalDate.now().format(DATE_FMT);
         String seq = String.format("%04d", ThreadLocalRandom.current().nextInt(10000));
         return new OrderNumber(PREFIX + "-" + date + "-" + seq);
+    }
+
+    /** 지정 날짜 기준으로 주문번호를 생성합니다. 레거시 이관 시 사용. */
+    public static OrderNumber generateWithDate(Instant orderDate) {
+        LocalDate date = orderDate.atZone(ZoneId.of("Asia/Seoul")).toLocalDate();
+        String dateStr = date.format(DATE_FMT);
+        String seq = String.format("%04d", ThreadLocalRandom.current().nextInt(10000));
+        return new OrderNumber(PREFIX + "-" + dateStr + "-" + seq);
     }
 }

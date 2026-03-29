@@ -113,7 +113,7 @@ public class LegacyOrderConversionFactory {
 
         String orderId = UUID.randomUUID().toString();
         Long orderItemId = null; // auto_increment — persist 후 PersistenceFacade에서 할당
-        OrderNumber orderNumber = OrderNumber.generate();
+        OrderNumber orderNumber = OrderNumber.generateWithDate(composite.orderDate());
 
         Order order =
                 buildOrder(
