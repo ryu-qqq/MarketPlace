@@ -28,7 +28,8 @@ public class LegacyOrderReadManager {
         return queryPort
                 .fetchOrderDetail(orderId)
                 .orElseThrow(
-                        () -> new IllegalStateException("레거시 주문을 찾을 수 없습니다. orderId=" + orderId));
+                        () -> new com.ryuqq.marketplace.domain.order.exception.OrderNotFoundException(
+                                String.valueOf(orderId)));
     }
 
     public Optional<LegacyOrderDetailResult> fetchOrderDetailOptional(long orderId) {

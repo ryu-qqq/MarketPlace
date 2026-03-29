@@ -2,31 +2,40 @@ package com.ryuqq.marketplace.application.legacy.order.service.command;
 
 import com.ryuqq.marketplace.application.legacy.order.dto.command.LegacyOrderUpdateCommand;
 import com.ryuqq.marketplace.application.legacy.order.dto.result.LegacyOrderUpdateResult;
-import com.ryuqq.marketplace.application.legacy.order.internal.LegacyOrderUpdateStrategy;
-import com.ryuqq.marketplace.application.legacy.order.internal.LegacyOrderUpdateStrategyProvider;
+import com.ryuqq.marketplace.application.legacy.order.internal.LegacyOrderMarketRouter;
 import com.ryuqq.marketplace.application.legacy.order.port.in.command.LegacyOrderUpdateUseCase;
+import com.ryuqq.marketplace.application.legacy.order.resolver.LegacyOrderIdResolver;
+import com.ryuqq.marketplace.domain.legacyconversion.aggregate.LegacyOrderIdMapping;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 레거시 주문 상태 변경 서비스.
  *
- * <p>전략 프로바이더에서 orderStatus에 맞는 전략을 O(1)로 조회하여 실행합니다.
+ * <p>market 스키마의 표준 UseCase로 라우팅합니다.
  */
 @Service
 public class LegacyOrderUpdateService implements LegacyOrderUpdateUseCase {
 
-    private final LegacyOrderUpdateStrategyProvider strategyProvider;
+    private final LegacyOrderIdResolver idResolver;
+    private final LegacyOrderMarketRouter marketRouter;
 
-    public LegacyOrderUpdateService(LegacyOrderUpdateStrategyProvider strategyProvider) {
-        this.strategyProvider = strategyProvider;
+    public LegacyOrderUpdateService(
+            LegacyOrderIdResolver idResolver,
+            LegacyOrderMarketRouter marketRouter) {
+        this.idResolver = idResolver;
+        this.marketRouter = marketRouter;
     }
 
     @Override
     @Transactional
     public LegacyOrderUpdateResult execute(LegacyOrderUpdateCommand command) {
-        LegacyOrderUpdateStrategy strategy = strategyProvider.getStrategy(command.orderStatus());
-        strategy.execute(command);
+        LegacyOrderIdMapping mapping = idResolver
+                .resolve(command.orderId())
+                .orElseThrow(() -> new com.ryuqq.marketplace.domain.order.exception.OrderNotFoundException(
+                        String.valueOf(command.orderId())));
+
+        marketRouter.route(command, mapping);
 
         return new LegacyOrderUpdateResult(
                 command.orderId(),
