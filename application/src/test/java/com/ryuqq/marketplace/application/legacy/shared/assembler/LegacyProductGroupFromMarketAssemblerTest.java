@@ -1,7 +1,6 @@
 package com.ryuqq.marketplace.application.legacy.shared.assembler;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -32,7 +31,8 @@ class LegacyProductGroupFromMarketAssemblerTest {
     @BeforeEach
     void setUp() {
         LegacyProductIdResolver resolver = mock(LegacyProductIdResolver.class);
-        when(resolver.reverseResolveProductGroupId(anyLong())).thenAnswer(inv -> inv.getArgument(0));
+        when(resolver.reverseResolveProductGroupId(anyLong()))
+                .thenAnswer(inv -> inv.getArgument(0));
         sut = new LegacyProductGroupFromMarketAssembler(resolver);
     }
 

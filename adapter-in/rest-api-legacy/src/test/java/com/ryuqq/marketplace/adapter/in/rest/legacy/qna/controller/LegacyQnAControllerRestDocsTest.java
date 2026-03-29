@@ -398,7 +398,8 @@ class LegacyQnAControllerRestDocsTest {
                                             fieldWithPath("data.content[].qnaTarget.brand.brandId")
                                                     .type(JsonFieldType.NUMBER)
                                                     .description("브랜드 ID"),
-                                            fieldWithPath("data.content[].qnaTarget.brand.brandName")
+                                            fieldWithPath(
+                                                            "data.content[].qnaTarget.brand.brandName")
                                                     .type(JsonFieldType.STRING)
                                                     .description("브랜드명"),
                                             fieldWithPath("data.content[].qnaTarget.paymentId")

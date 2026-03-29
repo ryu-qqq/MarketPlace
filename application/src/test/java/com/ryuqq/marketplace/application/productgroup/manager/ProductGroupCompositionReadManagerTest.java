@@ -195,9 +195,12 @@ class ProductGroupCompositionReadManagerTest {
             List<Long> productGroupIds = List.of(1L, 2L, 3L);
             List<ProductGroupEnrichmentResult> expected =
                     List.of(
-                            new ProductGroupEnrichmentResult(1L, 10000, 20000, 20000, 10000, 10, List.of()),
-                            new ProductGroupEnrichmentResult(2L, 15000, 25000, 25000, 15000, 15, List.of()),
-                            new ProductGroupEnrichmentResult(3L, 5000, 10000, 10000, 5000, 5, List.of()));
+                            new ProductGroupEnrichmentResult(
+                                    1L, 10000, 20000, 20000, 10000, 10, List.of()),
+                            new ProductGroupEnrichmentResult(
+                                    2L, 15000, 25000, 25000, 15000, 15, List.of()),
+                            new ProductGroupEnrichmentResult(
+                                    3L, 5000, 10000, 10000, 5000, 5, List.of()));
 
             given(compositionQueryPort.findEnrichmentsByProductGroupIds(productGroupIds))
                     .willReturn(expected);

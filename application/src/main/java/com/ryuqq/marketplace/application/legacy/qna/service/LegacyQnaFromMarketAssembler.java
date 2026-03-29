@@ -108,7 +108,14 @@ final class LegacyQnaFromMarketAssembler {
         if (qnaType == null) {
             return "ETC";
         }
-        return qnaType.name();
+        return switch (qnaType) {
+            case SHIPPING -> "SHIPMENT";
+            case RESTOCK -> "RESTOCK";
+            case REFUND -> "REFUND";
+            case ORDER -> "ETC";
+            case EXCHANGE -> "CANCEL";
+            default -> "ETC";
+        };
     }
 
     private static LocalDateTime toLocalDateTime(java.time.Instant instant) {

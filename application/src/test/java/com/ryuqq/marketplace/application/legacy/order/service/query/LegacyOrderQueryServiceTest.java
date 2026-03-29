@@ -1,7 +1,6 @@
 package com.ryuqq.marketplace.application.legacy.order.service.query;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -73,7 +72,8 @@ class LegacyOrderQueryServiceTest {
         ProductOrderDetailResult detail = createDetail("ORDERED");
         given(getOrderDetailUseCase.execute(orderId)).willReturn(detail);
         given(shipmentReadManager.findByOrderItemId(any())).willReturn(Optional.empty());
-        given(assembler.toDetailResult(any(), any(), any())).willReturn(createLegacyResult(orderId));
+        given(assembler.toDetailResult(any(), any(), any()))
+                .willReturn(createLegacyResult(orderId));
 
         LegacyOrderDetailResult result = service.execute(orderId);
         assertThat(result).isNotNull();
