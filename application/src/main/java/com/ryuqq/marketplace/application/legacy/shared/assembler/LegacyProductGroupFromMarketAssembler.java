@@ -140,7 +140,9 @@ public class LegacyProductGroupFromMarketAssembler {
                 toLocalDateTime(item.createdAt()),
                 toLocalDateTime(item.updatedAt()),
                 emptyNotice(),
-                List.of(),
+                item.thumbnailUrl() != null && !item.thumbnailUrl().isEmpty()
+                        ? List.of(new LegacyImageResult("MAIN", item.thumbnailUrl()))
+                        : List.of(),
                 "",
                 new LegacyDeliveryResult("", 0, 0, "", "", 0, ""),
                 List.of());
