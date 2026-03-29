@@ -1,11 +1,14 @@
 package com.ryuqq.marketplace.application.legacy.auth.internal;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ryuqq.marketplace.application.auth.dto.response.LoginResult;
 import com.ryuqq.marketplace.application.auth.port.out.client.AuthClient;
 import com.ryuqq.marketplace.application.legacy.auth.facade.LegacyTokenIssuanceFacade;
 import com.ryuqq.marketplace.application.selleradmin.manager.SellerAdminReadManager;
 import com.ryuqq.marketplace.domain.selleradmin.aggregate.SellerAdmin;
 import com.ryuqq.marketplace.domain.selleradmin.exception.SellerAdminInvalidPasswordException;
+import java.util.Base64;
 import org.springframework.stereotype.Component;
 
 /**
@@ -39,7 +42,13 @@ public class LegacyLoginCoordinator {
      * @return 자체 액세스 토큰
      */
     public String login(String identifier, String password) {
-        LoginResult authResult = authClient.login(identifier, password);
+        LoginResult authResult;
+        try {
+            authResult = authClient.login(identifier, password);
+        } catch (Exception e) {
+            throw new SellerAdminInvalidPasswordException();
+        }
+
         if (authResult.isFailure()) {
             throw new SellerAdminInvalidPasswordException();
         }
@@ -52,16 +61,20 @@ public class LegacyLoginCoordinator {
     }
 
     private String resolveRoleType(LoginResult authResult) {
-        // AuthHub의 getMyInfo로 role 확인 필요 — LoginResult에는 role이 없음
-        // userId로 market.seller_admins에서 판단: sellerId == 마스터 조직이면 MASTER
-        // 간단 방식: AuthClient.getMyInfo()로 role 조회
-        var myInfo = authClient.getMyInfo(authResult.userId());
-        if (myInfo.roles() != null) {
-            boolean isSuperAdmin =
-                    myInfo.roles().stream().anyMatch(r -> "SUPER_ADMIN".equals(r.name()));
-            if (isSuperAdmin) {
-                return "MASTER";
+        try {
+            String payload = authResult.accessToken().split("\\.")[1];
+            byte[] decoded = Base64.getUrlDecoder().decode(payload);
+            JsonNode claims = new ObjectMapper().readTree(decoded);
+            JsonNode roles = claims.get("roles");
+            if (roles != null && roles.isArray()) {
+                for (JsonNode role : roles) {
+                    if ("SUPER_ADMIN".equals(role.asText())) {
+                        return "MASTER";
+                    }
+                }
             }
+        } catch (Exception ignored) {
+            // 파싱 실패 시 SELLER로 폴백
         }
         return "SELLER";
     }
