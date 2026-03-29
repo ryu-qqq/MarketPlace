@@ -186,8 +186,13 @@ public class LegacyProductGroupFromMarketAssembler {
     private List<LegacyImageResult> toImageResults(List<ProductGroupImageResult> images) {
         if (images == null) return List.of();
         return images.stream()
-                .map(img -> new LegacyImageResult(img.imageType(), img.uploadedUrl()))
+                .map(img -> new LegacyImageResult(toLegacyImageType(img.imageType()), img.uploadedUrl()))
                 .toList();
+    }
+
+    private String toLegacyImageType(String imageType) {
+        if ("THUMBNAIL".equals(imageType)) return "MAIN";
+        return imageType;
     }
 
     private String toDescriptionContent(ProductGroupDescriptionResult description) {
