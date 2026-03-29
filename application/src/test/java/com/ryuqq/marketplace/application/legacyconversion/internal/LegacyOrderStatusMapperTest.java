@@ -94,12 +94,23 @@ class LegacyOrderStatusMapperTest {
             assertThat(resolution.shipmentStatus()).isEqualTo(ShipmentStatus.IN_TRANSIT);
         }
 
+        @Test
+        @DisplayName("ORDER_COMPLETED → Shipment READY (결제완료, 배송 전)")
+        void resolve_WithOrderCompleted_ReturnsShipmentReady() {
+            LegacyOrderStatusMapper.OrderStatusResolution resolution =
+                    sut.resolve("ORDER_COMPLETED");
+
+            assertThat(resolution.needsShipment()).isTrue();
+            assertThat(resolution.shipmentStatus()).isEqualTo(ShipmentStatus.READY);
+            assertThat(resolution.hasCancel()).isFalse();
+            assertThat(resolution.hasRefund()).isFalse();
+        }
+
         @ParameterizedTest
         @ValueSource(
                 strings = {
                     "DELIVERY_COMPLETED",
                     "DELIVERY_COMPLETE",
-                    "ORDER_COMPLETED",
                     "SETTLEMENT_PROCESSING",
                     "SETTLEMENT_COMPLETED"
                 })
