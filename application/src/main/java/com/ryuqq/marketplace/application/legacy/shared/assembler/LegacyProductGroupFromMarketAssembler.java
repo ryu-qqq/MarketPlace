@@ -152,7 +152,7 @@ public class LegacyProductGroupFromMarketAssembler {
                         ? List.of(new LegacyImageResult("MAIN", item.thumbnailUrl()))
                         : List.of(),
                 "",
-                new LegacyDeliveryResult("", 0, 0, "", "", 0, ""),
+                new LegacyDeliveryResult("", 0, 0, "RETURN_CONSUMER", "", 0, ""),
                 legacyProducts);
     }
 
@@ -237,15 +237,16 @@ public class LegacyProductGroupFromMarketAssembler {
     }
 
     private LegacyDeliveryResult toDeliveryResult(ShippingPolicyResult shipping) {
+        if (shipping == null) {
+            return new LegacyDeliveryResult("", 0, 0, "RETURN_CONSUMER", "", 0, "");
+        }
         return new LegacyDeliveryResult(
                 "",
-                shipping != null && shipping.baseFee() != null ? shipping.baseFee().intValue() : 0,
-                shipping != null ? shipping.leadTimeMaxDays() : 0,
+                shipping.baseFee() != null ? shipping.baseFee().intValue() : 0,
+                shipping.leadTimeMaxDays(),
+                "RETURN_CONSUMER",
                 "",
-                "",
-                shipping != null && shipping.returnFee() != null
-                        ? shipping.returnFee().intValue()
-                        : 0,
+                shipping.returnFee() != null ? shipping.returnFee().intValue() : 0,
                 "");
     }
 
