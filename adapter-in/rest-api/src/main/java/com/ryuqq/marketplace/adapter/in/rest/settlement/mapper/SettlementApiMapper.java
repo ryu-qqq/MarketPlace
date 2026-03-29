@@ -71,8 +71,8 @@ public class SettlementApiMapper {
     /**
      * 페이지 결과를 V4 API 응답으로 변환합니다.
      *
-     * <p>SettlementOrderEnricher 를 사용하여 orderItemId 목록으로 주문 데이터를 배치 조회한 뒤, orderProduct /
-     * buyer / seller / payment 중첩 필드를 채웁니다.
+     * <p>SettlementOrderEnricher 를 사용하여 orderItemId 목록으로 주문 데이터를 배치 조회한 뒤, orderProduct / buyer /
+     * seller / payment 중첩 필드를 채웁니다.
      */
     public PageApiResponse<SettlementListItemApiResponse> toPageResponse(
             SettlementEntryPageResult result) {

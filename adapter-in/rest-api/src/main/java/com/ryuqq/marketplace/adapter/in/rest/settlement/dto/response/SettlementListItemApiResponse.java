@@ -6,8 +6,8 @@ import java.util.List;
 /**
  * 정산 건별 목록 항목 응답 DTO (V4 스펙).
  *
- * <p>SETTLEMENT_SPEC_V1 의 SettlementListItem 구조를 그대로 반영한다. ClaimOrderEnricher 를 통해 주문 데이터를 배치
- * 보강하여 orderProduct, buyer, seller, payment 중첩 필드를 채운다.
+ * <p>SETTLEMENT_SPEC_V1 의 SettlementListItem 구조를 그대로 반영한다. ClaimOrderEnricher 를 통해 주문 데이터를 배치 보강하여
+ * orderProduct, buyer, seller, payment 중첩 필드를 채운다.
  *
  * <p>V4 간극 규칙: API orderId = 내부 orderItemId.
  */

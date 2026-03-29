@@ -6,17 +6,14 @@ import com.ryuqq.marketplace.application.legacy.qna.dto.result.LegacyQnaPageResu
 import com.ryuqq.marketplace.application.legacy.qna.port.in.LegacyQnaListQueryUseCase;
 import com.ryuqq.marketplace.application.qna.dto.query.QnaSearchCondition;
 import com.ryuqq.marketplace.application.qna.dto.result.QnaListResult;
-import com.ryuqq.marketplace.application.qna.dto.result.QnaResult;
 import com.ryuqq.marketplace.application.qna.port.in.query.GetQnaListUseCase;
 import com.ryuqq.marketplace.application.seller.manager.SellerReadManager;
 import com.ryuqq.marketplace.domain.qna.vo.QnaStatus;
 import com.ryuqq.marketplace.domain.qna.vo.QnaType;
-import com.ryuqq.marketplace.domain.seller.aggregate.Seller;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,8 +32,7 @@ public class LegacyQnaListQueryService implements LegacyQnaListQueryUseCase {
     private final SellerReadManager sellerReadManager;
 
     public LegacyQnaListQueryService(
-            GetQnaListUseCase getQnaListUseCase,
-            SellerReadManager sellerReadManager) {
+            GetQnaListUseCase getQnaListUseCase, SellerReadManager sellerReadManager) {
         this.getQnaListUseCase = getQnaListUseCase;
         this.sellerReadManager = sellerReadManager;
     }
@@ -47,17 +43,22 @@ public class LegacyQnaListQueryService implements LegacyQnaListQueryUseCase {
         QnaSearchCondition condition = toSearchCondition(params);
         QnaListResult listResult = getQnaListUseCase.execute(condition);
 
-        List<SellerId> sellerIds = listResult.items().stream()
-                .map(r -> SellerId.of(r.sellerId()))
-                .distinct()
-                .toList();
-        Map<Long, String> sellerNameMap = sellerReadManager.getByIds(sellerIds).stream()
-                .collect(Collectors.toMap(s -> s.id().value(), s -> s.sellerName().value(), (a, b) -> a));
+        List<SellerId> sellerIds =
+                listResult.items().stream().map(r -> SellerId.of(r.sellerId())).distinct().toList();
+        Map<Long, String> sellerNameMap =
+                sellerReadManager.getByIds(sellerIds).stream()
+                        .collect(
+                                Collectors.toMap(
+                                        s -> s.id().value(),
+                                        s -> s.sellerName().value(),
+                                        (a, b) -> a));
 
         List<LegacyQnaDetailResult> items =
                 listResult.items().stream()
-                        .map(r -> LegacyQnaFromMarketAssembler.toDetailResult(
-                                r, sellerNameMap.getOrDefault(r.sellerId(), "")))
+                        .map(
+                                r ->
+                                        LegacyQnaFromMarketAssembler.toDetailResult(
+                                                r, sellerNameMap.getOrDefault(r.sellerId(), "")))
                         .toList();
 
         Long lastDomainId = items.isEmpty() ? null : items.getLast().qnaId();
@@ -73,9 +74,7 @@ public class LegacyQnaListQueryService implements LegacyQnaListQueryUseCase {
                 status,
                 qnaType,
                 params.searchKeyword(),
-                params.startDate() != null
-                        ? params.startDate().atZone(ZONE_ID).toInstant()
-                        : null,
+                params.startDate() != null ? params.startDate().atZone(ZONE_ID).toInstant() : null,
                 params.endDate() != null ? params.endDate().atZone(ZONE_ID).toInstant() : null,
                 params.lastDomainId(),
                 params.size());

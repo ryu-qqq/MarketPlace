@@ -72,12 +72,9 @@ class LegacySellerControllerRestDocsTest {
                                     .value(LegacySellerApiFixtures.DEFAULT_SELLER_ID))
                     .andExpect(
                             jsonPath("$.data.email").value(LegacySellerApiFixtures.DEFAULT_EMAIL))
-                    .andExpect(
-                            jsonPath("$.data.passwordHash").value(""))
-                    .andExpect(
-                            jsonPath("$.data.roleType").value("SELLER"))
-                    .andExpect(
-                            jsonPath("$.data.approvalStatus").value("APPROVED"))
+                    .andExpect(jsonPath("$.data.passwordHash").value(""))
+                    .andExpect(jsonPath("$.data.roleType").value("SELLER"))
+                    .andExpect(jsonPath("$.data.approvalStatus").value("APPROVED"))
                     .andExpect(jsonPath("$.response.status").value(200))
                     .andExpect(jsonPath("$.response.message").value("success"))
                     .andDo(

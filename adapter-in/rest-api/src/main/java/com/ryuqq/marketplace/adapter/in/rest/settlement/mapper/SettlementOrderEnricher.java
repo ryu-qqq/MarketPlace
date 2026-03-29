@@ -18,8 +18,8 @@ import org.springframework.stereotype.Component;
 /**
  * 정산 건별 목록을 V4 스펙에 맞추기 위한 주문 데이터 보강기.
  *
- * <p>정산 원장(Entry)에는 orderItemId 만 존재하므로, 주문 상품/주문 기본 정보를 배치 조회하여 orderProduct / buyer /
- * seller / payment 중첩 필드를 생성한다.
+ * <p>정산 원장(Entry)에는 orderItemId 만 존재하므로, 주문 상품/주문 기본 정보를 배치 조회하여 orderProduct / buyer / seller /
+ * payment 중첩 필드를 생성한다.
  */
 @Component
 public class SettlementOrderEnricher {
@@ -128,8 +128,24 @@ public class SettlementOrderEnricher {
 
     public OrderProductV4 emptyOrderProduct() {
         return new OrderProductV4(
-                "", "", "", new PriceV4(0, 0, 0, 0, 0, 0), new BrandV4(0L, ""), 0L, 0L, "", "", "",
-                0, "", 0, 0, 0, "", "", List.of());
+                "",
+                "",
+                "",
+                new PriceV4(0, 0, 0, 0, 0, 0),
+                new BrandV4(0L, ""),
+                0L,
+                0L,
+                "",
+                "",
+                "",
+                0,
+                "",
+                0,
+                0,
+                0,
+                "",
+                "",
+                List.of());
     }
 
     private String nullToEmpty(String value) {

@@ -52,8 +52,7 @@ class LegacyLoginCoordinatorTest {
             given(sellerAdmin.sellerIdValue()).willReturn(10L);
             given(authClient.login(EMAIL, PASSWORD)).willReturn(loginResult);
             given(sellerAdminReadManager.getByAuthUserId(USER_ID)).willReturn(sellerAdmin);
-            given(tokenIssuanceFacade.issueAndCache(EMAIL, 10L, "SELLER"))
-                    .willReturn(ACCESS_TOKEN);
+            given(tokenIssuanceFacade.issueAndCache(EMAIL, 10L, "SELLER")).willReturn(ACCESS_TOKEN);
 
             String result = coordinator.login(EMAIL, PASSWORD);
 
@@ -72,8 +71,7 @@ class LegacyLoginCoordinatorTest {
             given(sellerAdmin.sellerIdValue()).willReturn(1L);
             given(authClient.login(EMAIL, PASSWORD)).willReturn(loginResult);
             given(sellerAdminReadManager.getByAuthUserId(USER_ID)).willReturn(sellerAdmin);
-            given(tokenIssuanceFacade.issueAndCache(EMAIL, 1L, "MASTER"))
-                    .willReturn(ACCESS_TOKEN);
+            given(tokenIssuanceFacade.issueAndCache(EMAIL, 1L, "MASTER")).willReturn(ACCESS_TOKEN);
 
             String result = coordinator.login(EMAIL, PASSWORD);
 
@@ -94,7 +92,8 @@ class LegacyLoginCoordinatorTest {
         @Test
         @DisplayName("AuthHub 예외 발생 시에도 SellerAdminInvalidPasswordException")
         void login_AuthException() {
-            given(authClient.login(EMAIL, PASSWORD)).willThrow(new RuntimeException("connection refused"));
+            given(authClient.login(EMAIL, PASSWORD))
+                    .willThrow(new RuntimeException("connection refused"));
 
             assertThatThrownBy(() -> coordinator.login(EMAIL, PASSWORD))
                     .isInstanceOf(SellerAdminInvalidPasswordException.class);

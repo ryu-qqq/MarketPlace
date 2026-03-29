@@ -54,10 +54,10 @@ class SettlementApiMapperTest {
     private void givenEmptyOrderContext() {
         given(enricher.loadOrderContext(anyList()))
                 .willReturn(new OrderContext(Map.of(), Map.of()));
-        given(enricher.toOrderProductV4(null)).willReturn(SettlementApiFixtures.emptyOrderProduct());
+        given(enricher.toOrderProductV4(null))
+                .willReturn(SettlementApiFixtures.emptyOrderProduct());
         given(enricher.toBuyerInfoV4(null)).willReturn(SettlementApiFixtures.emptyBuyer());
-        given(enricher.toSellerInfoV4(
-                        SettlementApiFixtures.DEFAULT_SELLER_ID, null))
+        given(enricher.toSellerInfoV4(SettlementApiFixtures.DEFAULT_SELLER_ID, null))
                 .willReturn(SettlementApiFixtures.defaultSeller());
         given(enricher.toPaymentInfoV4(null)).willReturn(SettlementApiFixtures.emptyPayment());
     }

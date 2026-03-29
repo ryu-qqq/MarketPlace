@@ -1,6 +1,5 @@
 package com.ryuqq.marketplace.adapter.in.rest.legacy.common.config;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;

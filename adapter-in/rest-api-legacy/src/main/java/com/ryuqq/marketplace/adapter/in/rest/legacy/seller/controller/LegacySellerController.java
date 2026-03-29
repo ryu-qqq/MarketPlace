@@ -25,12 +25,13 @@ public class LegacySellerController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping(SELLER)
     public ResponseEntity<LegacyApiResponse<LegacySellerResponse>> getCurrentSeller() {
-        return ResponseEntity.ok(LegacyApiResponse.success(
-                new LegacySellerResponse(
-                        LegacyAuthContextHolder.getSellerId(),
-                        LegacyAuthContextHolder.getEmail(),
-                        "",
-                        LegacyAuthContextHolder.getRoleType(),
-                        "APPROVED")));
+        return ResponseEntity.ok(
+                LegacyApiResponse.success(
+                        new LegacySellerResponse(
+                                LegacyAuthContextHolder.getSellerId(),
+                                LegacyAuthContextHolder.getEmail(),
+                                "",
+                                LegacyAuthContextHolder.getRoleType(),
+                                "APPROVED")));
     }
 }

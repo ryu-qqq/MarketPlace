@@ -83,8 +83,24 @@ public final class SettlementApiFixtures {
 
     public static OrderProductV4 emptyOrderProduct() {
         return new OrderProductV4(
-                "", "", "", new PriceV4(0, 0, 0, 0, 0, 0), new BrandV4(0L, ""), 0L, 0L, "", "", "",
-                0, "", 0, 0, 0, "", "", List.of());
+                "",
+                "",
+                "",
+                new PriceV4(0, 0, 0, 0, 0, 0),
+                new BrandV4(0L, ""),
+                0L,
+                0L,
+                "",
+                "",
+                "",
+                0,
+                "",
+                0,
+                0,
+                0,
+                "",
+                "",
+                List.of());
     }
 
     public static BuyerInfoV4 emptyBuyer() {

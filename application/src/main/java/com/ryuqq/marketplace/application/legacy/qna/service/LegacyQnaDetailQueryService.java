@@ -21,8 +21,7 @@ public class LegacyQnaDetailQueryService implements LegacyQnaDetailQueryUseCase 
     private final SellerReadManager sellerReadManager;
 
     public LegacyQnaDetailQueryService(
-            GetQnaDetailUseCase getQnaDetailUseCase,
-            SellerReadManager sellerReadManager) {
+            GetQnaDetailUseCase getQnaDetailUseCase, SellerReadManager sellerReadManager) {
         this.getQnaDetailUseCase = getQnaDetailUseCase;
         this.sellerReadManager = sellerReadManager;
     }

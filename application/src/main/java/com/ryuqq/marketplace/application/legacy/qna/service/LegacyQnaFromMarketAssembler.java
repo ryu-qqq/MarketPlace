@@ -13,8 +13,8 @@ import java.util.List;
 /**
  * market QnaResult → 레거시 LegacyQnaDetailResult 변환기.
  *
- * <p>market 스키마의 QnaResult를 레거시 어드민 프론트가 기대하는 형태로 변환합니다. privateYn = "N", userInfo =
- * questionAuthor 기반, qnaImages = 빈 배열로 디폴트 처리합니다.
+ * <p>market 스키마의 QnaResult를 레거시 어드민 프론트가 기대하는 형태로 변환합니다. privateYn = "N", userInfo = questionAuthor
+ * 기반, qnaImages = 빈 배열로 디폴트 처리합니다.
  */
 final class LegacyQnaFromMarketAssembler {
 
@@ -50,8 +50,7 @@ final class LegacyQnaFromMarketAssembler {
     }
 
     private static LegacyQnaAnswerResult toAnswerResult(QnaReplyResult reply) {
-        String writerType =
-                reply.replyType() == QnaReplyType.SELLER_ANSWER ? "SELLER" : "CUSTOMER";
+        String writerType = reply.replyType() == QnaReplyType.SELLER_ANSWER ? "SELLER" : "CUSTOMER";
         LocalDateTime createdAt = toLocalDateTime(reply.createdAt());
 
         return new LegacyQnaAnswerResult(
