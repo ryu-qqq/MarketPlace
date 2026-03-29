@@ -342,7 +342,7 @@ public class LegacyOrderConversionFactory {
         return Shipment.reconstitute(
                 shipmentId,
                 shipmentNumber,
-                OrderItemId.of(orderItemId),
+                OrderItemId.forNew(),
                 targetStatus,
                 shipmentMethod,
                 trackingNumber,
@@ -421,7 +421,7 @@ public class LegacyOrderConversionFactory {
         return Cancel.reconstitute(
                 cancelId,
                 cancelNumber,
-                OrderItemId.of(orderItemId),
+                OrderItemId.forNew(),
                 composite.legacySellerId(),
                 composite.quantity(),
                 cancelType,
@@ -514,7 +514,7 @@ public class LegacyOrderConversionFactory {
         return RefundClaim.reconstitute(
                 refundId,
                 refundNumber,
-                OrderItemId.of(orderItemId),
+                OrderItemId.forNew(),
                 composite.legacySellerId(),
                 composite.quantity(),
                 refundStatus,
