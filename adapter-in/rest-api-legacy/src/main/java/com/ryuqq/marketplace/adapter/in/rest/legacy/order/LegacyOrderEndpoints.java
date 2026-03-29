@@ -5,7 +5,7 @@ public final class LegacyOrderEndpoints {
 
     private LegacyOrderEndpoints() {}
 
-    private static final String BASE = "/api/v1/legacy";
+    private static final String BASE = "/api/v1";
 
     public static final String ORDER = BASE + "/order";
     public static final String ORDER_ID = ORDER + "/{orderId}";
