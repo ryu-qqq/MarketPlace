@@ -50,7 +50,10 @@ public class LegacyOrderQueryApiMapper {
                 request.startDate(),
                 request.endDate(),
                 effectiveSellerId != null ? effectiveSellerId : request.sellerId(),
-                request.resolvedSize());
+                request.resolvedSize(),
+                request.periodType(),
+                request.searchKeyword(),
+                request.searchWord());
     }
 
     /** 단건 조회용 — 주문 상세 결과를 세토프 flat 구조 응답으로 변환. 히스토리 없이 빈 목록으로 매핑. */

@@ -33,7 +33,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -133,7 +132,10 @@ class LegacyOrderListQueryServiceTest {
                 LocalDateTime.of(2026, 3, 1, 0, 0),
                 LocalDateTime.of(2026, 3, 28, 23, 59),
                 10L,
-                20);
+                20,
+                null,
+                null,
+                null);
     }
 
     private ProductOrderListResult createListItem(Long orderItemId) {
@@ -186,11 +188,31 @@ class LegacyOrderListQueryServiceTest {
 
     private LegacyOrderDetailResult createLegacyResult(long orderId) {
         return new LegacyOrderDetailResult(
-                orderId, 1L, 1L, 1L, 1L, 10000L,
-                "DELIVERY_COMPLETED", 1, Instant.now(),
-                100L, "상품", 1L, "브랜드", 1L,
-                10000L, 10000L, 12L, 100L,
-                List.of(), "img.jpg",
-                "수령인", "010", "12345", "주소", "상세", "요청");
+                orderId,
+                1L,
+                1L,
+                1L,
+                1L,
+                10000L,
+                "DELIVERY_COMPLETED",
+                1,
+                Instant.now(),
+                100L,
+                "상품",
+                1L,
+                "브랜드",
+                1L,
+                10000L,
+                10000L,
+                12L,
+                100L,
+                List.of(),
+                "img.jpg",
+                "수령인",
+                "010",
+                "12345",
+                "주소",
+                "상세",
+                "요청");
     }
 }

@@ -19,4 +19,7 @@ public record LegacyOrderSearchParams(
         LocalDateTime startDate,
         LocalDateTime endDate,
         Long sellerId,
-        int size) {}
+        int size,
+        String periodType,
+        String searchKeyword,
+        String searchWord) {}

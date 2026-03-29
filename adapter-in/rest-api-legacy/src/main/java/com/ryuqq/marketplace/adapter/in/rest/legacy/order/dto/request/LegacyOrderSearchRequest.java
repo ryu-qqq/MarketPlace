@@ -19,7 +19,10 @@ public record LegacyOrderSearchRequest(
         LocalDateTime startDate,
         LocalDateTime endDate,
         Long sellerId,
-        Integer size) {
+        Integer size,
+        String periodType,
+        String searchKeyword,
+        String searchWord) {
 
     public int resolvedSize() {
         return size != null && size > 0 ? size : 20;

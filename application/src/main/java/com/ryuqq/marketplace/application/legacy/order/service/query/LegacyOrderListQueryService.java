@@ -111,9 +111,43 @@ public class LegacyOrderListQueryService implements LegacyOrderListQueryUseCase 
                         params.size());
 
         List<String> marketStatuses = convertLegacyStatuses(params.orderStatusList());
+        String dateField = convertPeriodType(params.periodType());
+        String searchField = convertSearchKeyword(params.searchKeyword());
 
         return new OrderSearchParams(
-                marketStatuses, null, null, null, params.sellerId(), commonParams);
+                marketStatuses, searchField, params.searchWord(), dateField,
+                params.sellerId(), commonParams);
+    }
+
+    /** 레거시 periodType → market dateField 변환. */
+    private String convertPeriodType(String periodType) {
+        if (periodType == null) {
+            return null;
+        }
+        return switch (periodType) {
+            case "PAYMENT" -> "createdAt";
+            case "SETTLEMENT" -> "settlementDate";
+            case "ORDER_HISTORY" -> "updatedAt";
+            default -> "createdAt";
+        };
+    }
+
+    /** 레거시 searchKeyword → market searchField 변환. */
+    private String convertSearchKeyword(String searchKeyword) {
+        if (searchKeyword == null) {
+            return null;
+        }
+        return switch (searchKeyword) {
+            case "ORDER_ID" -> "orderId";
+            case "PAYMENT_ID" -> "paymentId";
+            case "SELLER_ID" -> "sellerId";
+            case "SELLER_NAME" -> "sellerName";
+            case "PRODUCT_GROUP_NAME" -> "productGroupName";
+            case "PRODUCT_GROUP_ID" -> "productGroupId";
+            case "BUYER_NAME" -> "buyerName";
+            case "MEMBER_ID" -> "buyerId";
+            default -> null;
+        };
     }
 
     private List<String> convertLegacyStatuses(List<String> legacyStatuses) {
