@@ -6,23 +6,7 @@ import java.util.List;
 /**
  * 레거시 QnA 상세 결과.
  *
- * @param qnaId QnA ID
- * @param title 제목
- * @param content 내용
- * @param privateYn 비공개 여부
- * @param qnaStatus QnA 상태
- * @param qnaType QnA 유형
- * @param qnaDetailType QnA 상세 유형
- * @param userId 사용자 ID
- * @param sellerId 셀러 ID
- * @param userType 사용자 유형
- * @param insertOperator 등록자
- * @param insertDate 등록일시
- * @param updateDate 수정일시
- * @param productGroupId 상품그룹 ID (nullable)
- * @param orderId 주문 ID (nullable)
- * @param answers 답변 목록
- * @param images 질문 이미지 목록
+ * <p>세토프 QnA 응답과 동일한 구조를 제공하기 위해 상품/브랜드 정보를 포함합니다.
  */
 public record LegacyQnaDetailResult(
         long qnaId,
@@ -42,4 +26,14 @@ public record LegacyQnaDetailResult(
         Long productGroupId,
         Long orderId,
         List<LegacyQnaAnswerResult> answers,
-        List<LegacyQnaImageResult> images) {}
+        List<LegacyQnaImageResult> images,
+        // 상품/브랜드 정보
+        String productGroupName,
+        String productGroupMainImageUrl,
+        Long brandId,
+        String brandName,
+        // 사용자 상세
+        String userName,
+        String userPhone,
+        String userEmail,
+        String userGender) {}

@@ -158,7 +158,15 @@ public final class LegacyQnAApiFixtures {
                                 LocalDateTime.of(2025, 2, 10, 10, 30, 0),
                                 LocalDateTime.of(2025, 2, 10, 10, 30, 0),
                                 List.of())),
-                List.of());
+                List.of(),
+                "",
+                "",
+                0L,
+                "",
+                "",
+                "",
+                "",
+                "");
     }
 
     // ===== API Response Fixtures =====
@@ -181,7 +189,7 @@ public final class LegacyQnAApiFixtures {
                 "GENERAL",
                 "",
                 new LegacyUserInfoQnaResponse("", null, DEFAULT_AUTHOR, "", "", null),
-                LegacyQnaTargetResponse.product(100L, "", "", ""),
+                LegacyQnaTargetResponse.product(100L, "", "", 0L, ""),
                 List.of(qnaImageResponse()),
                 LocalDateTime.of(2025, 2, 10, 10, 30, 0),
                 LocalDateTime.of(2025, 2, 10, 11, 0, 0));

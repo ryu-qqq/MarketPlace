@@ -182,9 +182,12 @@ class ProductGroupCompositionQueryAdapterTest {
             List<Long> productGroupIds = List.of(1L, 2L, 3L);
             List<ProductGroupEnrichmentResult> expected =
                     List.of(
-                            new ProductGroupEnrichmentResult(1L, 10000, 20000, 10, List.of()),
-                            new ProductGroupEnrichmentResult(2L, 15000, 30000, 20, List.of()),
-                            new ProductGroupEnrichmentResult(3L, 5000, 5000, 0, List.of()));
+                            new ProductGroupEnrichmentResult(
+                                    1L, 10000, 20000, 25000, 10000, 10, List.of()),
+                            new ProductGroupEnrichmentResult(
+                                    2L, 15000, 30000, 40000, 15000, 20, List.of()),
+                            new ProductGroupEnrichmentResult(
+                                    3L, 5000, 5000, 6000, 5000, 0, List.of()));
 
             given(compositionRepository.findEnrichmentsByProductGroupIds(productGroupIds))
                     .willReturn(expected);
@@ -225,7 +228,8 @@ class ProductGroupCompositionQueryAdapterTest {
                             new OptionGroupSummaryResult("색상", List.of("블랙", "화이트")),
                             new OptionGroupSummaryResult("사이즈", List.of("S", "M", "L")));
             ProductGroupEnrichmentResult enrichment =
-                    new ProductGroupEnrichmentResult(1L, 10000, 50000, 30, optionGroups);
+                    new ProductGroupEnrichmentResult(
+                            1L, 10000, 50000, 60000, 10000, 30, optionGroups);
 
             given(compositionRepository.findEnrichmentsByProductGroupIds(productGroupIds))
                     .willReturn(List.of(enrichment));

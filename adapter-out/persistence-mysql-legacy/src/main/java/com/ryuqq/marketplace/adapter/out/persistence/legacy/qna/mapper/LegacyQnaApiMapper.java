@@ -51,7 +51,15 @@ public class LegacyQnaApiMapper {
                 dto.productGroupId(),
                 dto.orderId(),
                 answerResults,
-                imageResults);
+                imageResults,
+                "",
+                "",
+                0L,
+                "",
+                "",
+                "",
+                "",
+                "");
     }
 
     /** flat DTO → Application 상세 결과 (답변/이미지 없음 - 목록용). */
@@ -74,7 +82,15 @@ public class LegacyQnaApiMapper {
                 dto.productGroupId(),
                 dto.orderId(),
                 List.of(),
-                List.of());
+                List.of(),
+                "",
+                "",
+                0L,
+                "",
+                "",
+                "",
+                "",
+                "");
     }
 
     private LegacyQnaAnswerResult toAnswerResult(

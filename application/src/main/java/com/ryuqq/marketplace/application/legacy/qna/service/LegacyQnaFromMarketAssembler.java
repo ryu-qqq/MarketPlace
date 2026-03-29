@@ -13,8 +13,7 @@ import java.util.List;
 /**
  * market QnaResult → 레거시 LegacyQnaDetailResult 변환기.
  *
- * <p>market 스키마의 QnaResult를 레거시 어드민 프론트가 기대하는 형태로 변환합니다. privateYn = "N", userInfo = questionAuthor
- * 기반, qnaImages = 빈 배열로 디폴트 처리합니다.
+ * <p>market 스키마의 QnaResult를 레거시 어드민 프론트가 기대하는 형태로 변환합니다.
  */
 final class LegacyQnaFromMarketAssembler {
 
@@ -22,7 +21,14 @@ final class LegacyQnaFromMarketAssembler {
 
     private LegacyQnaFromMarketAssembler() {}
 
-    static LegacyQnaDetailResult toDetailResult(QnaResult result, String sellerName) {
+    /** 상품 정보가 포함된 QnA 상세 결과 생성. */
+    static LegacyQnaDetailResult toDetailResult(
+            QnaResult result,
+            String sellerName,
+            String productGroupName,
+            String productGroupMainImageUrl,
+            Long brandId,
+            String brandName) {
         List<LegacyQnaAnswerResult> answers =
                 result.replies().stream()
                         .map(LegacyQnaFromMarketAssembler::toAnswerResult)
@@ -46,7 +52,15 @@ final class LegacyQnaFromMarketAssembler {
                 result.productGroupId() != 0 ? result.productGroupId() : null,
                 result.orderId(),
                 answers,
-                List.of());
+                List.of(),
+                nullToEmpty(productGroupName),
+                nullToEmpty(productGroupMainImageUrl),
+                brandId != null ? brandId : 0L,
+                nullToEmpty(brandName),
+                "",
+                "",
+                "",
+                "M");
     }
 
     private static LegacyQnaAnswerResult toAnswerResult(QnaReplyResult reply) {

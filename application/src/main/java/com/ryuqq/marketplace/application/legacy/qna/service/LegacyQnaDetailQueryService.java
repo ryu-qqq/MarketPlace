@@ -2,9 +2,12 @@ package com.ryuqq.marketplace.application.legacy.qna.service;
 
 import com.ryuqq.marketplace.application.legacy.qna.dto.result.LegacyQnaDetailResult;
 import com.ryuqq.marketplace.application.legacy.qna.port.in.LegacyQnaDetailQueryUseCase;
+import com.ryuqq.marketplace.application.productgroup.manager.ProductGroupReadManager;
 import com.ryuqq.marketplace.application.qna.dto.result.QnaResult;
 import com.ryuqq.marketplace.application.qna.port.in.query.GetQnaDetailUseCase;
 import com.ryuqq.marketplace.application.seller.manager.SellerReadManager;
+import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
+import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.seller.id.SellerId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,11 +22,15 @@ public class LegacyQnaDetailQueryService implements LegacyQnaDetailQueryUseCase 
 
     private final GetQnaDetailUseCase getQnaDetailUseCase;
     private final SellerReadManager sellerReadManager;
+    private final ProductGroupReadManager productGroupReadManager;
 
     public LegacyQnaDetailQueryService(
-            GetQnaDetailUseCase getQnaDetailUseCase, SellerReadManager sellerReadManager) {
+            GetQnaDetailUseCase getQnaDetailUseCase,
+            SellerReadManager sellerReadManager,
+            ProductGroupReadManager productGroupReadManager) {
         this.getQnaDetailUseCase = getQnaDetailUseCase;
         this.sellerReadManager = sellerReadManager;
+        this.productGroupReadManager = productGroupReadManager;
     }
 
     @Override
@@ -31,7 +38,22 @@ public class LegacyQnaDetailQueryService implements LegacyQnaDetailQueryUseCase 
     public LegacyQnaDetailResult execute(long qnaId) {
         QnaResult result = getQnaDetailUseCase.execute(qnaId);
         String sellerName = resolveSellerName(result.sellerId());
-        return LegacyQnaFromMarketAssembler.toDetailResult(result, sellerName);
+
+        String pgName = "";
+        Long brandId = 0L;
+        if (result.productGroupId() != 0) {
+            try {
+                ProductGroup pg =
+                        productGroupReadManager.getById(ProductGroupId.of(result.productGroupId()));
+                pgName = pg.productGroupName().value();
+                brandId = pg.brandId().value();
+            } catch (Exception e) {
+                // 상품이 삭제됐을 수 있음
+            }
+        }
+
+        return LegacyQnaFromMarketAssembler.toDetailResult(
+                result, sellerName, pgName, "", brandId, "");
     }
 
     private String resolveSellerName(long sellerId) {

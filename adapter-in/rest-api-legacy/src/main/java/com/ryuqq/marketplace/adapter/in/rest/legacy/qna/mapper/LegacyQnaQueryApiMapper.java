@@ -59,29 +59,27 @@ public class LegacyQnaQueryApiMapper {
                 new LegacyUserInfoQnaResponse(
                         nullToEmpty(result.userType()),
                         result.userId(),
-                        nullToEmpty(result.insertOperator()),
-                        "",
-                        "",
-                        null);
+                        nullToEmpty(
+                                result.userName() != null
+                                        ? result.userName()
+                                        : result.insertOperator()),
+                        nullToEmpty(result.userPhone()),
+                        nullToEmpty(result.userEmail()),
+                        nullToEmpty(result.userGender()));
 
         LegacyQnaTargetResponse target;
+        long pgId = result.productGroupId() != null ? result.productGroupId() : 0L;
+        String pgName = nullToEmpty(result.productGroupName());
+        String pgImage = nullToEmpty(result.productGroupMainImageUrl());
+        long bId = result.brandId() != null ? result.brandId() : 0L;
+        String bName = nullToEmpty(result.brandName());
+
         if (result.orderId() != null) {
             target =
                     LegacyQnaTargetResponse.order(
-                            result.productGroupId() != null ? result.productGroupId() : 0L,
-                            "",
-                            "",
-                            "",
-                            0L,
-                            result.orderId(),
-                            "");
+                            pgId, pgName, pgImage, bId, bName, 0L, result.orderId(), "");
         } else {
-            target =
-                    LegacyQnaTargetResponse.product(
-                            result.productGroupId() != null ? result.productGroupId() : 0L,
-                            "",
-                            "",
-                            "");
+            target = LegacyQnaTargetResponse.product(pgId, pgName, pgImage, bId, bName);
         }
 
         List<LegacyQnaImageResponse> images =
