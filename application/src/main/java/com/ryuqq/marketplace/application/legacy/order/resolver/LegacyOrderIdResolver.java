@@ -2,14 +2,15 @@ package com.ryuqq.marketplace.application.legacy.order.resolver;
 
 import com.ryuqq.marketplace.application.legacyconversion.manager.LegacyOrderIdMappingReadManager;
 import com.ryuqq.marketplace.domain.legacyconversion.aggregate.LegacyOrderIdMapping;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 /**
  * 레거시 주문 ID ↔ Market 주문 ID 양방향 리졸버.
  *
- * <p>legacy_order_id_mappings 테이블에서 직접 조회합니다. legacyOrderId → internalOrderId(UUID) +
- * internalOrderItemId(Long) 변환.
+ * <p>legacy_order_id_mappings 테이블에서 직접 조회합니다. legacyOrderId로 먼저 조회하고, 없으면
+ * internalOrderItemId(market PK)로 재조회합니다.
  */
 @Component
 public class LegacyOrderIdResolver {
@@ -21,13 +22,19 @@ public class LegacyOrderIdResolver {
     }
 
     /**
-     * 레거시 orderId → market 매핑 전체 조회.
+     * orderId → market 매핑 조회. legacyOrderId로 먼저 찾고, 없으면 market orderItemId로 재조회.
      *
-     * @param legacyOrderId 레거시 주문 ID
+     * @param orderId 레거시 주문 ID 또는 market orderItemId
      * @return 매핑 Optional
      */
-    public Optional<LegacyOrderIdMapping> resolve(long legacyOrderId) {
-        return mappingReadManager.findByLegacyOrderId(legacyOrderId);
+    public Optional<LegacyOrderIdMapping> resolve(long orderId) {
+        Optional<LegacyOrderIdMapping> byLegacy = mappingReadManager.findByLegacyOrderId(orderId);
+        if (byLegacy.isPresent()) {
+            return byLegacy;
+        }
+        List<LegacyOrderIdMapping> byInternal =
+                mappingReadManager.findByInternalOrderItemIds(List.of(orderId));
+        return byInternal.isEmpty() ? Optional.empty() : Optional.of(byInternal.getFirst());
     }
 
     /**
