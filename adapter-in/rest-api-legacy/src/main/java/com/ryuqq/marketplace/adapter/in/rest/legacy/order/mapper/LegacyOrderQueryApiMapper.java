@@ -74,7 +74,7 @@ public class LegacyOrderQueryApiMapper {
                         "",
                         "",
                         formatDate(result.orderDate()),
-                        "",
+                        null,
                         result.userId(),
                         "OUR_MALL",
                         result.orderAmount(),
@@ -92,7 +92,8 @@ public class LegacyOrderQueryApiMapper {
                         nullToEmpty(result.deliveryRequest()));
 
         PaymentShipmentInfo paymentShipmentInfo =
-                new PaymentShipmentInfo(nullToEmpty(result.orderStatus()), "REFER_DETAIL", "", "");
+                new PaymentShipmentInfo(
+                        nullToEmpty(result.orderStatus()), "REFER_DETAIL", "", null);
 
         double commissionRateDouble = result.commissionRate();
         double fee = result.orderAmount() * commissionRateDouble / 100.0;
@@ -106,8 +107,8 @@ public class LegacyOrderQueryApiMapper {
                         expectationSettlementAmount,
                         expectationSettlementAmount,
                         shareRatioDouble,
-                        "",
-                        "");
+                        null,
+                        null);
 
         String optionString =
                 result.optionValues() != null ? String.join(" ", result.optionValues()) : "";
@@ -115,7 +116,13 @@ public class LegacyOrderQueryApiMapper {
         List<OptionInfo> optionInfos = buildOptionInfos(result.optionValues());
 
         PriceInfo priceInfo =
-                new PriceInfo(result.regularPrice(), result.currentPrice(), result.currentPrice());
+                new PriceInfo(
+                        result.regularPrice(),
+                        result.currentPrice(),
+                        result.currentPrice(),
+                        0,
+                        0,
+                        0);
 
         ProductStatusInfo productStatus = new ProductStatusInfo("N", "Y");
 

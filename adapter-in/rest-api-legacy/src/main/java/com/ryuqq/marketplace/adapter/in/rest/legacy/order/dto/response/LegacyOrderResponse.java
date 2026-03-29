@@ -92,7 +92,13 @@ public record LegacyOrderResponse(
             long categoryId,
             long brandId) {}
 
-    public record PriceInfo(long regularPrice, long currentPrice, long salePrice) {}
+    public record PriceInfo(
+            long regularPrice,
+            long currentPrice,
+            long salePrice,
+            long directDiscountPrice,
+            long directDiscountRate,
+            int discountRate) {}
 
     public record ProductStatusInfo(String soldOutYn, String displayYn) {}
 
