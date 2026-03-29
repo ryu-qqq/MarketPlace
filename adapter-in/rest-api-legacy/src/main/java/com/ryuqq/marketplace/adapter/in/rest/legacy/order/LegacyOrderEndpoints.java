@@ -9,5 +9,6 @@ public final class LegacyOrderEndpoints {
 
     public static final String ORDER = BASE + "/order";
     public static final String ORDER_ID = ORDER + "/{orderId}";
+    public static final String ORDER_HISTORY = ORDER + "/history/{orderId}";
     public static final String ORDERS = BASE + "/orders";
 }

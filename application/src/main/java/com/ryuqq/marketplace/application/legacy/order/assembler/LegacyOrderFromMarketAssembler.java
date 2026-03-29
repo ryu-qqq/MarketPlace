@@ -16,7 +16,11 @@ import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResu
 import com.ryuqq.marketplace.domain.cancel.vo.CancelStatus;
 import com.ryuqq.marketplace.domain.legacyconversion.aggregate.LegacyOrderIdMapping;
 import com.ryuqq.marketplace.domain.refund.vo.RefundStatus;
+import com.ryuqq.marketplace.domain.shipment.aggregate.Shipment;
 import com.ryuqq.marketplace.domain.shipment.vo.ShipmentStatus;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
@@ -261,6 +265,94 @@ public class LegacyOrderFromMarketAssembler {
             case FAILED -> "DELIVERY_PENDING";
             case CANCELLED -> "SALE_CANCELLED_COMPLETED";
         };
+    }
+
+    // ==================== 통합 타임라인 ====================
+
+    /**
+     * 주문 상세의 모든 이벤트를 통합 타임라인으로 변환.
+     *
+     * <p>OrderHistory + Cancel + Refund + Shipment 이벤트를 시간순으로 병합합니다.
+     */
+    public List<LegacyOrderHistoryResult> toUnifiedTimeline(
+            ProductOrderDetailResult detail,
+            long legacyOrderId,
+            Shipment shipment) {
+
+        List<LegacyOrderHistoryResult> timeline = new ArrayList<>();
+
+        // 1. 주문 상태 변경 이력
+        if (detail.timeLine() != null) {
+            detail.timeLine().forEach(h -> timeline.add(new LegacyOrderHistoryResult(
+                    h.historyId(), legacyOrderId,
+                    safe(h.toStatus()), safe(h.changedBy()), safe(h.reason()),
+                    h.changedAt())));
+        }
+
+        // 2. 취소 이력
+        if (detail.cancels() != null) {
+            for (OrderCancelResult c : detail.cancels()) {
+                if (c.requestedAt() != null) {
+                    timeline.add(new LegacyOrderHistoryResult(
+                            0L, legacyOrderId, "SALE_CANCELLED",
+                            safe(c.reasonType()), safe(c.reasonDetail()),
+                            c.requestedAt()));
+                }
+                if (c.completedAt() != null) {
+                    timeline.add(new LegacyOrderHistoryResult(
+                            0L, legacyOrderId, "SALE_CANCELLED_COMPLETED",
+                            safe(c.reasonType()), safe(c.reasonDetail()),
+                            c.completedAt()));
+                }
+            }
+        }
+
+        // 3. 반품 이력
+        if (detail.claims() != null) {
+            for (OrderClaimResult r : detail.claims()) {
+                if (r.requestedAt() != null) {
+                    timeline.add(new LegacyOrderHistoryResult(
+                            0L, legacyOrderId, "RETURN_REQUEST",
+                            safe(r.reasonType()), safe(r.reasonDetail()),
+                            r.requestedAt()));
+                }
+                if (r.completedAt() != null) {
+                    timeline.add(new LegacyOrderHistoryResult(
+                            0L, legacyOrderId, "RETURN_REQUEST_COMPLETED",
+                            safe(r.reasonType()), safe(r.reasonDetail()),
+                            r.completedAt()));
+                }
+                if (r.rejectedAt() != null) {
+                    timeline.add(new LegacyOrderHistoryResult(
+                            0L, legacyOrderId, "RETURN_REQUEST_REJECTED",
+                            safe(r.reasonType()), safe(r.reasonDetail()),
+                            r.rejectedAt()));
+                }
+            }
+        }
+
+        // 4. 배송 이력
+        if (shipment != null) {
+            if (shipment.shippedAt() != null) {
+                String invoiceInfo = shipment.trackingNumber() != null
+                        ? "송장: " + shipment.trackingNumber() : "";
+                timeline.add(new LegacyOrderHistoryResult(
+                        0L, legacyOrderId, "DELIVERY_PROCESSING",
+                        invoiceInfo, "", shipment.shippedAt()));
+            }
+            if (shipment.deliveredAt() != null) {
+                timeline.add(new LegacyOrderHistoryResult(
+                        0L, legacyOrderId, "DELIVERY_COMPLETED",
+                        "", "", shipment.deliveredAt()));
+            }
+        }
+
+        // 시간순 정렬
+        timeline.sort(Comparator.comparing(
+                LegacyOrderHistoryResult::createdAt,
+                Comparator.nullsLast(Comparator.naturalOrder())));
+
+        return timeline;
     }
 
     // ==================== 히스토리 변환 ====================

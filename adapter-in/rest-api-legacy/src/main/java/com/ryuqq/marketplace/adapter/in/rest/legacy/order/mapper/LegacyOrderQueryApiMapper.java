@@ -169,6 +169,18 @@ public class LegacyOrderQueryApiMapper {
         return items.stream().map(item -> toOrderResponse(item.order(), item.histories())).toList();
     }
 
+    /** 단건 이력 → OrderHistoryInfo 변환 (이력 조회 엔드포인트용). */
+    public OrderHistoryInfo toOrderHistoryInfo(LegacyOrderHistoryResult h) {
+        return new OrderHistoryInfo(
+                h.orderId(),
+                nullToEmpty(h.changeReason()),
+                nullToEmpty(h.changeDetailReason()),
+                nullToEmpty(h.orderStatus()),
+                "",
+                "REFER_DETAIL",
+                formatDate(h.createdAt()));
+    }
+
     private List<OrderHistoryInfo> toOrderHistoryInfos(List<LegacyOrderHistoryResult> histories) {
         if (histories == null) {
             return null;

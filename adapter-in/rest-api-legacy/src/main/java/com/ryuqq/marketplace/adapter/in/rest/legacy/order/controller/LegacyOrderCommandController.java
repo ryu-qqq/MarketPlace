@@ -1,6 +1,7 @@
 package com.ryuqq.marketplace.adapter.in.rest.legacy.order.controller;
 
 import static com.ryuqq.marketplace.adapter.in.rest.legacy.order.LegacyOrderEndpoints.ORDER;
+import static com.ryuqq.marketplace.adapter.in.rest.legacy.order.LegacyOrderEndpoints.ORDERS;
 
 import com.ryuqq.marketplace.adapter.in.rest.legacy.common.dto.LegacyApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.order.dto.request.LegacyUpdateOrderRequest;
@@ -11,6 +12,7 @@ import com.ryuqq.marketplace.application.legacy.order.dto.result.LegacyOrderUpda
 import com.ryuqq.marketplace.application.legacy.order.port.in.command.LegacyOrderUpdateUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -45,5 +47,20 @@ public class LegacyOrderCommandController {
         LegacyOrderUpdateResult result = orderUpdateUseCase.execute(command);
         LegacyUpdateOrderResponse response = commandApiMapper.toResponse(result);
         return ResponseEntity.ok(LegacyApiResponse.success(response));
+    }
+
+    @Operation(summary = "주문 일괄 상태 변경", description = "여러 주문의 상태를 일괄 변경합니다.")
+    @PreAuthorize("@legacyAccess.authenticated()")
+    @PutMapping(ORDERS)
+    public ResponseEntity<LegacyApiResponse<List<LegacyUpdateOrderResponse>>> modifyOrderStatusList(
+            @RequestBody List<LegacyUpdateOrderRequest> requests) {
+        List<LegacyUpdateOrderResponse> responses = requests.stream()
+                .map(request -> {
+                    LegacyOrderUpdateCommand command = commandApiMapper.toCommand(request);
+                    LegacyOrderUpdateResult result = orderUpdateUseCase.execute(command);
+                    return commandApiMapper.toResponse(result);
+                })
+                .toList();
+        return ResponseEntity.ok(LegacyApiResponse.success(responses));
     }
 }
