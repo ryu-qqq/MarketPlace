@@ -45,9 +45,7 @@ public class LegacyOrderConversionSeederScheduler {
         this.lockManager = lockManager;
     }
 
-    @Scheduled(
-            cron = "${scheduler.jobs.legacy-order-conversion-seeder.cron:0 */30 * * * *}",
-            zone = "${scheduler.jobs.legacy-order-conversion-seeder.timezone:Asia/Seoul}")
+    @Scheduled(fixedDelayString = "${scheduler.jobs.legacy-order-conversion-seeder.fixed-delay:10000}")
     @SchedulerJob("LegacyOrderConversion-Seeder")
     public int seedPendingOutboxes() {
         return lockManager.executeWithLock(this::doSeed, 0);
