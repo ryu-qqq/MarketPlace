@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.adapter.in.rest.legacy.order.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
 
 /**
@@ -14,6 +15,7 @@ import java.util.List;
  * @param orderProduct 주문 상품 정보
  * @param orderHistories 주문 이력 목록
  */
+@JsonInclude(JsonInclude.Include.ALWAYS)
 public record LegacyOrderResponse(
         long orderId,
         BuyerInfo buyerInfo,
@@ -26,6 +28,7 @@ public record LegacyOrderResponse(
 
     public record BuyerInfo(String buyerName, String buyerEmail, String buyerPhoneNumber) {}
 
+    @JsonInclude(JsonInclude.Include.ALWAYS)
     public record PaymentInfo(
             long paymentId,
             String paymentAgencyId,
@@ -48,12 +51,14 @@ public record LegacyOrderResponse(
             String country,
             String deliveryRequest) {}
 
+    @JsonInclude(JsonInclude.Include.ALWAYS)
     public record PaymentShipmentInfo(
             String deliveryStatus,
             String shipmentCompanyCode,
             String invoice,
             String shipmentCompletedDate) {}
 
+    @JsonInclude(JsonInclude.Include.ALWAYS)
     public record SettlementInfo(
             double commissionRate,
             double fee,
