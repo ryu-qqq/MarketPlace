@@ -106,8 +106,8 @@ public class LegacyOrderQueryApiMapper {
                         expectationSettlementAmount,
                         expectationSettlementAmount,
                         shareRatioDouble,
-                        null,
-                        null);
+                        "",
+                        "");
 
         String optionString =
                 result.optionValues() != null ? String.join(" ", result.optionValues()) : "";
@@ -186,7 +186,7 @@ public class LegacyOrderQueryApiMapper {
 
     private List<OrderHistoryInfo> toOrderHistoryInfos(List<LegacyOrderHistoryResult> histories) {
         if (histories == null) {
-            return null;
+            return List.of();
         }
         if (histories.isEmpty()) {
             return List.of();
