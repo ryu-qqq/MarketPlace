@@ -290,6 +290,10 @@ public class LegacyOrderConversionFactory {
                         || statusResolution.refundStatus() == RefundStatus.COLLECTED)) {
             return OrderItemStatus.RETURN_REQUESTED;
         }
+        // 배송 시작 이후(READY/IN_TRANSIT/DELIVERED 등)는 CONFIRMED
+        if (statusResolution.needsShipment()) {
+            return OrderItemStatus.CONFIRMED;
+        }
         return OrderItemStatus.READY;
     }
 
