@@ -48,7 +48,12 @@ public class OrderCommandAdapter implements OrderCommandPort {
         paymentRepository.save(mapper.toPaymentEntity(order, idGeneratorPort.generate()));
 
         List<OrderItemJpaEntity> savedItems =
-                itemRepository.saveAll(mapper.toOrderItemEntities(order.items(), order.idValue()));
+                itemRepository.saveAll(
+                        mapper.toOrderItemEntities(
+                                order.items(),
+                                order.idValue(),
+                                order.createdAt(),
+                                order.updatedAt()));
 
         // auto_increment로 할당된 ID를 도메인에 반영 + history 엔티티 생성
         List<OrderItemHistoryJpaEntity> histories = new ArrayList<>();

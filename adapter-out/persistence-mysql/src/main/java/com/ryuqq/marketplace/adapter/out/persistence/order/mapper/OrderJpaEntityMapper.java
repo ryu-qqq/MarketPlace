@@ -83,6 +83,11 @@ public class OrderJpaEntityMapper {
     }
 
     public OrderItemJpaEntity toOrderItemEntity(OrderItem item, String orderId) {
+        return toOrderItemEntity(item, orderId, Instant.now(), Instant.now());
+    }
+
+    public OrderItemJpaEntity toOrderItemEntity(
+            OrderItem item, String orderId, Instant createdAt, Instant updatedAt) {
         return OrderItemJpaEntity.create(
                 item.idValue(),
                 item.orderItemNumberValue(),
@@ -125,12 +130,19 @@ public class OrderJpaEntityMapper {
                 item.externalOrderStatus(),
                 item.cancelledQty(),
                 item.returnedQty(),
-                Instant.now(),
-                Instant.now());
+                createdAt,
+                updatedAt);
     }
 
     public List<OrderItemJpaEntity> toOrderItemEntities(List<OrderItem> items, String orderId) {
-        return items.stream().map(item -> toOrderItemEntity(item, orderId)).toList();
+        return toOrderItemEntities(items, orderId, Instant.now(), Instant.now());
+    }
+
+    public List<OrderItemJpaEntity> toOrderItemEntities(
+            List<OrderItem> items, String orderId, Instant createdAt, Instant updatedAt) {
+        return items.stream()
+                .map(item -> toOrderItemEntity(item, orderId, createdAt, updatedAt))
+                .toList();
     }
 
     public OrderItemHistoryJpaEntity toOrderItemHistoryEntity(OrderItemHistory history) {

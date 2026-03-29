@@ -84,7 +84,7 @@ class OrderCommandAdapterTest {
             given(idGeneratorPort.generate()).willReturn(generatedPaymentId);
             given(mapper.toOrderEntity(order)).willReturn(orderEntity);
             given(mapper.toPaymentEntity(order, generatedPaymentId)).willReturn(paymentEntity);
-            given(mapper.toOrderItemEntities(order.items(), order.idValue()))
+            given(mapper.toOrderItemEntities(anyList(), anyString(), any(), any()))
                     .willReturn(List.of(itemEntity));
             given(itemRepository.saveAll(List.of(itemEntity))).willReturn(List.of(itemEntity));
 
@@ -114,7 +114,7 @@ class OrderCommandAdapterTest {
             given(idGeneratorPort.generate()).willReturn(generatedPaymentId);
             given(mapper.toOrderEntity(order)).willReturn(orderEntity);
             given(mapper.toPaymentEntity(order, generatedPaymentId)).willReturn(paymentEntity);
-            given(mapper.toOrderItemEntities(order.items(), order.idValue()))
+            given(mapper.toOrderItemEntities(anyList(), anyString(), any(), any()))
                     .willReturn(List.of(itemEntity));
             given(itemRepository.saveAll(List.of(itemEntity))).willReturn(List.of(itemEntity));
 
@@ -143,7 +143,8 @@ class OrderCommandAdapterTest {
             given(mapper.toOrderEntity(order)).willReturn(orderEntity);
             given(mapper.toPaymentEntity(eq(order), eq(specificPaymentId)))
                     .willReturn(paymentEntity);
-            given(mapper.toOrderItemEntities(anyList(), anyString())).willReturn(List.of());
+            given(mapper.toOrderItemEntities(anyList(), anyString(), any(), any()))
+                    .willReturn(List.of());
             given(itemRepository.saveAll(anyList())).willReturn(List.of());
 
             // when
@@ -166,7 +167,8 @@ class OrderCommandAdapterTest {
             given(mapper.toPaymentEntity(order, generatedId))
                     .willReturn(
                             PaymentJpaEntityFixtures.completedEntity(generatedId, order.idValue()));
-            given(mapper.toOrderItemEntities(anyList(), anyString())).willReturn(List.of());
+            given(mapper.toOrderItemEntities(anyList(), anyString(), any(), any()))
+                    .willReturn(List.of());
             given(itemRepository.saveAll(anyList())).willReturn(List.of());
 
             // when
@@ -208,7 +210,8 @@ class OrderCommandAdapterTest {
                                     PaymentJpaEntityFixtures.completedEntity(
                                             inv.getArgument(1),
                                             ((Order) inv.getArgument(0)).idValue()));
-            given(mapper.toOrderItemEntities(anyList(), anyString())).willReturn(List.of());
+            given(mapper.toOrderItemEntities(anyList(), anyString(), any(), any()))
+                    .willReturn(List.of());
             given(itemRepository.saveAll(anyList())).willReturn(List.of());
 
             // when
