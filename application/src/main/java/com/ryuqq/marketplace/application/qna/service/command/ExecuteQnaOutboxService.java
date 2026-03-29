@@ -9,7 +9,6 @@ import com.ryuqq.marketplace.application.qna.port.in.command.ExecuteQnaOutboxUse
 import com.ryuqq.marketplace.application.qna.port.out.client.QnaAnswerSyncStrategy;
 import com.ryuqq.marketplace.domain.qna.outbox.aggregate.QnaOutbox;
 import java.time.Instant;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -27,19 +26,14 @@ public class ExecuteQnaOutboxService implements ExecuteQnaOutboxUseCase {
     public ExecuteQnaOutboxService(
             QnaOutboxReadManager readManager,
             QnaOutboxCommandManager commandManager,
-            Optional<QnaAnswerSyncStrategy> syncStrategy) {
+            QnaAnswerSyncStrategy syncStrategy) {
         this.readManager = readManager;
         this.commandManager = commandManager;
-        this.syncStrategy = syncStrategy.orElse(null);
+        this.syncStrategy = syncStrategy;
     }
 
     @Override
     public void execute(ExecuteQnaOutboxCommand command) {
-        if (syncStrategy == null) {
-            log.warn("QnaAnswerSyncStrategy 미등록, 아웃박스 건너뜀: outboxId={}", command.outboxId());
-            return;
-        }
-
         QnaOutbox outbox = readManager.getById(command.outboxId());
 
         try {
