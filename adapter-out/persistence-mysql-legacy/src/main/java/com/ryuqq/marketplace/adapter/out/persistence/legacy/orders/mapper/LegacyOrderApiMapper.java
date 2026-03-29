@@ -40,8 +40,8 @@ public class LegacyOrderApiMapper {
                 dto.categoryId() != null ? dto.categoryId() : 0L,
                 dto.regularPrice() != null ? dto.regularPrice() : 0L,
                 dto.currentPrice() != null ? dto.currentPrice() : 0L,
-                dto.commissionRate() != null ? dto.commissionRate() : 0L,
-                dto.shareRatio() != null ? dto.shareRatio() : 0L,
+                dto.commissionRate() != null ? dto.commissionRate() : 0.0,
+                dto.shareRatio() != null ? dto.shareRatio() : 0.0,
                 List.copyOf(optionValues),
                 dto.mainImageUrl(),
                 dto.receiverName(),
@@ -49,7 +49,35 @@ public class LegacyOrderApiMapper {
                 dto.receiverZipCode(),
                 dto.receiverAddress(),
                 dto.receiverAddressDetail(),
-                dto.deliveryRequest());
+                dto.deliveryRequest(),
+                // payment 추가
+                "",
+                "",
+                "",
+                null,
+                "",
+                dto.orderAmount() != null ? dto.orderAmount() : 0L,
+                0L,
+                // buyer 추가
+                "",
+                "",
+                "",
+                // 배송 추가
+                "",
+                null,
+                "",
+                "REFER_DETAIL",
+                // product 추가
+                "",
+                "",
+                "",
+                "MENUAL",
+                "OPTION_ONE",
+                "NEW",
+                "",
+                "",
+                0L,
+                0);
     }
 
     public LegacyOrderHistoryResult toHistoryResult(LegacyOrderHistoryQueryDto dto) {
@@ -63,5 +91,9 @@ public class LegacyOrderApiMapper {
                 dto.changeReason(),
                 dto.changeDetailReason(),
                 createdAt);
+    }
+
+    private String safe(String value) {
+        return value != null ? value : "";
     }
 }

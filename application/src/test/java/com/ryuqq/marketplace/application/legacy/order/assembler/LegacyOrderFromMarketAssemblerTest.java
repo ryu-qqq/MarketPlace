@@ -266,7 +266,10 @@ class LegacyOrderFromMarketAssemblerTest {
             ProductOrderDetailResult detail = detailWith("CONFIRMED", noneCancel(), noneClaim());
 
             LegacyOrderDetailResult result =
-                    assembler.toDetailResult(detail, mapping, ShipmentStatus.DELIVERED);
+                    assembler.toDetailResult(
+                            detail,
+                            mapping,
+                            (com.ryuqq.marketplace.domain.shipment.aggregate.Shipment) null);
 
             assertThat(result.orderId()).isEqualTo(5001L);
             assertThat(result.paymentId()).isEqualTo(9001L);
@@ -311,7 +314,10 @@ class LegacyOrderFromMarketAssemblerTest {
                             List.of(history));
 
             LegacyOrderDetailWithHistoryResult result =
-                    assembler.toDetailWithHistory(detail, mapping, ShipmentStatus.DELIVERED);
+                    assembler.toDetailWithHistory(
+                            detail,
+                            mapping,
+                            (com.ryuqq.marketplace.domain.shipment.aggregate.Shipment) null);
 
             assertThat(result.order().orderStatus()).isEqualTo("DELIVERY_COMPLETED");
             assertThat(result.histories()).hasSize(1);
@@ -325,7 +331,10 @@ class LegacyOrderFromMarketAssemblerTest {
             ProductOrderDetailResult detail = detailWith("CONFIRMED", noneCancel(), noneClaim());
 
             LegacyOrderDetailResult result =
-                    assembler.toDetailResult(detail, mapping, ShipmentStatus.DELIVERED);
+                    assembler.toDetailResult(
+                            detail,
+                            mapping,
+                            (com.ryuqq.marketplace.domain.shipment.aggregate.Shipment) null);
 
             assertThat(result.optionValues()).containsExactly("블랙 / L");
         }
@@ -373,7 +382,10 @@ class LegacyOrderFromMarketAssemblerTest {
                             List.of());
 
             LegacyOrderDetailResult result =
-                    assembler.toDetailResult(detail, mapping, ShipmentStatus.DELIVERED);
+                    assembler.toDetailResult(
+                            detail,
+                            mapping,
+                            (com.ryuqq.marketplace.domain.shipment.aggregate.Shipment) null);
 
             assertThat(result.productGroupName()).isEmpty();
             assertThat(result.brandName()).isEmpty();

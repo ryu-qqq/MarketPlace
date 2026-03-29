@@ -8,7 +8,7 @@ import com.ryuqq.marketplace.application.order.port.in.query.GetOrderDetailUseCa
 import com.ryuqq.marketplace.application.shipment.manager.ShipmentReadManager;
 import com.ryuqq.marketplace.domain.legacyconversion.aggregate.LegacyOrderIdMapping;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
-import com.ryuqq.marketplace.domain.shipment.vo.ShipmentStatus;
+import com.ryuqq.marketplace.domain.shipment.aggregate.Shipment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,11 +49,8 @@ public class LegacyOrderQueryService implements LegacyOrderQueryUseCase {
 
         Long orderItemId = mapping.internalOrderItemId();
         var detail = getOrderDetailUseCase.execute(orderItemId);
-        ShipmentStatus shipmentStatus =
-                shipmentReadManager
-                        .findByOrderItemId(OrderItemId.of(orderItemId))
-                        .map(s -> s.status())
-                        .orElse(null);
-        return assembler.toDetailResult(detail, mapping, shipmentStatus);
+        Shipment shipment =
+                shipmentReadManager.findByOrderItemId(OrderItemId.of(orderItemId)).orElse(null);
+        return assembler.toDetailResult(detail, mapping, shipment);
     }
 }

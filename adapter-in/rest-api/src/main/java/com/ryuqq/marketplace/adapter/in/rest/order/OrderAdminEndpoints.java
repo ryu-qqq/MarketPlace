@@ -7,6 +7,7 @@ public final class OrderAdminEndpoints {
 
     private static final String BASE = "/api/v1/market";
     public static final String ORDERS = BASE + "/orders";
+
     /** V4 간극: 프론트에겐 orderId, 내부는 orderItemId. */
     public static final String ORDER_ITEM_ID = "/{orderId}";
 

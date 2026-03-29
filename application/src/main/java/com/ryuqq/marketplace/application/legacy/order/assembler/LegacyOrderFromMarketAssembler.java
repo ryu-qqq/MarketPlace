@@ -49,11 +49,9 @@ public class LegacyOrderFromMarketAssembler {
      * @return 레거시 주문 상세 + 히스토리
      */
     public LegacyOrderDetailWithHistoryResult toDetailWithHistory(
-            ProductOrderDetailResult detail,
-            LegacyOrderIdMapping mapping,
-            ShipmentStatus shipmentStatus) {
+            ProductOrderDetailResult detail, LegacyOrderIdMapping mapping, Shipment shipment) {
 
-        LegacyOrderDetailResult order = toDetailResult(detail, mapping, shipmentStatus);
+        LegacyOrderDetailResult order = toDetailResult(detail, mapping, shipment);
         List<LegacyOrderHistoryResult> histories =
                 toHistoryResults(detail.timeLine(), mapping.legacyOrderId());
 
@@ -69,15 +67,16 @@ public class LegacyOrderFromMarketAssembler {
      * @return 레거시 주문 상세
      */
     public LegacyOrderDetailResult toDetailResult(
-            ProductOrderDetailResult detail,
-            LegacyOrderIdMapping mapping,
-            ShipmentStatus shipmentStatus) {
+            ProductOrderDetailResult detail, LegacyOrderIdMapping mapping, Shipment shipment) {
 
         OrderInfo order = detail.order();
         ProductOrderInfo product = detail.productOrder();
         ReceiverInfo receiver = detail.receiver();
+        ProductOrderListResult.PaymentInfo payment = detail.payment();
+        ShipmentStatus shipmentStatus = shipment != null ? shipment.status() : null;
 
         String legacyStatus = resolveOrderStatus(detail, shipmentStatus);
+        String deliveryStatus = resolveFromShipment(shipmentStatus);
 
         return new LegacyOrderDetailResult(
                 mapping.legacyOrderId(),
@@ -96,8 +95,8 @@ public class LegacyOrderFromMarketAssembler {
                 product.categoryId() != null ? product.categoryId() : 0L,
                 product.regularPrice(),
                 product.unitPrice(),
-                12L,
-                100L,
+                12.0,
+                100.0,
                 resolveOptionValues(product),
                 safe(product.mainImageUrl()),
                 safe(receiver.receiverName()),
@@ -105,7 +104,37 @@ public class LegacyOrderFromMarketAssembler {
                 safe(receiver.receiverZipcode()),
                 safe(receiver.receiverAddress()),
                 safe(receiver.receiverAddressDetail()),
-                safe(receiver.deliveryRequest()));
+                safe(receiver.deliveryRequest()),
+                // payment 추가
+                safe(payment != null ? payment.paymentAgencyId() : null),
+                safe(payment != null ? payment.paymentStatus() : null),
+                safe(payment != null ? payment.paymentMethod() : null),
+                payment != null ? payment.canceledAt() : null,
+                safe(order.shopCode()),
+                payment != null ? payment.paymentAmount() : 0L,
+                0L,
+                // buyer 추가
+                safe(order.buyerName()),
+                safe(order.buyerEmail()),
+                safe(order.buyerPhone()),
+                // 배송 추가
+                deliveryStatus,
+                shipment != null ? shipment.deliveredAt() : null,
+                shipment != null ? safe(shipment.trackingNumber()) : "",
+                shipment != null && shipment.shipmentMethod() != null
+                        ? safe(shipment.shipmentMethod().courierCode())
+                        : "REFER_DETAIL",
+                // product 추가
+                safe(product.sellerName()),
+                "",
+                safe(product.skuCode()),
+                "MENUAL",
+                "OPTION_ONE",
+                "NEW",
+                "",
+                "",
+                0L,
+                0);
     }
 
     /**
@@ -117,15 +146,16 @@ public class LegacyOrderFromMarketAssembler {
      * @return 레거시 주문 상세
      */
     public LegacyOrderDetailResult toDetailResultFromListItem(
-            ProductOrderListResult item,
-            LegacyOrderIdMapping mapping,
-            ShipmentStatus shipmentStatus) {
+            ProductOrderListResult item, LegacyOrderIdMapping mapping, Shipment shipment) {
 
         OrderInfo order = item.order();
         ProductOrderInfo product = item.productOrder();
         ReceiverInfo receiver = item.receiver();
+        ProductOrderListResult.PaymentInfo payment = item.payment();
+        ShipmentStatus shipmentStatus = shipment != null ? shipment.status() : null;
 
         String legacyStatus = resolveOrderStatusFromList(item, shipmentStatus);
+        String deliveryStatus = resolveFromShipment(shipmentStatus);
 
         return new LegacyOrderDetailResult(
                 mapping.legacyOrderId(),
@@ -144,8 +174,8 @@ public class LegacyOrderFromMarketAssembler {
                 product.categoryId() != null ? product.categoryId() : 0L,
                 product.regularPrice(),
                 product.unitPrice(),
-                12L,
-                100L,
+                12.0,
+                100.0,
                 resolveOptionValues(product),
                 safe(product.mainImageUrl()),
                 safe(receiver.receiverName()),
@@ -153,7 +183,37 @@ public class LegacyOrderFromMarketAssembler {
                 safe(receiver.receiverZipcode()),
                 safe(receiver.receiverAddress()),
                 safe(receiver.receiverAddressDetail()),
-                safe(receiver.deliveryRequest()));
+                safe(receiver.deliveryRequest()),
+                // payment 추가
+                safe(payment != null ? payment.paymentAgencyId() : null),
+                safe(payment != null ? payment.paymentStatus() : null),
+                safe(payment != null ? payment.paymentMethod() : null),
+                payment != null ? payment.canceledAt() : null,
+                safe(order.shopCode()),
+                payment != null ? payment.paymentAmount() : 0L,
+                0L,
+                // buyer 추가
+                safe(order.buyerName()),
+                safe(order.buyerEmail()),
+                safe(order.buyerPhone()),
+                // 배송 추가
+                deliveryStatus,
+                shipment != null ? shipment.deliveredAt() : null,
+                shipment != null ? safe(shipment.trackingNumber()) : "",
+                shipment != null && shipment.shipmentMethod() != null
+                        ? safe(shipment.shipmentMethod().courierCode())
+                        : "REFER_DETAIL",
+                // product 추가
+                safe(product.sellerName()),
+                "",
+                safe(product.skuCode()),
+                "MENUAL",
+                "OPTION_ONE",
+                "NEW",
+                "",
+                "",
+                0L,
+                0);
     }
 
     /** ProductOrderListResult에서 상태 역매핑 (CancelSummary/ClaimSummary + delivery 기반). */

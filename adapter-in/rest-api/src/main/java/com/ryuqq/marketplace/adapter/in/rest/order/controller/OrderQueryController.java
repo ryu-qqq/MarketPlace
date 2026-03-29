@@ -74,8 +74,7 @@ public class OrderQueryController {
     public ResponseEntity<ApiResponse<OrderDetailApiResponseV4>> getOrderDetail(
             @PathVariable(OrderAdminEndpoints.PATH_ORDER_ITEM_ID) String orderId) {
 
-        ProductOrderDetailResult result =
-                getOrderDetailUseCase.execute(Long.parseLong(orderId));
+        ProductOrderDetailResult result = getOrderDetailUseCase.execute(Long.parseLong(orderId));
         OrderDetailApiResponseV4 response = mapper.toDetailResponseV4(result);
 
         return ResponseEntity.ok(ApiResponse.of(response));

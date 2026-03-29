@@ -101,7 +101,7 @@ public final class LegacyOrderApiFixtures {
         SettlementInfo settlementInfo =
                 new SettlementInfo(10.0, 5000.0, 45000, 45000, 90.0, null, null);
 
-        PriceInfo priceInfo = new PriceInfo(60000L, 50000L, 50000L);
+        PriceInfo priceInfo = new PriceInfo(60000L, 50000L, 50000L, 0L, 0, 0);
         ProductStatusInfo productStatus = new ProductStatusInfo("N", "Y");
         ClothesDetailInfo clothesDetailInfo = new ClothesDetailInfo("NEW", "", null);
         ProductGroupDetails productGroupDetails =

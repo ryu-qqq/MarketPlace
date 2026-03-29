@@ -38,6 +38,7 @@ import org.springframework.stereotype.Component;
 public class LegacyProductGroupFromMarketAssembler {
 
     private static final ZoneId SEOUL = ZoneId.of("Asia/Seoul");
+    private static final String DEFAULT_PRODUCT_CONDITION = "NEW";
 
     /** 표준 상세 조회 결과 → 레거시 상세 결과. */
     public LegacyProductGroupDetailResult toDetailResult(
@@ -79,11 +80,11 @@ public class LegacyProductGroupFromMarketAssembler {
                 discountRate,
                 "SOLD_OUT".equals(composite.status()),
                 "ACTIVE".equals(composite.status()) || "DRAFT".equals(composite.status()),
+                DEFAULT_PRODUCT_CONDITION,
                 "",
                 "",
-                "",
-                "",
-                "",
+                safe(composite.sellerName()),
+                safe(composite.sellerName()),
                 toLocalDateTime(composite.createdAt()),
                 toLocalDateTime(composite.updatedAt()),
                 toNoticeResult(composite.productNotice()),
@@ -123,11 +124,11 @@ public class LegacyProductGroupFromMarketAssembler {
                 item.maxDiscountRate(),
                 "SOLD_OUT".equals(item.status()),
                 "ACTIVE".equals(item.status()) || "DRAFT".equals(item.status()),
+                DEFAULT_PRODUCT_CONDITION,
                 "",
                 "",
-                "",
-                "",
-                "",
+                safe(item.sellerName()),
+                safe(item.sellerName()),
                 toLocalDateTime(item.createdAt()),
                 toLocalDateTime(item.updatedAt()),
                 emptyNotice(),

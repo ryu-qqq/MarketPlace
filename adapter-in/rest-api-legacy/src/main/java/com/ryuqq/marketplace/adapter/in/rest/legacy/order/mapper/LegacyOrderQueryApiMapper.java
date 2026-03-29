@@ -36,12 +36,6 @@ public class LegacyOrderQueryApiMapper {
     private static final DateTimeFormatter SETOF_DATE_FORMAT =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.of("Asia/Seoul"));
 
-    /**
-     * 요청 DTO → 검색 파라미터 변환.
-     *
-     * @param request 검색 요청
-     * @param effectiveSellerId MASTER이면 null (전체 조회), SELLER이면 본인 ID (강제 필터)
-     */
     public LegacyOrderSearchParams toSearchParams(
             LegacyOrderSearchRequest request, Long effectiveSellerId) {
         return new LegacyOrderSearchParams(
@@ -56,30 +50,34 @@ public class LegacyOrderQueryApiMapper {
                 request.searchWord());
     }
 
-    /** 단건 조회용 — 주문 상세 결과를 세토프 flat 구조 응답으로 변환. 히스토리 없이 빈 목록으로 매핑. */
+    /** 단건 조회용. */
     public LegacyOrderResponse toOrderResponse(LegacyOrderDetailResult result) {
         return toOrderResponse(result, null);
     }
 
-    /** 목록 조회용 — 주문 상세 + 히스토리 결과를 세토프 flat 구조 응답으로 변환. */
+    /** 목록 조회용. */
     public LegacyOrderResponse toOrderResponse(
             LegacyOrderDetailResult result, List<LegacyOrderHistoryResult> histories) {
 
-        BuyerInfo buyerInfo = new BuyerInfo("", "", "");
+        BuyerInfo buyerInfo =
+                new BuyerInfo(
+                        nullToEmpty(result.buyerName()),
+                        nullToEmpty(result.buyerEmail()),
+                        nullToEmpty(result.buyerPhone()));
 
         PaymentInfo payment =
                 new PaymentInfo(
                         result.paymentId(),
-                        "",
-                        "",
-                        "",
+                        nullToEmpty(result.paymentAgencyId()),
+                        nullToEmpty(result.paymentStatus()),
+                        nullToEmpty(result.paymentMethod()),
                         formatDate(result.orderDate()),
-                        null,
+                        formatDateNullable(result.paymentCanceledDate()),
                         result.userId(),
-                        "OUR_MALL",
+                        nullToEmpty(result.siteName()),
+                        result.billAmount(),
                         result.orderAmount(),
-                        result.orderAmount(),
-                        0);
+                        result.usedMileageAmount());
 
         ReceiverInfo receiverInfo =
                 new ReceiverInfo(
@@ -93,7 +91,10 @@ public class LegacyOrderQueryApiMapper {
 
         PaymentShipmentInfo paymentShipmentInfo =
                 new PaymentShipmentInfo(
-                        nullToEmpty(result.orderStatus()), "REFER_DETAIL", "", null);
+                        nullToEmpty(result.deliveryStatus()),
+                        nullToEmpty(result.shipmentCompanyCode()),
+                        nullToEmpty(result.shipmentInvoiceNo()),
+                        formatDateNullable(result.shipmentCompletedDate()));
 
         double commissionRateDouble = result.commissionRate();
         double fee = result.orderAmount() * commissionRateDouble / 100.0;
@@ -120,19 +121,23 @@ public class LegacyOrderQueryApiMapper {
                         result.regularPrice(),
                         result.currentPrice(),
                         result.currentPrice(),
+                        result.directDiscountPrice(),
                         0,
-                        0,
-                        0);
+                        result.discountRate());
 
         ProductStatusInfo productStatus = new ProductStatusInfo("N", "Y");
 
-        ClothesDetailInfo clothesDetailInfo = new ClothesDetailInfo("NEW", "", null);
+        ClothesDetailInfo clothesDetailInfo =
+                new ClothesDetailInfo(
+                        nullToEmpty(result.productCondition()),
+                        nullToEmpty(result.origin()),
+                        nullToEmpty(result.styleCode()));
 
         ProductGroupDetails productGroupDetails =
                 new ProductGroupDetails(
                         nullToEmpty(result.productGroupName()),
-                        "OPTION_ONE",
-                        "MENUAL",
+                        nullToEmpty(result.optionType()),
+                        nullToEmpty(result.managementType()),
                         priceInfo,
                         productStatus,
                         clothesDetailInfo,
@@ -149,16 +154,16 @@ public class LegacyOrderQueryApiMapper {
                         brand,
                         result.productGroupId(),
                         result.productId(),
-                        "",
+                        nullToEmpty(result.sellerName()),
                         nullToEmpty(result.mainImageUrl()),
-                        "",
+                        nullToEmpty(result.deliveryArea()),
                         result.quantity(),
                         nullToEmpty(result.orderStatus()),
                         result.regularPrice(),
                         result.orderAmount(),
                         0,
                         optionString,
-                        "",
+                        nullToEmpty(result.skuNumber()),
                         optionInfos);
 
         List<OrderHistoryInfo> orderHistories = toOrderHistoryInfos(histories);
@@ -179,7 +184,7 @@ public class LegacyOrderQueryApiMapper {
         return items.stream().map(item -> toOrderResponse(item.order(), item.histories())).toList();
     }
 
-    /** 단건 이력 → OrderHistoryInfo 변환 (이력 조회 엔드포인트용). */
+    /** 단건 이력 → OrderHistoryInfo 변환. */
     public OrderHistoryInfo toOrderHistoryInfo(LegacyOrderHistoryResult h) {
         return new OrderHistoryInfo(
                 h.orderId(),
@@ -192,10 +197,7 @@ public class LegacyOrderQueryApiMapper {
     }
 
     private List<OrderHistoryInfo> toOrderHistoryInfos(List<LegacyOrderHistoryResult> histories) {
-        if (histories == null) {
-            return null;
-        }
-        if (histories.isEmpty()) {
+        if (histories == null || histories.isEmpty()) {
             return List.of();
         }
         return histories.stream()
@@ -222,6 +224,14 @@ public class LegacyOrderQueryApiMapper {
     private String formatDate(Instant instant) {
         if (instant == null) {
             return "";
+        }
+        return SETOF_DATE_FORMAT.format(instant);
+    }
+
+    /** null이면 null 반환 (setof 호환 — canceledDate, shipmentCompletedDate 등). */
+    private String formatDateNullable(Instant instant) {
+        if (instant == null) {
+            return null;
         }
         return SETOF_DATE_FORMAT.format(instant);
     }

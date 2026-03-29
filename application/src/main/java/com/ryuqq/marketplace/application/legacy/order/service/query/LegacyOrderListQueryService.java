@@ -16,7 +16,6 @@ import com.ryuqq.marketplace.application.shipment.manager.ShipmentReadManager;
 import com.ryuqq.marketplace.domain.legacyconversion.aggregate.LegacyOrderIdMapping;
 import com.ryuqq.marketplace.domain.order.id.OrderItemId;
 import com.ryuqq.marketplace.domain.shipment.aggregate.Shipment;
-import com.ryuqq.marketplace.domain.shipment.vo.ShipmentStatus;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -86,10 +85,9 @@ public class LegacyOrderListQueryService implements LegacyOrderListQueryUseCase 
                 continue;
             }
             Shipment shipment = shipmentMap.get(itemId);
-            ShipmentStatus shipmentStatus = shipment != null ? shipment.status() : null;
 
             LegacyOrderDetailResult detail =
-                    assembler.toDetailResultFromListItem(item, mapping, shipmentStatus);
+                    assembler.toDetailResultFromListItem(item, mapping, shipment);
             converted.add(new LegacyOrderDetailWithHistoryResult(detail, List.of()));
         }
 

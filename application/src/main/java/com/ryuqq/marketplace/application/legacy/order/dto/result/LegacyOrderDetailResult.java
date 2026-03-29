@@ -6,34 +6,7 @@ import java.util.List;
 /**
  * 레거시 주문 단건 조회 결과.
  *
- * <p>기존 LegacyOrderCompositeResult 구조를 재사용하되, 주문 API 전용 Result로 분리.
- *
- * @param orderId 주문 ID
- * @param paymentId 결제 ID
- * @param productId 상품 ID
- * @param sellerId 셀러 ID
- * @param userId 유저 ID
- * @param orderAmount 주문 금액
- * @param orderStatus 주문 상태
- * @param quantity 수량
- * @param orderDate 주문 일시
- * @param productGroupId 상품그룹 ID
- * @param productGroupName 상품그룹명
- * @param brandId 브랜드 ID
- * @param brandName 브랜드명
- * @param categoryId 카테고리 ID
- * @param regularPrice 정가
- * @param currentPrice 판매가
- * @param commissionRate 수수료율
- * @param shareRatio 정산 비율
- * @param optionValues 옵션값 목록
- * @param mainImageUrl 대표 이미지 URL
- * @param receiverName 수령인 이름
- * @param receiverPhone 수령인 연락처
- * @param receiverZipCode 우편번호
- * @param receiverAddress 주소
- * @param receiverAddressDetail 상세주소
- * @param deliveryRequest 배송 요청사항
+ * <p>세토프 OrderResponse와 동일한 구조를 제공하기 위해 필요한 모든 필드를 포함합니다.
  */
 public record LegacyOrderDetailResult(
         long orderId,
@@ -52,8 +25,8 @@ public record LegacyOrderDetailResult(
         long categoryId,
         long regularPrice,
         long currentPrice,
-        long commissionRate,
-        long shareRatio,
+        double commissionRate,
+        double shareRatio,
         List<String> optionValues,
         String mainImageUrl,
         String receiverName,
@@ -61,4 +34,32 @@ public record LegacyOrderDetailResult(
         String receiverZipCode,
         String receiverAddress,
         String receiverAddressDetail,
-        String deliveryRequest) {}
+        String deliveryRequest,
+        // payment 추가 필드
+        String paymentAgencyId,
+        String paymentStatus,
+        String paymentMethod,
+        Instant paymentCanceledDate,
+        String siteName,
+        long billAmount,
+        long usedMileageAmount,
+        // buyer 추가 필드
+        String buyerName,
+        String buyerEmail,
+        String buyerPhone,
+        // 배송 추가 필드
+        String deliveryStatus,
+        Instant shipmentCompletedDate,
+        String shipmentInvoiceNo,
+        String shipmentCompanyCode,
+        // product 추가 필드
+        String sellerName,
+        String deliveryArea,
+        String skuNumber,
+        String managementType,
+        String optionType,
+        String productCondition,
+        String origin,
+        String styleCode,
+        long directDiscountPrice,
+        int discountRate) {}
