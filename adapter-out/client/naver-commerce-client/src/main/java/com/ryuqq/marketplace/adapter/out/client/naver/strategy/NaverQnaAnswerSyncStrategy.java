@@ -13,6 +13,7 @@ import com.ryuqq.marketplace.domain.qna.outbox.aggregate.QnaOutbox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 /**
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Component;
  *
  * <p>externalQnaId의 prefix로 고객 문의(INQUIRY-)와 상품 문의(PRODUCT-QNA-)를 구분합니다.
  */
+@Primary
 @Component
 @ConditionalOnBean(NaverCommerceQnaClientAdapter.class)
 public class NaverQnaAnswerSyncStrategy implements QnaAnswerSyncStrategy {

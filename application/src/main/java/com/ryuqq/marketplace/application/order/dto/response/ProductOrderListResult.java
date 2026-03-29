@@ -54,6 +54,9 @@ public record ProductOrderListResult(
      *
      * @param orderItemId 주문 상품 ID
      * @param productGroupId 내부 상품그룹 ID
+     * @param sellerId 셀러 ID
+     * @param brandId 브랜드 ID
+     * @param categoryId 카테고리 ID
      * @param productId 내부 상품 ID
      * @param skuCode SKU 코드
      * @param productGroupName 상품그룹명
@@ -65,6 +68,7 @@ public record ProductOrderListResult(
      * @param externalProductName 외부 상품명
      * @param externalOptionName 외부 옵션명
      * @param externalImageUrl 외부 이미지 URL
+     * @param regularPrice 정가
      * @param unitPrice 개당 판매가
      * @param quantity 수량
      * @param totalAmount 총 금액
@@ -75,6 +79,9 @@ public record ProductOrderListResult(
             Long orderItemId,
             String orderItemNumber,
             long productGroupId,
+            Long sellerId,
+            Long brandId,
+            Long categoryId,
             long productId,
             String skuCode,
             String productGroupName,
@@ -86,6 +93,7 @@ public record ProductOrderListResult(
             String externalProductName,
             String externalOptionName,
             String externalImageUrl,
+            int regularPrice,
             int unitPrice,
             int quantity,
             int totalAmount,

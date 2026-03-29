@@ -262,7 +262,7 @@ class LegacyOrderFromMarketAssemblerTest {
             assertThat(result.orderId()).isEqualTo(5001L);
             assertThat(result.paymentId()).isEqualTo(9001L);
             assertThat(result.productId()).isEqualTo(200L);
-            assertThat(result.sellerId()).isEqualTo(10L);
+            assertThat(result.sellerId()).isEqualTo(1L);
             assertThat(result.orderStatus()).isEqualTo("DELIVERY_COMPLETED");
             assertThat(result.quantity()).isEqualTo(2);
             assertThat(result.productGroupId()).isEqualTo(100L);
@@ -329,6 +329,9 @@ class LegacyOrderFromMarketAssemblerTest {
                             1001L,
                             "ORD-001-001",
                             100L,
+                            1L,
+                            1L,
+                            null,
                             200L,
                             null,
                             null,
@@ -340,6 +343,7 @@ class LegacyOrderFromMarketAssemblerTest {
                             null,
                             null,
                             null,
+                            10000,
                             10000,
                             2,
                             20000,
@@ -408,6 +412,9 @@ class LegacyOrderFromMarketAssemblerTest {
                 1001L,
                 "ORD-20260218-0001-001",
                 100L,
+                1L,
+                1L,
+                null,
                 200L,
                 "SKU-001",
                 "테스트 상품그룹",
@@ -419,6 +426,7 @@ class LegacyOrderFromMarketAssemblerTest {
                 "테스트 상품명",
                 "블랙 / L",
                 "https://example.com/images/product.jpg",
+                10000,
                 10000,
                 2,
                 20000,

@@ -33,6 +33,9 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
     @Column(name = "brand_id")
     private Long brandId;
 
+    @Column(name = "category_id")
+    private Long categoryId;
+
     @Column(name = "product_id")
     private Long productId;
 
@@ -65,6 +68,9 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
 
     @Column(name = "external_image_url", length = 1000)
     private String externalImageUrl;
+
+    @Column(name = "regular_price", nullable = false)
+    private int regularPrice;
 
     @Column(name = "unit_price", nullable = false)
     private int unitPrice;
@@ -288,6 +294,14 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
 
     public Long getBrandId() {
         return brandId;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public int getRegularPrice() {
+        return regularPrice;
     }
 
     public Long getProductId() {
