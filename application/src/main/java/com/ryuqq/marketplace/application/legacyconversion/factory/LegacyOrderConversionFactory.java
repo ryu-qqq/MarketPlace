@@ -626,7 +626,7 @@ public class LegacyOrderConversionFactory {
         return PaymentInfo.of(
                 PaymentNumber.of(
                         "LEGACY-" + composite.legacyPaymentId() + "-" + composite.legacyOrderId()),
-                "LEGACY",
+                "CARD",
                 Money.of((int) composite.orderAmount()),
                 composite.orderDate());
     }
