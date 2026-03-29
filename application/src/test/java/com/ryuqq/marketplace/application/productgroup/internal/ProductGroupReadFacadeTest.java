@@ -79,8 +79,8 @@ class ProductGroupReadFacadeTest {
             long totalElements = 2L;
             List<ProductGroupEnrichmentResult> enrichments =
                     List.of(
-                            new ProductGroupEnrichmentResult(1L, 10000, 20000, 10, List.of()),
-                            new ProductGroupEnrichmentResult(2L, 15000, 25000, 15, List.of()));
+                            new ProductGroupEnrichmentResult(1L, 10000, 20000, 20000, 10000, 10, List.of()),
+                            new ProductGroupEnrichmentResult(2L, 15000, 25000, 25000, 15000, 15, List.of()));
 
             given(compositionReadManager.findCompositeByCriteria(criteria))
                     .willReturn(baseComposites);
@@ -126,7 +126,7 @@ class ProductGroupReadFacadeTest {
             List<ProductGroupListCompositeResult> baseComposites =
                     List.of(createListCompositeResult(1L));
             List<ProductGroupEnrichmentResult> enrichments =
-                    List.of(new ProductGroupEnrichmentResult(1L, 10000, 20000, 10, List.of()));
+                    List.of(new ProductGroupEnrichmentResult(1L, 10000, 20000, 20000, 10000, 10, List.of()));
 
             given(compositionReadManager.findCompositeByCriteria(criteria))
                     .willReturn(baseComposites);

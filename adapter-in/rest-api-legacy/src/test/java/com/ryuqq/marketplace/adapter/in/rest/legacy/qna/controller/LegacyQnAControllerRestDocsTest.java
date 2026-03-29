@@ -172,7 +172,10 @@ class LegacyQnAControllerRestDocsTest {
                                                             "data.qna.qnaTarget.productGroupMainImageUrl")
                                                     .type(JsonFieldType.STRING)
                                                     .description("상품 대표 이미지 URL"),
-                                            fieldWithPath("data.qna.qnaTarget.brandName")
+                                            fieldWithPath("data.qna.qnaTarget.brand.brandId")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("브랜드 ID"),
+                                            fieldWithPath("data.qna.qnaTarget.brand.brandName")
                                                     .type(JsonFieldType.STRING)
                                                     .description("브랜드명"),
                                             fieldWithPath("data.qna.qnaTarget.paymentId")
@@ -392,7 +395,10 @@ class LegacyQnAControllerRestDocsTest {
                                                             "data.content[].qnaTarget.productGroupMainImageUrl")
                                                     .type(JsonFieldType.STRING)
                                                     .description("상품 대표 이미지 URL"),
-                                            fieldWithPath("data.content[].qnaTarget.brandName")
+                                            fieldWithPath("data.content[].qnaTarget.brand.brandId")
+                                                    .type(JsonFieldType.NUMBER)
+                                                    .description("브랜드 ID"),
+                                            fieldWithPath("data.content[].qnaTarget.brand.brandName")
                                                     .type(JsonFieldType.STRING)
                                                     .description("브랜드명"),
                                             fieldWithPath("data.content[].qnaTarget.paymentId")

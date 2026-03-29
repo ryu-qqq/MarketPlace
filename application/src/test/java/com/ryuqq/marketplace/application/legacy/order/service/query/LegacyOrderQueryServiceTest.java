@@ -65,14 +65,18 @@ class LegacyOrderQueryServiceTest {
     }
 
     @Test
-    @DisplayName("매핑이 없으면 예외 발생")
-    void throwsWhenNoMapping() {
-        long legacyOrderId = 9999L;
-        given(idResolver.resolve(legacyOrderId)).willReturn(Optional.empty());
+    @DisplayName("매핑이 없으면 orderId를 market orderItemId로 직접 조회 (fallback)")
+    void fallbackWhenNoMapping() {
+        long orderId = 9999L;
+        given(idResolver.resolve(orderId)).willReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.execute(legacyOrderId))
-                .isInstanceOf(
-                        com.ryuqq.marketplace.domain.order.exception.OrderNotFoundException.class);
+        ProductOrderDetailResult detail = createDetail("ORDERED");
+        given(getOrderDetailUseCase.execute(orderId)).willReturn(detail);
+        given(shipmentReadManager.findByOrderItemId(any())).willReturn(Optional.empty());
+        given(assembler.toDetailResult(any(), any(), any())).willReturn(createLegacyResult(orderId));
+
+        LegacyOrderDetailResult result = service.execute(orderId);
+        assertThat(result).isNotNull();
     }
 
     private ProductOrderDetailResult createDetail(String orderItemStatus) {

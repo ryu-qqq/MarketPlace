@@ -2,7 +2,12 @@ package com.ryuqq.marketplace.application.legacy.shared.assembler;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.ryuqq.marketplace.application.legacy.productcontext.LegacyProductContextFixtures;
+import com.ryuqq.marketplace.application.legacy.productcontext.resolver.LegacyProductIdResolver;
 import com.ryuqq.marketplace.application.legacy.productgroup.dto.response.LegacyProductGroupPageResult;
 import com.ryuqq.marketplace.application.legacy.shared.dto.result.LegacyProductGroupDetailResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeResult;
@@ -26,7 +31,9 @@ class LegacyProductGroupFromMarketAssemblerTest {
 
     @BeforeEach
     void setUp() {
-        sut = new LegacyProductGroupFromMarketAssembler();
+        LegacyProductIdResolver resolver = mock(LegacyProductIdResolver.class);
+        when(resolver.reverseResolveProductGroupId(anyLong())).thenAnswer(inv -> inv.getArgument(0));
+        sut = new LegacyProductGroupFromMarketAssembler(resolver);
     }
 
     @Nested

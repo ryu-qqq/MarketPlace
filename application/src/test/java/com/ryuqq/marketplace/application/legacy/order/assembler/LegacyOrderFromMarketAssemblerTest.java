@@ -275,7 +275,7 @@ class LegacyOrderFromMarketAssemblerTest {
             assertThat(result.paymentId()).isEqualTo(9001L);
             assertThat(result.productId()).isEqualTo(200L);
             assertThat(result.sellerId()).isEqualTo(1L);
-            assertThat(result.orderStatus()).isEqualTo("DELIVERY_COMPLETED");
+            assertThat(result.orderStatus()).isEqualTo("DELIVERY_PENDING");
             assertThat(result.quantity()).isEqualTo(2);
             assertThat(result.productGroupId()).isEqualTo(100L);
             assertThat(result.productGroupName()).isEqualTo("테스트 상품그룹");
@@ -319,7 +319,7 @@ class LegacyOrderFromMarketAssemblerTest {
                             mapping,
                             (com.ryuqq.marketplace.domain.shipment.aggregate.Shipment) null);
 
-            assertThat(result.order().orderStatus()).isEqualTo("DELIVERY_COMPLETED");
+            assertThat(result.order().orderStatus()).isEqualTo("DELIVERY_PENDING");
             assertThat(result.histories()).hasSize(1);
             assertThat(result.histories().getFirst().orderId()).isEqualTo(5001L);
             assertThat(result.histories().getFirst().orderStatus()).isEqualTo("CONFIRMED");

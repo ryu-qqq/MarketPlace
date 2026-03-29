@@ -96,7 +96,7 @@ class ProductGroupAssemblerTest {
             Instant now = Instant.now();
             ProductGroupListCompositeResult base = createListCompositeResult(1L, now);
             ProductGroupEnrichmentResult enrichment =
-                    new ProductGroupEnrichmentResult(1L, 10000, 20000, 10, List.of());
+                    new ProductGroupEnrichmentResult(1L, 10000, 20000, 20000, 10000, 10, List.of());
             ProductGroupExcelBundle bundle =
                     new ProductGroupExcelBundle(
                             List.of(base),

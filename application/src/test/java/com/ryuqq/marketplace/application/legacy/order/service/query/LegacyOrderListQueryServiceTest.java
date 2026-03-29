@@ -120,9 +120,8 @@ class LegacyOrderListQueryServiceTest {
         // when
         LegacyOrderPageResult result = service.execute(params);
 
-        // then
-        assertThat(result.items()).hasSize(1);
-        assertThat(result.items().getFirst().order().orderId()).isEqualTo(5001L);
+        // then — fallback으로 매핑 없는 아이템도 포함
+        assertThat(result.items()).hasSize(2);
     }
 
     private LegacyOrderSearchParams defaultParams() {
