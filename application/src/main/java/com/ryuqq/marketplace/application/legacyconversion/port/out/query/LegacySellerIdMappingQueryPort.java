@@ -20,4 +20,12 @@ public interface LegacySellerIdMappingQueryPort {
      * @return 셀러명
      */
     Optional<String> findSellerNameByLegacySellerId(long legacySellerId);
+
+    /**
+     * 내부 셀러 ID로 레거시 셀러 ID 역조회.
+     *
+     * @param internalSellerId market sellers.id
+     * @return 레거시 셀러 ID
+     */
+    Optional<Long> findLegacySellerIdByInternalSellerId(long internalSellerId);
 }

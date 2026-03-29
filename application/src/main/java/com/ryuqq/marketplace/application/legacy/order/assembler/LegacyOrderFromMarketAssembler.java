@@ -13,6 +13,7 @@ import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResu
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResult.OrderInfo;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResult.ProductOrderInfo;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResult.ReceiverInfo;
+import com.ryuqq.marketplace.application.legacyconversion.manager.LegacySellerIdMappingReadManager;
 import com.ryuqq.marketplace.domain.cancel.vo.CancelStatus;
 import com.ryuqq.marketplace.domain.legacyconversion.aggregate.LegacyOrderIdMapping;
 import com.ryuqq.marketplace.domain.refund.vo.RefundStatus;
@@ -32,6 +33,13 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class LegacyOrderFromMarketAssembler {
+
+    private final LegacySellerIdMappingReadManager sellerIdMappingReadManager;
+
+    public LegacyOrderFromMarketAssembler(
+            LegacySellerIdMappingReadManager sellerIdMappingReadManager) {
+        this.sellerIdMappingReadManager = sellerIdMappingReadManager;
+    }
 
     /**
      * 표준 주문 상세 -> 레거시 주문 상세 + 히스토리 변환.
@@ -76,7 +84,7 @@ public class LegacyOrderFromMarketAssembler {
                 mapping.legacyOrderId(),
                 mapping.legacyPaymentId(),
                 parseLongSafe(product.externalProductId(), product.productId()),
-                product.sellerId() != null ? product.sellerId() : order.shopId(),
+                resolveLegacySellerId(product.sellerId(), order.shopId()),
                 0L,
                 product.paymentAmount(),
                 legacyStatus,
@@ -124,7 +132,7 @@ public class LegacyOrderFromMarketAssembler {
                 mapping.legacyOrderId(),
                 mapping.legacyPaymentId(),
                 parseLongSafe(product.externalProductId(), product.productId()),
-                product.sellerId() != null ? product.sellerId() : order.shopId(),
+                resolveLegacySellerId(product.sellerId(), order.shopId()),
                 0L,
                 product.paymentAmount(),
                 legacyStatus,
@@ -400,6 +408,15 @@ public class LegacyOrderFromMarketAssembler {
         } catch (IllegalArgumentException e) {
             return RefundStatus.REQUESTED;
         }
+    }
+
+    private long resolveLegacySellerId(Long internalSellerId, long fallback) {
+        if (internalSellerId == null) {
+            return fallback;
+        }
+        return sellerIdMappingReadManager
+                .findLegacySellerIdByInternalSellerId(internalSellerId)
+                .orElse(internalSellerId);
     }
 
     private long parseLongSafe(String value, long fallback) {

@@ -55,4 +55,15 @@ public class LegacySellerIdMappingReadManager {
     public Optional<String> findSellerNameByLegacySellerId(long legacySellerId) {
         return queryPort.findSellerNameByLegacySellerId(legacySellerId);
     }
+
+    /**
+     * 내부 셀러 ID로 레거시 셀러 ID 역조회.
+     *
+     * @param internalSellerId market sellers.id
+     * @return 레거시 셀러 ID Optional
+     */
+    @Transactional(readOnly = true)
+    public Optional<Long> findLegacySellerIdByInternalSellerId(long internalSellerId) {
+        return queryPort.findLegacySellerIdByInternalSellerId(internalSellerId);
+    }
 }

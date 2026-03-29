@@ -88,7 +88,7 @@ public class OrderJpaEntityMapper {
 
     public OrderItemJpaEntity toOrderItemEntity(
             OrderItem item, String orderId, Instant createdAt, Instant updatedAt) {
-        return OrderItemJpaEntity.create(
+        OrderItemJpaEntity entity = OrderItemJpaEntity.create(
                 item.idValue(),
                 item.orderItemNumberValue(),
                 orderId,
@@ -132,6 +132,7 @@ public class OrderJpaEntityMapper {
                 item.returnedQty(),
                 createdAt,
                 updatedAt);
+        return entity;
     }
 
     public List<OrderItemJpaEntity> toOrderItemEntities(List<OrderItem> items, String orderId) {

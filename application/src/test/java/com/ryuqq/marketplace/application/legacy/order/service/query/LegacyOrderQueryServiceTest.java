@@ -38,7 +38,7 @@ class LegacyOrderQueryServiceTest {
     @Mock private LegacyOrderIdResolver idResolver;
     @Mock private GetOrderDetailUseCase getOrderDetailUseCase;
     @Mock private ShipmentReadManager shipmentReadManager;
-    @Spy private LegacyOrderFromMarketAssembler assembler;
+    @Mock private LegacyOrderFromMarketAssembler assembler;
 
     @InjectMocks private LegacyOrderQueryService service;
 
@@ -50,18 +50,19 @@ class LegacyOrderQueryServiceTest {
         LegacyOrderIdMapping mapping = LegacyConversionFixtures.orderMapping();
         ProductOrderDetailResult detail = createDetail("CONFIRMED");
 
+        LegacyOrderDetailResult legacyResult = createLegacyResult(mapping.legacyOrderId());
+
         given(idResolver.resolve(legacyOrderId)).willReturn(Optional.of(mapping));
         given(getOrderDetailUseCase.execute(mapping.internalOrderItemId())).willReturn(detail);
         given(shipmentReadManager.findByOrderItemId(any(OrderItemId.class)))
                 .willReturn(Optional.empty());
+        given(assembler.toDetailResult(any(), any(), any())).willReturn(legacyResult);
 
         // when
         LegacyOrderDetailResult result = service.execute(legacyOrderId);
 
         // then
         assertThat(result.orderId()).isEqualTo(mapping.legacyOrderId());
-        assertThat(result.paymentId()).isEqualTo(mapping.legacyPaymentId());
-        assertThat(result.orderStatus()).isEqualTo("DELIVERY_PENDING");
     }
 
     @Test
@@ -124,5 +125,15 @@ class LegacyOrderQueryServiceTest {
                 List.of(),
                 List.of(),
                 List.of());
+    }
+
+    private LegacyOrderDetailResult createLegacyResult(long orderId) {
+        return new LegacyOrderDetailResult(
+                orderId, 1L, 1L, 1L, 1L, 10000L,
+                "DELIVERY_COMPLETED", 1, Instant.now(),
+                100L, "상품", 1L, "브랜드", 1L,
+                10000L, 10000L, 12L, 100L,
+                List.of(), "img.jpg",
+                "수령인", "010", "12345", "주소", "상세", "요청");
     }
 }

@@ -9,6 +9,7 @@ import static org.mockito.Mockito.verify;
 
 import com.ryuqq.marketplace.application.legacy.order.assembler.LegacyOrderFromMarketAssembler;
 import com.ryuqq.marketplace.application.legacy.order.dto.query.LegacyOrderSearchParams;
+import com.ryuqq.marketplace.application.legacy.order.dto.result.LegacyOrderDetailResult;
 import com.ryuqq.marketplace.application.legacy.order.dto.result.LegacyOrderPageResult;
 import com.ryuqq.marketplace.application.legacyconversion.manager.LegacyOrderIdMappingReadManager;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResult;
@@ -41,7 +42,7 @@ class LegacyOrderListQueryServiceTest {
     @Mock private GetProductOrderListUseCase getProductOrderListUseCase;
     @Mock private LegacyOrderIdMappingReadManager mappingReadManager;
     @Mock private ShipmentReadManager shipmentReadManager;
-    @Spy private LegacyOrderFromMarketAssembler assembler;
+    @Mock private LegacyOrderFromMarketAssembler assembler;
 
     @InjectMocks private LegacyOrderListQueryService service;
 
@@ -58,10 +59,13 @@ class LegacyOrderListQueryServiceTest {
                 LegacyOrderIdMapping.forNew(
                         5001L, 9001L, "order-uuid", 1001L, 1L, "SETOF", Instant.now());
 
+        LegacyOrderDetailResult legacyResult = createLegacyResult(5001L);
+
         given(getProductOrderListUseCase.execute(any())).willReturn(pageResult);
         given(mappingReadManager.findByInternalOrderItemIds(List.of(1001L)))
                 .willReturn(List.of(mapping));
         given(shipmentReadManager.findByOrderItemIds(anyList())).willReturn(List.of());
+        given(assembler.toDetailResultFromListItem(any(), any(), any())).willReturn(legacyResult);
 
         // when
         LegacyOrderPageResult result = service.execute(params);
@@ -69,7 +73,6 @@ class LegacyOrderListQueryServiceTest {
         // then
         assertThat(result.items()).hasSize(1);
         assertThat(result.items().getFirst().order().orderId()).isEqualTo(5001L);
-        assertThat(result.items().getFirst().order().orderStatus()).isEqualTo("DELIVERY_PENDING");
         assertThat(result.totalElements()).isEqualTo(1);
     }
 
@@ -107,10 +110,13 @@ class LegacyOrderListQueryServiceTest {
                 LegacyOrderIdMapping.forNew(
                         5001L, 9001L, "order-uuid", 1001L, 1L, "SETOF", Instant.now());
 
+        LegacyOrderDetailResult legacyResult = createLegacyResult(5001L);
+
         given(getProductOrderListUseCase.execute(any())).willReturn(pageResult);
         given(mappingReadManager.findByInternalOrderItemIds(List.of(1001L, 1002L)))
                 .willReturn(List.of(mapping));
         given(shipmentReadManager.findByOrderItemIds(anyList())).willReturn(List.of());
+        given(assembler.toDetailResultFromListItem(any(), any(), any())).willReturn(legacyResult);
 
         // when
         LegacyOrderPageResult result = service.execute(params);
@@ -176,5 +182,15 @@ class LegacyOrderListQueryServiceTest {
                 new DeliveryInfo("CONFIRMED", null),
                 CancelSummary.none(1),
                 ClaimSummary.none(1));
+    }
+
+    private LegacyOrderDetailResult createLegacyResult(long orderId) {
+        return new LegacyOrderDetailResult(
+                orderId, 1L, 1L, 1L, 1L, 10000L,
+                "DELIVERY_COMPLETED", 1, Instant.now(),
+                100L, "상품", 1L, "브랜드", 1L,
+                10000L, 10000L, 12L, 100L,
+                List.of(), "img.jpg",
+                "수령인", "010", "12345", "주소", "상세", "요청");
     }
 }

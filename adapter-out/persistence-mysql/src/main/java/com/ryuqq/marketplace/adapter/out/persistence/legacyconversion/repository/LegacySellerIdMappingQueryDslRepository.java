@@ -51,4 +51,20 @@ public class LegacySellerIdMappingQueryDslRepository {
                         .fetchOne();
         return Optional.ofNullable(sellerName);
     }
+
+    /**
+     * 내부 셀러 ID로 레거시 셀러 ID 역조회.
+     *
+     * @param internalSellerId market sellers.id
+     * @return 레거시 셀러 ID Optional
+     */
+    public Optional<Long> findLegacySellerIdByInternalSellerId(long internalSellerId) {
+        Long legacySellerId =
+                queryFactory
+                        .select(legacySellerIdMappingJpaEntity.legacySellerId)
+                        .from(legacySellerIdMappingJpaEntity)
+                        .where(legacySellerIdMappingJpaEntity.internalSellerId.eq(internalSellerId))
+                        .fetchOne();
+        return Optional.ofNullable(legacySellerId);
+    }
 }

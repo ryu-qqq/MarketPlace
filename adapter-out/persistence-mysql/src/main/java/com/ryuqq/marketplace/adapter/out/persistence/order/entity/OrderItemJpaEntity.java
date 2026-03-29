@@ -427,4 +427,12 @@ public class OrderItemJpaEntity extends BaseAuditEntity {
     public void updateReturnedQty(int returnedQty) {
         this.returnedQty = returnedQty;
     }
+
+    public void updateCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public void updateRegularPrice(int regularPrice) {
+        this.regularPrice = regularPrice;
+    }
 }
