@@ -1,5 +1,7 @@
 package com.ryuqq.marketplace.application.legacy.qna.service;
 
+import com.ryuqq.marketplace.application.brand.manager.BrandReadManager;
+import com.ryuqq.marketplace.application.legacy.productcontext.resolver.LegacyProductIdResolver;
 import com.ryuqq.marketplace.application.legacy.qna.dto.query.LegacyQnaSearchParams;
 import com.ryuqq.marketplace.application.legacy.qna.dto.result.LegacyQnaDetailResult;
 import com.ryuqq.marketplace.application.legacy.qna.dto.result.LegacyQnaPageResult;
@@ -10,6 +12,7 @@ import com.ryuqq.marketplace.application.qna.dto.result.QnaListResult;
 import com.ryuqq.marketplace.application.qna.dto.result.QnaResult;
 import com.ryuqq.marketplace.application.qna.port.in.query.GetQnaListUseCase;
 import com.ryuqq.marketplace.application.seller.manager.SellerReadManager;
+import com.ryuqq.marketplace.domain.brand.id.BrandId;
 import com.ryuqq.marketplace.domain.productgroup.aggregate.ProductGroup;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.qna.vo.QnaStatus;
@@ -35,14 +38,20 @@ public class LegacyQnaListQueryService implements LegacyQnaListQueryUseCase {
     private final GetQnaListUseCase getQnaListUseCase;
     private final SellerReadManager sellerReadManager;
     private final ProductGroupReadManager productGroupReadManager;
+    private final LegacyProductIdResolver productIdResolver;
+    private final BrandReadManager brandReadManager;
 
     public LegacyQnaListQueryService(
             GetQnaListUseCase getQnaListUseCase,
             SellerReadManager sellerReadManager,
-            ProductGroupReadManager productGroupReadManager) {
+            ProductGroupReadManager productGroupReadManager,
+            LegacyProductIdResolver productIdResolver,
+            BrandReadManager brandReadManager) {
         this.getQnaListUseCase = getQnaListUseCase;
         this.sellerReadManager = sellerReadManager;
         this.productGroupReadManager = productGroupReadManager;
+        this.productIdResolver = productIdResolver;
+        this.brandReadManager = brandReadManager;
     }
 
     @Override
@@ -61,19 +70,45 @@ public class LegacyQnaListQueryService implements LegacyQnaListQueryUseCase {
                                         s -> s.sellerName().value(),
                                         (a, b) -> a));
 
-        List<ProductGroupId> pgIds =
+        // QnA의 productGroupId는 레거시 PK → 내부 PK로 변환
+        Map<Long, Long> legacyToInternalPgMap =
                 listResult.items().stream()
                         .filter(r -> r.productGroupId() != 0)
-                        .map(r -> ProductGroupId.of(r.productGroupId()))
+                        .map(QnaResult::productGroupId)
                         .distinct()
+                        .collect(Collectors.toMap(
+                                id -> id,
+                                id -> productIdResolver.resolveProductGroupId(id),
+                                (a, b) -> a));
+
+        List<ProductGroupId> internalPgIds =
+                legacyToInternalPgMap.values().stream()
+                        .distinct()
+                        .map(ProductGroupId::of)
                         .toList();
         Map<Long, ProductGroup> pgMap =
-                productGroupReadManager.findByIds(pgIds).stream()
+                productGroupReadManager.findByIds(internalPgIds).stream()
                         .collect(Collectors.toMap(pg -> pg.id().value(), pg -> pg, (a, b) -> a));
+
+        // brand 정보 조회
+        Map<Long, String> brandNameMap =
+                pgMap.values().stream()
+                        .map(pg -> pg.brandId().value())
+                        .distinct()
+                        .collect(Collectors.toMap(
+                                id -> id,
+                                id -> {
+                                    try {
+                                        return brandReadManager.getById(BrandId.of(id)).nameKo();
+                                    } catch (Exception e) {
+                                        return "";
+                                    }
+                                },
+                                (a, b) -> a));
 
         List<LegacyQnaDetailResult> items =
                 listResult.items().stream()
-                        .map(r -> toDetailResult(r, sellerNameMap, pgMap))
+                        .map(r -> toDetailResult(r, sellerNameMap, legacyToInternalPgMap, pgMap, brandNameMap))
                         .toList();
 
         Long lastDomainId = items.isEmpty() ? null : items.getLast().qnaId();
@@ -81,12 +116,19 @@ public class LegacyQnaListQueryService implements LegacyQnaListQueryUseCase {
     }
 
     private LegacyQnaDetailResult toDetailResult(
-            QnaResult r, Map<Long, String> sellerNameMap, Map<Long, ProductGroup> pgMap) {
+            QnaResult r,
+            Map<Long, String> sellerNameMap,
+            Map<Long, Long> legacyToInternalPgMap,
+            Map<Long, ProductGroup> pgMap,
+            Map<Long, String> brandNameMap) {
         String sellerName = sellerNameMap.getOrDefault(r.sellerId(), "");
-        ProductGroup pg = pgMap.get(r.productGroupId());
+        Long internalPgId = legacyToInternalPgMap.getOrDefault(r.productGroupId(), r.productGroupId());
+        ProductGroup pg = pgMap.get(internalPgId);
         String pgName = pg != null ? pg.productGroupName().value() : "";
         Long brandId = pg != null ? pg.brandId().value() : 0L;
-        return LegacyQnaFromMarketAssembler.toDetailResult(r, sellerName, pgName, "", brandId, "");
+        String brandName = brandNameMap.getOrDefault(brandId, "");
+        return LegacyQnaFromMarketAssembler.toDetailResult(
+                r, sellerName, pgName, "", brandId, brandName);
     }
 
     private QnaSearchCondition toSearchCondition(LegacyQnaSearchParams params) {
