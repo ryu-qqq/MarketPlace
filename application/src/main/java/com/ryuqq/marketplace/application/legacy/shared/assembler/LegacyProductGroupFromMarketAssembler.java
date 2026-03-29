@@ -188,9 +188,7 @@ public class LegacyProductGroupFromMarketAssembler {
     private LegacyDeliveryResult toDeliveryResult(ShippingPolicyResult shipping) {
         return new LegacyDeliveryResult(
                 "",
-                shipping != null && shipping.baseFee() != null
-                        ? shipping.baseFee().intValue()
-                        : 0,
+                shipping != null && shipping.baseFee() != null ? shipping.baseFee().intValue() : 0,
                 shipping != null ? shipping.leadTimeMaxDays() : 0,
                 "",
                 "",
@@ -211,7 +209,8 @@ public class LegacyProductGroupFromMarketAssembler {
         boolean soldOut = "SOLD_OUT".equals(product.status());
         List<LegacyOptionMappingResult> options =
                 product.options().stream().map(this::toOptionMapping).toList();
-        return new LegacyProductResult(responseProductId, product.stockQuantity(), soldOut, options);
+        return new LegacyProductResult(
+                responseProductId, product.stockQuantity(), soldOut, options);
     }
 
     private LegacyOptionMappingResult toOptionMapping(ResolvedProductOptionResult opt) {

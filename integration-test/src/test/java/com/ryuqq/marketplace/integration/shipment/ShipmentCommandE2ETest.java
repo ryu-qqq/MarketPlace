@@ -189,10 +189,7 @@ class ShipmentCommandE2ETest extends E2ETestBase {
 
             // when: 존재하는 1건 + 존재하지 않는 1건으로 요청
             given().spec(givenSuperAdmin())
-                    .body(
-                            Map.of(
-                                    "orderIds",
-                                    List.of(itemId1, 999999999L)))
+                    .body(Map.of("orderIds", List.of(itemId1, 999999999L)))
                     .when()
                     .post(CONFIRM_BATCH_URL)
                     .then()

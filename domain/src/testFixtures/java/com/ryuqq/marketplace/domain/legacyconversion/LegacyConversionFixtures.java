@@ -346,10 +346,7 @@ public final class LegacyConversionFixtures {
     /** 기본 셀러 ID 매핑 재구성. */
     public static LegacySellerIdMapping sellerMapping() {
         return LegacySellerIdMapping.reconstitute(
-                1L,
-                DEFAULT_LEGACY_SELLER_ID,
-                DEFAULT_INTERNAL_SELLER_ID,
-                DEFAULT_SELLER_NAME);
+                1L, DEFAULT_LEGACY_SELLER_ID, DEFAULT_INTERNAL_SELLER_ID, DEFAULT_SELLER_NAME);
     }
 
     /** 특정 값으로 셀러 ID 매핑 재구성. */

@@ -4,6 +4,7 @@ import static com.ryuqq.marketplace.adapter.out.persistence.legacyconversion.ent
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ryuqq.marketplace.adapter.out.persistence.legacyconversion.entity.LegacyOrderIdMappingJpaEntity;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
@@ -50,5 +51,21 @@ public class LegacyOrderIdMappingQueryDslRepository {
                         .where(legacyOrderIdMappingJpaEntity.legacyOrderId.eq(legacyOrderId))
                         .fetchFirst();
         return result != null;
+    }
+
+    /**
+     * market orderItemId 목록으로 매핑 배치 조회.
+     *
+     * @param orderItemIds market 주문 아이템 ID 목록
+     * @return 매핑 엔티티 목록
+     */
+    public List<LegacyOrderIdMappingJpaEntity> findByInternalOrderItemIds(List<Long> orderItemIds) {
+        if (orderItemIds == null || orderItemIds.isEmpty()) {
+            return List.of();
+        }
+        return queryFactory
+                .selectFrom(legacyOrderIdMappingJpaEntity)
+                .where(legacyOrderIdMappingJpaEntity.internalOrderItemId.in(orderItemIds))
+                .fetch();
     }
 }

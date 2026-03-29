@@ -41,7 +41,8 @@ class LegacyProductUpdateDisplayStatusServiceTest {
             LegacyUpdateDisplayStatusCommand command =
                     new LegacyUpdateDisplayStatusCommand(productGroupId, "Y");
             Instant now = Instant.now();
-            ResolvedLegacyProductIds resolved = LegacyProductContextFixtures.resolvedLegacyProductIds();
+            ResolvedLegacyProductIds resolved =
+                    LegacyProductContextFixtures.resolvedLegacyProductIds();
 
             given(resolveFactory.resolve(productGroupId)).willReturn(resolved);
             given(resolveFactory.now()).willReturn(now);
@@ -65,7 +66,8 @@ class LegacyProductUpdateDisplayStatusServiceTest {
             LegacyUpdateDisplayStatusCommand command =
                     new LegacyUpdateDisplayStatusCommand(productGroupId, "N");
             Instant now = Instant.now();
-            ResolvedLegacyProductIds resolved = LegacyProductContextFixtures.resolvedLegacyProductIds();
+            ResolvedLegacyProductIds resolved =
+                    LegacyProductContextFixtures.resolvedLegacyProductIds();
 
             given(resolveFactory.resolve(productGroupId)).willReturn(resolved);
             given(resolveFactory.now()).willReturn(now);
@@ -76,7 +78,8 @@ class LegacyProductUpdateDisplayStatusServiceTest {
             // then
             then(bulkCommandCoordinator)
                     .should()
-                    .changeStatusAll(resolved.resolvedProductGroupId(), ProductStatus.INACTIVE, now);
+                    .changeStatusAll(
+                            resolved.resolvedProductGroupId(), ProductStatus.INACTIVE, now);
         }
 
         @Test
@@ -87,7 +90,8 @@ class LegacyProductUpdateDisplayStatusServiceTest {
             LegacyUpdateDisplayStatusCommand command =
                     new LegacyUpdateDisplayStatusCommand(productGroupId, "UNKNOWN");
             Instant now = Instant.now();
-            ResolvedLegacyProductIds resolved = LegacyProductContextFixtures.resolvedLegacyProductIds();
+            ResolvedLegacyProductIds resolved =
+                    LegacyProductContextFixtures.resolvedLegacyProductIds();
 
             given(resolveFactory.resolve(productGroupId)).willReturn(resolved);
             given(resolveFactory.now()).willReturn(now);
@@ -98,7 +102,8 @@ class LegacyProductUpdateDisplayStatusServiceTest {
             // then
             then(bulkCommandCoordinator)
                     .should()
-                    .changeStatusAll(resolved.resolvedProductGroupId(), ProductStatus.INACTIVE, now);
+                    .changeStatusAll(
+                            resolved.resolvedProductGroupId(), ProductStatus.INACTIVE, now);
         }
     }
 }

@@ -68,19 +68,20 @@ class LegacyProductGroupFullUpdateServiceTest {
                             LegacyProductContextFixtures.LEGACY_PRODUCT_GROUP_ID);
             UpdateProductGroupFullCommand resolvedCommand =
                     LegacyProductContextFixtures.updateProductGroupFullCommand();
-            resolvedCommand = new UpdateProductGroupFullCommand(
-                    LegacyProductContextFixtures.INTERNAL_PRODUCT_GROUP_ID,
-                    resolvedCommand.productGroupName(),
-                    resolvedCommand.brandId(),
-                    resolvedCommand.categoryId(),
-                    resolvedCommand.shippingPolicyId(),
-                    resolvedCommand.refundPolicyId(),
-                    resolvedCommand.optionType(),
-                    resolvedCommand.images(),
-                    resolvedCommand.optionGroups(),
-                    resolvedCommand.products(),
-                    resolvedCommand.description(),
-                    resolvedCommand.notice());
+            resolvedCommand =
+                    new UpdateProductGroupFullCommand(
+                            LegacyProductContextFixtures.INTERNAL_PRODUCT_GROUP_ID,
+                            resolvedCommand.productGroupName(),
+                            resolvedCommand.brandId(),
+                            resolvedCommand.categoryId(),
+                            resolvedCommand.shippingPolicyId(),
+                            resolvedCommand.refundPolicyId(),
+                            resolvedCommand.optionType(),
+                            resolvedCommand.images(),
+                            resolvedCommand.optionGroups(),
+                            resolvedCommand.products(),
+                            resolvedCommand.description(),
+                            resolvedCommand.notice());
             ProductGroupUpdateBundle bundle = Mockito.mock(ProductGroupUpdateBundle.class);
 
             given(resolveFactory.resolveUpdateFullCommand(originalCommand))

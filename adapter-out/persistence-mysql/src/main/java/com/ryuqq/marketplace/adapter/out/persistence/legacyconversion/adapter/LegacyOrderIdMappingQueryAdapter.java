@@ -4,6 +4,7 @@ import com.ryuqq.marketplace.adapter.out.persistence.legacyconversion.mapper.Leg
 import com.ryuqq.marketplace.adapter.out.persistence.legacyconversion.repository.LegacyOrderIdMappingQueryDslRepository;
 import com.ryuqq.marketplace.application.legacyconversion.port.out.query.LegacyOrderIdMappingQueryPort;
 import com.ryuqq.marketplace.domain.legacyconversion.aggregate.LegacyOrderIdMapping;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
 
@@ -37,5 +38,12 @@ public class LegacyOrderIdMappingQueryAdapter implements LegacyOrderIdMappingQue
     @Override
     public boolean existsByLegacyOrderId(long legacyOrderId) {
         return queryDslRepository.existsByLegacyOrderId(legacyOrderId);
+    }
+
+    @Override
+    public List<LegacyOrderIdMapping> findByInternalOrderItemIds(List<Long> orderItemIds) {
+        return queryDslRepository.findByInternalOrderItemIds(orderItemIds).stream()
+                .map(mapper::toDomain)
+                .toList();
     }
 }

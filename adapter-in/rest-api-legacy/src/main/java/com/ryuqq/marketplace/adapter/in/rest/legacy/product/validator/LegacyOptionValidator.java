@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
  * <p>옵션 타입별 옵션 수 검증 + 2단 옵션 조합 검증을 담당합니다. 등록/수정 양쪽에서 사용됩니다.
  *
  * <p>규칙:
+ *
  * <ul>
  *   <li>SINGLE: options 비어있어야 함
  *   <li>OPTION_ONE: options 정확히 1개, optionName은 SIZE/COLOR/DEFAULT_ONE 중 하나
@@ -63,12 +64,14 @@ public class LegacyOptionValidator {
 
     private void validateOptionSize(
             String optionType, List<LegacyCreateOptionRequest> productOptions) {
-        int expectedSize = switch (optionType) {
-            case "SINGLE" -> 0;
-            case "OPTION_ONE" -> 1;
-            case "OPTION_TWO" -> 2;
-            default -> throw new IllegalArgumentException("지원하지 않는 옵션 타입입니다: " + optionType);
-        };
+        int expectedSize =
+                switch (optionType) {
+                    case "SINGLE" -> 0;
+                    case "OPTION_ONE" -> 1;
+                    case "OPTION_TWO" -> 2;
+                    default ->
+                            throw new IllegalArgumentException("지원하지 않는 옵션 타입입니다: " + optionType);
+                };
 
         for (LegacyCreateOptionRequest option : productOptions) {
             if (option.options().size() != expectedSize) {
@@ -80,13 +83,13 @@ public class LegacyOptionValidator {
     }
 
     private void validateTwoStepCombination(List<LegacyCreateOptionRequest> productOptions) {
-        Set<String> allOptionNames = productOptions.stream()
-                .flatMap(opt -> opt.options().stream())
-                .map(LegacyCreateOptionRequest.OptionDetail::optionName)
-                .collect(Collectors.toSet());
+        Set<String> allOptionNames =
+                productOptions.stream()
+                        .flatMap(opt -> opt.options().stream())
+                        .map(LegacyCreateOptionRequest.OptionDetail::optionName)
+                        .collect(Collectors.toSet());
 
-        boolean hasColorSize =
-                allOptionNames.contains("COLOR") && allOptionNames.contains("SIZE");
+        boolean hasColorSize = allOptionNames.contains("COLOR") && allOptionNames.contains("SIZE");
         boolean hasDefaultOneTwo =
                 allOptionNames.contains("DEFAULT_ONE") && allOptionNames.contains("DEFAULT_TWO");
 

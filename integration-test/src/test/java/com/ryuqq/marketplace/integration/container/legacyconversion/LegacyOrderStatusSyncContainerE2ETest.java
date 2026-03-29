@@ -288,14 +288,21 @@ class LegacyOrderStatusSyncContainerE2ETest extends ContainerLegacyE2ETestBase {
         orderJpaRepository.save(orderEntity);
 
         OrderItemJpaEntity itemEntity = OrderItemJpaEntityFixtures.defaultItem(orderId);
-        orderItemId = itemEntity.getId();
-        orderItemJpaRepository.save(itemEntity);
+        OrderItemJpaEntity savedItem = orderItemJpaRepository.save(itemEntity);
+        orderItemId = savedItem.getId();
     }
 
     private void setupMappingInDb() {
         LegacyOrderIdMappingJpaEntity mapping =
                 LegacyOrderIdMappingJpaEntity.create(
-                        null, LEGACY_ORDER_ID, LEGACY_PAYMENT_ID, orderId, 1001L, 1L, "SETOF", NOW);
+                        null,
+                        LEGACY_ORDER_ID,
+                        LEGACY_PAYMENT_ID,
+                        orderId,
+                        orderItemId,
+                        1L,
+                        "SETOF",
+                        NOW);
         mappingJpaRepository.save(mapping);
     }
 

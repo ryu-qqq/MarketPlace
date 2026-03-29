@@ -35,7 +35,8 @@ class LegacyOrderIdMappingTest {
                     LegacyOrderIdMapping.forNew(
                             legacyOrderId,
                             legacyPaymentId,
-                            internalOrderId, 1001L,
+                            internalOrderId,
+                            1001L,
                             salesChannelId,
                             channelName,
                             now);
@@ -70,7 +71,8 @@ class LegacyOrderIdMappingTest {
                             id,
                             LegacyConversionFixtures.DEFAULT_LEGACY_ORDER_ID,
                             LegacyConversionFixtures.DEFAULT_LEGACY_PAYMENT_ID,
-                            LegacyConversionFixtures.DEFAULT_INTERNAL_ORDER_ID, 1001L,
+                            LegacyConversionFixtures.DEFAULT_INTERNAL_ORDER_ID,
+                            1001L,
                             LegacyConversionFixtures.DEFAULT_SALES_CHANNEL_ID,
                             LegacyConversionFixtures.DEFAULT_CHANNEL_NAME,
                             now);

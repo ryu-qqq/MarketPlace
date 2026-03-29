@@ -52,7 +52,9 @@ class LegacySearchProductGroupByOffsetServiceTest {
 
             given(queryFactory.toStandardSearchParams(legacyParams)).willReturn(standardParams);
             given(searchUseCase.execute(standardParams)).willReturn(standardPageResult);
-            given(assembler.toPageResult(standardPageResult, legacyParams.page(), legacyParams.size()))
+            given(
+                            assembler.toPageResult(
+                                    standardPageResult, legacyParams.page(), legacyParams.size()))
                     .willReturn(expectedResult);
 
             // when
@@ -81,7 +83,9 @@ class LegacySearchProductGroupByOffsetServiceTest {
 
             given(queryFactory.toStandardSearchParams(legacyParams)).willReturn(standardParams);
             given(searchUseCase.execute(standardParams)).willReturn(standardPageResult);
-            given(assembler.toPageResult(standardPageResult, legacyParams.page(), legacyParams.size()))
+            given(
+                            assembler.toPageResult(
+                                    standardPageResult, legacyParams.page(), legacyParams.size()))
                     .willReturn(expectedResult);
 
             // when

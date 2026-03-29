@@ -67,8 +67,7 @@ class LegacyProductBulkCommandCoordinatorTest {
             Money currentPrice = Money.of(9000);
             Instant now = Instant.now();
 
-            given(productReadManager.findByProductGroupId(productGroupId))
-                    .willReturn(List.of());
+            given(productReadManager.findByProductGroupId(productGroupId)).willReturn(List.of());
 
             // when
             sut.updatePriceAll(productGroupId, regularPrice, currentPrice, now);
@@ -92,9 +91,7 @@ class LegacyProductBulkCommandCoordinatorTest {
 
             // INACTIVE → ACTIVE, SOLD_OUT → ACTIVE 전환은 도메인에서 허용됨
             List<Product> products =
-                    List.of(
-                            ProductFixtures.inactiveProduct(),
-                            ProductFixtures.soldOutProduct());
+                    List.of(ProductFixtures.inactiveProduct(), ProductFixtures.soldOutProduct());
             given(productReadManager.findByProductGroupId(productGroupId)).willReturn(products);
 
             // when

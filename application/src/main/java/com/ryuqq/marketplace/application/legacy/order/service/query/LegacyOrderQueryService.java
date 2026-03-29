@@ -39,10 +39,13 @@ public class LegacyOrderQueryService implements LegacyOrderQueryUseCase {
     @Override
     @Transactional(readOnly = true)
     public LegacyOrderDetailResult execute(long orderId) {
-        LegacyOrderIdMapping mapping = idResolver
-                .resolve(orderId)
-                .orElseThrow(() -> new com.ryuqq.marketplace.domain.order.exception.OrderNotFoundException(
-                        String.valueOf(orderId)));
+        LegacyOrderIdMapping mapping =
+                idResolver
+                        .resolve(orderId)
+                        .orElseThrow(
+                                () ->
+                                        new com.ryuqq.marketplace.domain.order.exception
+                                                .OrderNotFoundException(String.valueOf(orderId)));
 
         Long orderItemId = mapping.internalOrderItemId();
         var detail = getOrderDetailUseCase.execute(orderItemId);

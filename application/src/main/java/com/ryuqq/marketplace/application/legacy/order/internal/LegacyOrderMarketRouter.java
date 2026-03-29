@@ -78,16 +78,18 @@ public class LegacyOrderMarketRouter {
         String orderItemIdStr = String.valueOf(orderItemId);
 
         switch (command.orderStatus()) {
-            case "DELIVERY_COMPLETED" -> deliverOrderUseCase.execute(
-                    new OrderItemStatusCommand(List.of(orderItemIdStr), LEGACY_SYSTEM));
+            case "DELIVERY_COMPLETED" ->
+                    deliverOrderUseCase.execute(
+                            new OrderItemStatusCommand(List.of(orderItemIdStr), LEGACY_SYSTEM));
 
-            case "DELIVERY_PROCESSING" -> shipSingleUseCase.execute(
-                    new ShipSingleCommand(
-                            orderItemId,
-                            safe(command.invoiceNo()),
-                            safe(command.courierCode()),
-                            "",
-                            safe(command.shipmentType())));
+            case "DELIVERY_PROCESSING" ->
+                    shipSingleUseCase.execute(
+                            new ShipSingleCommand(
+                                    orderItemId,
+                                    safe(command.invoiceNo()),
+                                    safe(command.courierCode()),
+                                    "",
+                                    safe(command.shipmentType())));
 
             case "CANCEL_REQUEST_CONFIRMED" -> routeApproveCancel(orderItemId);
 
@@ -99,55 +101,72 @@ public class LegacyOrderMarketRouter {
 
             case "SALE_CANCELLED" -> routeSellerCancel(command, orderItemId);
 
-            default -> throw new IllegalArgumentException(
-                    "market 라우팅 불가능한 레거시 상태: " + command.orderStatus());
+            default ->
+                    throw new IllegalArgumentException(
+                            "market 라우팅 불가능한 레거시 상태: " + command.orderStatus());
         }
     }
 
     private void routeApproveCancel(Long orderItemId) {
-        Cancel cancel = cancelReadManager
-                .findByOrderItemId(OrderItemId.of(orderItemId))
-                .orElseThrow(() -> new com.ryuqq.marketplace.domain.cancel.exception.CancelNotFoundException(
-                        String.valueOf(orderItemId)));
+        Cancel cancel =
+                cancelReadManager
+                        .findByOrderItemId(OrderItemId.of(orderItemId))
+                        .orElseThrow(
+                                () ->
+                                        new com.ryuqq.marketplace.domain.cancel.exception
+                                                .CancelNotFoundException(
+                                                String.valueOf(orderItemId)));
         approveCancelUseCase.execute(
                 new ApproveCancelBatchCommand(List.of(cancel.idValue()), LEGACY_SYSTEM, null));
     }
 
     private void routeRejectCancel(Long orderItemId) {
-        Cancel cancel = cancelReadManager
-                .findByOrderItemId(OrderItemId.of(orderItemId))
-                .orElseThrow(() -> new com.ryuqq.marketplace.domain.cancel.exception.CancelNotFoundException(
-                        String.valueOf(orderItemId)));
+        Cancel cancel =
+                cancelReadManager
+                        .findByOrderItemId(OrderItemId.of(orderItemId))
+                        .orElseThrow(
+                                () ->
+                                        new com.ryuqq.marketplace.domain.cancel.exception
+                                                .CancelNotFoundException(
+                                                String.valueOf(orderItemId)));
         rejectCancelUseCase.execute(
                 new RejectCancelBatchCommand(List.of(cancel.idValue()), LEGACY_SYSTEM, null));
     }
 
     private void routeApproveRefund(Long orderItemId) {
-        RefundClaim refund = refundReadManager
-                .findByOrderItemId(orderItemId)
-                .orElseThrow(() -> new com.ryuqq.marketplace.domain.refund.exception.RefundNotFoundException(
-                        String.valueOf(orderItemId)));
+        RefundClaim refund =
+                refundReadManager
+                        .findByOrderItemId(orderItemId)
+                        .orElseThrow(
+                                () ->
+                                        new com.ryuqq.marketplace.domain.refund.exception
+                                                .RefundNotFoundException(
+                                                String.valueOf(orderItemId)));
         approveRefundUseCase.execute(
                 new ApproveRefundBatchCommand(List.of(refund.idValue()), LEGACY_SYSTEM, null));
     }
 
     private void routeRejectRefund(Long orderItemId) {
-        RefundClaim refund = refundReadManager
-                .findByOrderItemId(orderItemId)
-                .orElseThrow(() -> new com.ryuqq.marketplace.domain.refund.exception.RefundNotFoundException(
-                        String.valueOf(orderItemId)));
+        RefundClaim refund =
+                refundReadManager
+                        .findByOrderItemId(orderItemId)
+                        .orElseThrow(
+                                () ->
+                                        new com.ryuqq.marketplace.domain.refund.exception
+                                                .RefundNotFoundException(
+                                                String.valueOf(orderItemId)));
         rejectRefundUseCase.execute(
                 new RejectRefundBatchCommand(List.of(refund.idValue()), LEGACY_SYSTEM, null));
     }
 
     private void routeSellerCancel(LegacyOrderUpdateCommand command, Long orderItemId) {
-        SellerCancelItem item = new SellerCancelItem(
-                orderItemId,
-                1,
-                CancelReasonType.OUT_OF_STOCK,
-                safe(command.changeReason()));
-        sellerCancelUseCase.execute(
-                new SellerCancelBatchCommand(List.of(item), LEGACY_SYSTEM, 0L));
+        SellerCancelItem item =
+                new SellerCancelItem(
+                        orderItemId,
+                        1,
+                        CancelReasonType.OUT_OF_STOCK,
+                        safe(command.changeReason()));
+        sellerCancelUseCase.execute(new SellerCancelBatchCommand(List.of(item), LEGACY_SYSTEM, 0L));
     }
 
     private String safe(String value) {

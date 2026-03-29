@@ -67,7 +67,7 @@ class OrderQueryAdapterTest {
             PaymentJpaEntity paymentEntity =
                     PaymentJpaEntityFixtures.completedEntity(
                             PaymentJpaEntityFixtures.DEFAULT_ID, orderId);
-            OrderItemJpaEntity itemEntity = OrderItemJpaEntityFixtures.defaultItem(orderId);
+            OrderItemJpaEntity itemEntity = OrderItemJpaEntityFixtures.defaultItemWithId(orderId);
             Order domain = OrderFixtures.reconstitutedOrder();
 
             given(queryDslRepository.findById(orderId)).willReturn(Optional.of(orderEntity));
@@ -114,7 +114,7 @@ class OrderQueryAdapterTest {
             PaymentJpaEntity paymentEntity =
                     PaymentJpaEntityFixtures.completedEntity(
                             PaymentJpaEntityFixtures.DEFAULT_ID, orderId);
-            OrderItemJpaEntity itemEntity = OrderItemJpaEntityFixtures.defaultItem(orderId);
+            OrderItemJpaEntity itemEntity = OrderItemJpaEntityFixtures.defaultItemWithId(orderId);
             OrderItemHistoryJpaEntity historyEntity =
                     OrderItemHistoryJpaEntityFixtures.creationHistory(itemEntity.getId());
             Order domain = OrderFixtures.reconstitutedOrder();

@@ -77,15 +77,13 @@ class OrderItemIdTest {
 
         @Test
         @DisplayName("forNew()는 전달한 값으로 OrderItemId를 생성한다")
-        void forNewWithValue() {
-            // given
-            Long value = 1002L;
-
+        void forNewReturnsNullId() {
             // when
-            OrderItemId id = OrderItemId.forNew(value);
+            OrderItemId id = OrderItemId.forNew();
 
             // then
-            assertThat(id.value()).isEqualTo(value);
+            assertThat(id.value()).isNull();
+            assertThat(id.isNew()).isTrue();
         }
     }
 

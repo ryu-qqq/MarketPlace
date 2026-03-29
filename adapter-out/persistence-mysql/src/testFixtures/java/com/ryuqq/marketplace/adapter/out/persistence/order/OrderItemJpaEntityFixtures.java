@@ -10,6 +10,9 @@ public final class OrderItemJpaEntityFixtures {
 
     private OrderItemJpaEntityFixtures() {}
 
+    private static final java.util.concurrent.atomic.AtomicLong SEQUENCE =
+            new java.util.concurrent.atomic.AtomicLong(0);
+
     public static final long DEFAULT_PRODUCT_GROUP_ID = 1000L;
     public static final long DEFAULT_PRODUCT_ID = 2000L;
     public static final String DEFAULT_SKU_CODE = "SKU-001";
@@ -33,10 +36,10 @@ public final class OrderItemJpaEntityFixtures {
     /** 기본 주문 상품 Entity 생성. */
     public static OrderItemJpaEntity defaultItem(String orderId) {
         Instant now = Instant.now();
-        long itemId = System.nanoTime();
+        long seq = SEQUENCE.incrementAndGet();
         return OrderItemJpaEntity.create(
-                itemId,
-                "ORD-20240101-" + itemId + "-001",
+                null,
+                "ORD-20240101-" + seq + "-001",
                 orderId,
                 DEFAULT_PRODUCT_GROUP_ID,
                 1L,
@@ -80,10 +83,10 @@ public final class OrderItemJpaEntityFixtures {
     /** CONFIRMED 상태의 주문 상품 Entity 생성. 교환/환불 테스트용. */
     public static OrderItemJpaEntity confirmedItem(String orderId) {
         Instant now = Instant.now();
-        long itemId = System.nanoTime();
+        long seq = SEQUENCE.incrementAndGet();
         return OrderItemJpaEntity.create(
-                itemId,
-                "ORD-20240101-" + itemId + "-001",
+                null,
+                "ORD-20240101-" + seq + "-001",
                 orderId,
                 DEFAULT_PRODUCT_GROUP_ID,
                 1L,
@@ -119,14 +122,56 @@ public final class OrderItemJpaEntityFixtures {
                 now);
     }
 
+    /** 단위 테스트 mock용 — ID가 할당된 기본 주문 상품 Entity 생성. */
+    public static OrderItemJpaEntity defaultItemWithId(String orderId) {
+        Instant now = Instant.now();
+        long seq = SEQUENCE.incrementAndGet();
+        return OrderItemJpaEntity.create(
+                seq,
+                "ORD-20240101-" + seq + "-001",
+                orderId,
+                DEFAULT_PRODUCT_GROUP_ID,
+                1L,
+                5L,
+                DEFAULT_PRODUCT_ID,
+                DEFAULT_SKU_CODE,
+                null,
+                null,
+                null,
+                null,
+                DEFAULT_EXTERNAL_PRODUCT_ID,
+                DEFAULT_EXTERNAL_OPTION_ID,
+                DEFAULT_EXTERNAL_PRODUCT_NAME,
+                DEFAULT_EXTERNAL_OPTION_NAME,
+                DEFAULT_EXTERNAL_IMAGE_URL,
+                DEFAULT_UNIT_PRICE,
+                DEFAULT_QUANTITY,
+                DEFAULT_TOTAL_AMOUNT,
+                DEFAULT_DISCOUNT_AMOUNT,
+                0,
+                DEFAULT_PAYMENT_AMOUNT,
+                DEFAULT_RECEIVER_NAME,
+                DEFAULT_RECEIVER_PHONE,
+                DEFAULT_RECEIVER_ZIPCODE,
+                DEFAULT_RECEIVER_ADDRESS,
+                DEFAULT_RECEIVER_ADDRESS_DETAIL,
+                DEFAULT_DELIVERY_REQUEST,
+                "READY",
+                null,
+                0,
+                0,
+                now,
+                now);
+    }
+
     /** 가격을 지정한 주문 상품 Entity 생성. */
     public static OrderItemJpaEntity itemWithPrice(String orderId, int unitPrice, int quantity) {
         Instant now = Instant.now();
         int totalAmount = unitPrice * quantity;
-        long itemId = System.nanoTime();
+        long seq = SEQUENCE.incrementAndGet();
         return OrderItemJpaEntity.create(
-                itemId,
-                "ORD-20240101-" + itemId + "-001",
+                null,
+                "ORD-20240101-" + seq + "-001",
                 orderId,
                 DEFAULT_PRODUCT_GROUP_ID,
                 1L,

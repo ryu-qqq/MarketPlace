@@ -21,8 +21,7 @@ public class LegacyOrderUpdateService implements LegacyOrderUpdateUseCase {
     private final LegacyOrderMarketRouter marketRouter;
 
     public LegacyOrderUpdateService(
-            LegacyOrderIdResolver idResolver,
-            LegacyOrderMarketRouter marketRouter) {
+            LegacyOrderIdResolver idResolver, LegacyOrderMarketRouter marketRouter) {
         this.idResolver = idResolver;
         this.marketRouter = marketRouter;
     }
@@ -30,10 +29,14 @@ public class LegacyOrderUpdateService implements LegacyOrderUpdateUseCase {
     @Override
     @Transactional
     public LegacyOrderUpdateResult execute(LegacyOrderUpdateCommand command) {
-        LegacyOrderIdMapping mapping = idResolver
-                .resolve(command.orderId())
-                .orElseThrow(() -> new com.ryuqq.marketplace.domain.order.exception.OrderNotFoundException(
-                        String.valueOf(command.orderId())));
+        LegacyOrderIdMapping mapping =
+                idResolver
+                        .resolve(command.orderId())
+                        .orElseThrow(
+                                () ->
+                                        new com.ryuqq.marketplace.domain.order.exception
+                                                .OrderNotFoundException(
+                                                String.valueOf(command.orderId())));
 
         marketRouter.route(command, mapping);
 

@@ -1,7 +1,7 @@
 package com.ryuqq.marketplace.application.legacy.productcontext;
 
-import com.ryuqq.marketplace.application.product.dto.command.UpdateProductsCommand;
 import com.ryuqq.marketplace.application.product.dto.command.UpdateProductStockCommand;
+import com.ryuqq.marketplace.application.product.dto.command.UpdateProductsCommand;
 import com.ryuqq.marketplace.application.productgroup.dto.command.UpdateProductGroupFullCommand;
 import com.ryuqq.marketplace.domain.legacyconversion.vo.ResolvedLegacyProductIds;
 import com.ryuqq.marketplace.domain.product.id.ProductId;
@@ -37,7 +37,9 @@ public final class LegacyProductContextFixtures {
                         LEGACY_PRODUCT_ID_1, ProductId.of(INTERNAL_PRODUCT_ID_1),
                         LEGACY_PRODUCT_ID_2, ProductId.of(INTERNAL_PRODUCT_ID_2));
         return new ResolvedLegacyProductIds(
-                LEGACY_PRODUCT_GROUP_ID, ProductGroupId.of(INTERNAL_PRODUCT_GROUP_ID), productIdMap);
+                LEGACY_PRODUCT_GROUP_ID,
+                ProductGroupId.of(INTERNAL_PRODUCT_GROUP_ID),
+                productIdMap);
     }
 
     public static ResolvedLegacyProductIds resolvedLegacyProductIdsEmpty() {
@@ -94,7 +96,8 @@ public final class LegacyProductContextFixtures {
                 1L,
                 "SINGLE",
                 List.of(
-                        new UpdateProductGroupFullCommand.ImageCommand("THUMBNAIL", "https://example.com/img.jpg", 0)),
+                        new UpdateProductGroupFullCommand.ImageCommand(
+                                "THUMBNAIL", "https://example.com/img.jpg", 0)),
                 List.of(),
                 List.of(
                         new UpdateProductGroupFullCommand.ProductCommand(

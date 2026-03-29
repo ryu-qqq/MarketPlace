@@ -41,7 +41,8 @@ class LegacyProductUpdatePriceServiceTest {
             long regularPrice = 10000L;
             long currentPrice = 9000L;
             Instant now = Instant.now();
-            ResolvedLegacyProductIds resolved = LegacyProductContextFixtures.resolvedLegacyProductIds();
+            ResolvedLegacyProductIds resolved =
+                    LegacyProductContextFixtures.resolvedLegacyProductIds();
 
             given(resolveFactory.resolve(productGroupId)).willReturn(resolved);
             given(resolveFactory.now()).willReturn(now);
@@ -54,11 +55,7 @@ class LegacyProductUpdatePriceServiceTest {
             then(resolveFactory).should().now();
             then(bulkCommandCoordinator)
                     .should()
-                    .updatePriceAll(
-                            eq(resolved.resolvedProductGroupId()),
-                            any(),
-                            any(),
-                            eq(now));
+                    .updatePriceAll(eq(resolved.resolvedProductGroupId()), any(), any(), eq(now));
         }
 
         @Test
@@ -68,7 +65,8 @@ class LegacyProductUpdatePriceServiceTest {
             long productGroupId = LegacyProductContextFixtures.LEGACY_PRODUCT_GROUP_ID;
             long samePrice = 8000L;
             Instant now = Instant.now();
-            ResolvedLegacyProductIds resolved = LegacyProductContextFixtures.resolvedLegacyProductIds();
+            ResolvedLegacyProductIds resolved =
+                    LegacyProductContextFixtures.resolvedLegacyProductIds();
 
             given(resolveFactory.resolve(productGroupId)).willReturn(resolved);
             given(resolveFactory.now()).willReturn(now);
@@ -79,11 +77,7 @@ class LegacyProductUpdatePriceServiceTest {
             // then
             then(bulkCommandCoordinator)
                     .should()
-                    .updatePriceAll(
-                            eq(resolved.resolvedProductGroupId()),
-                            any(),
-                            any(),
-                            eq(now));
+                    .updatePriceAll(eq(resolved.resolvedProductGroupId()), any(), any(), eq(now));
         }
     }
 }

@@ -38,8 +38,7 @@ class LegacyProductIdResolverTest {
             // given
             long legacyGroupId = LegacyConversionFixtures.DEFAULT_LEGACY_PRODUCT_GROUP_ID;
             LegacyProductIdMapping mapping =
-                    LegacyConversionFixtures.mappingWithGroup(
-                            1L, 200L, 300L, legacyGroupId, 400L);
+                    LegacyConversionFixtures.mappingWithGroup(1L, 200L, 300L, legacyGroupId, 400L);
 
             given(mappingReadManager.findByLegacyProductGroupId(legacyGroupId))
                     .willReturn(List.of(mapping));
@@ -157,7 +156,8 @@ class LegacyProductIdResolverTest {
             // given
             long internalGroupId = LegacyConversionFixtures.DEFAULT_INTERNAL_PRODUCT_GROUP_ID;
             LegacyProductIdMapping mapping =
-                    LegacyConversionFixtures.mappingWithGroup(1L, 200L, 300L, 100L, internalGroupId);
+                    LegacyConversionFixtures.mappingWithGroup(
+                            1L, 200L, 300L, 100L, internalGroupId);
 
             given(mappingReadManager.findByInternalProductGroupId(internalGroupId))
                     .willReturn(List.of(mapping));
@@ -232,16 +232,17 @@ class LegacyProductIdResolverTest {
             // given
             long internalGroupId = LegacyConversionFixtures.DEFAULT_INTERNAL_PRODUCT_GROUP_ID;
             LegacyProductIdMapping m1 =
-                    LegacyConversionFixtures.mappingWithGroup(1L, 201L, 301L, 100L, internalGroupId);
+                    LegacyConversionFixtures.mappingWithGroup(
+                            1L, 201L, 301L, 100L, internalGroupId);
             LegacyProductIdMapping m2 =
-                    LegacyConversionFixtures.mappingWithGroup(2L, 202L, 302L, 100L, internalGroupId);
+                    LegacyConversionFixtures.mappingWithGroup(
+                            2L, 202L, 302L, 100L, internalGroupId);
 
             given(mappingReadManager.findByInternalProductGroupId(internalGroupId))
                     .willReturn(List.of(m1, m2));
 
             // when
-            Map<Long, Long> result =
-                    sut.reverseResolveProductIdsByInternalGroupId(internalGroupId);
+            Map<Long, Long> result = sut.reverseResolveProductIdsByInternalGroupId(internalGroupId);
 
             // then
             assertThat(result).hasSize(2);

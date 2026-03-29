@@ -3,14 +3,11 @@ package com.ryuqq.marketplace.application.legacy.shared.assembler;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.ryuqq.marketplace.application.legacy.productcontext.LegacyProductContextFixtures;
-import com.ryuqq.marketplace.application.legacy.productgroup.LegacyProductGroupQueryFixtures;
 import com.ryuqq.marketplace.application.legacy.productgroup.dto.response.LegacyProductGroupPageResult;
 import com.ryuqq.marketplace.application.legacy.shared.dto.result.LegacyProductGroupDetailResult;
-import com.ryuqq.marketplace.application.product.dto.response.ProductDetailResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupDetailCompositeResult;
 import com.ryuqq.marketplace.application.productgroup.dto.composite.ProductGroupListCompositeResult;
 import com.ryuqq.marketplace.application.productgroup.dto.response.ProductGroupPageResult;
-import com.ryuqq.marketplace.application.productgroup.dto.response.ProductOptionMatrixResult;
 import com.ryuqq.marketplace.domain.legacyconversion.vo.ResolvedLegacyProductIds;
 import com.ryuqq.marketplace.domain.productgroup.ProductGroupFixtures;
 import java.time.Instant;
@@ -41,7 +38,8 @@ class LegacyProductGroupFromMarketAssemblerTest {
         void toDetailResult_ValidComposite_ReturnsLegacyDetailResult() {
             // given
             Instant now = Instant.now();
-            ResolvedLegacyProductIds resolved = LegacyProductContextFixtures.resolvedLegacyProductIds();
+            ResolvedLegacyProductIds resolved =
+                    LegacyProductContextFixtures.resolvedLegacyProductIds();
             ProductGroupDetailCompositeResult composite = createCompositeResult(200L, now);
 
             // when

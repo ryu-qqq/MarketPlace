@@ -4,8 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 
 import com.ryuqq.marketplace.application.legacy.order.assembler.LegacyOrderFromMarketAssembler;
 import com.ryuqq.marketplace.application.legacy.order.dto.result.LegacyOrderDetailResult;
@@ -73,25 +71,54 @@ class LegacyOrderQueryServiceTest {
         given(idResolver.resolve(legacyOrderId)).willReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.execute(legacyOrderId))
-                .isInstanceOf(com.ryuqq.marketplace.domain.order.exception.OrderNotFoundException.class);
+                .isInstanceOf(
+                        com.ryuqq.marketplace.domain.order.exception.OrderNotFoundException.class);
     }
 
     private ProductOrderDetailResult createDetail(String orderItemStatus) {
         return new ProductOrderDetailResult(
-                new OrderInfo("order-uuid", "ORD-001", 1L, 10L, "SETOF", "세토프",
-                        null, null, "홍길동", "buyer@test.com", "010-0000-0000",
-                        Instant.now(), Instant.now()),
-                new ProductOrderInfo(1001L, "ORD-001-001", 100L, 200L, "SKU-001",
-                        "상품그룹", "브랜드", "셀러", "img.jpg",
-                        null, null, null, "블랙/L", null,
-                        10000, 1, 10000, 0, 10000),
-                new PaymentInfo("pay-uuid", "PAY-001", "PAID", "CARD", null,
-                        10000, Instant.now(), null),
-                new ReceiverInfo("김수령", "010-1111-2222", "12345",
-                        "서울시 강남구", "101호", "문앞"),
+                new OrderInfo(
+                        "order-uuid",
+                        "ORD-001",
+                        1L,
+                        10L,
+                        "SETOF",
+                        "세토프",
+                        null,
+                        null,
+                        "홍길동",
+                        "buyer@test.com",
+                        "010-0000-0000",
+                        Instant.now(),
+                        Instant.now()),
+                new ProductOrderInfo(
+                        1001L,
+                        "ORD-001-001",
+                        100L,
+                        200L,
+                        "SKU-001",
+                        "상품그룹",
+                        "브랜드",
+                        "셀러",
+                        "img.jpg",
+                        null,
+                        null,
+                        null,
+                        "블랙/L",
+                        null,
+                        10000,
+                        1,
+                        10000,
+                        0,
+                        10000),
+                new PaymentInfo(
+                        "pay-uuid", "PAY-001", "PAID", "CARD", null, 10000, Instant.now(), null),
+                new ReceiverInfo("김수령", "010-1111-2222", "12345", "서울시 강남구", "101호", "문앞"),
                 new DeliveryInfo(orderItemStatus, null),
-                CancelSummary.none(1), ClaimSummary.none(1),
-                List.of(), List.of(), List.of());
+                CancelSummary.none(1),
+                ClaimSummary.none(1),
+                List.of(),
+                List.of(),
+                List.of());
     }
-
 }

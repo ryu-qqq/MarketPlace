@@ -86,8 +86,7 @@ class LegacyProductIdMappingTest {
         void reconstituteMappingWithGroupInfo() {
             // when
             LegacyProductIdMapping mapping =
-                    LegacyConversionFixtures.mappingWithGroup(
-                            5L, 201L, 301L, 101L, 401L);
+                    LegacyConversionFixtures.mappingWithGroup(5L, 201L, 301L, 101L, 401L);
 
             // then
             assertThat(mapping.legacyProductGroupId()).isEqualTo(101L);

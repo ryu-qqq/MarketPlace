@@ -233,13 +233,20 @@ public class LegacyGlobalExceptionHandler {
         String detail = Optional.ofNullable(mapped.detail()).orElse("요청 처리에 실패했습니다.");
 
         if (status.is5xxServerError()) {
-            log.error("Legacy domain exception: code={}, status={}, message={}",
-                    ex.code(), status.value(), detail, ex);
+            log.error(
+                    "Legacy domain exception: code={}, status={}, message={}",
+                    ex.code(),
+                    status.value(),
+                    detail,
+                    ex);
         } else if (status == HttpStatus.NOT_FOUND) {
             log.debug("Legacy domain not found: code={}, message={}", ex.code(), detail);
         } else {
-            log.warn("Legacy domain exception: code={}, status={}, message={}",
-                    ex.code(), status.value(), detail);
+            log.warn(
+                    "Legacy domain exception: code={}, status={}, message={}",
+                    ex.code(),
+                    status.value(),
+                    detail);
         }
 
         return ResponseEntity.status(status)

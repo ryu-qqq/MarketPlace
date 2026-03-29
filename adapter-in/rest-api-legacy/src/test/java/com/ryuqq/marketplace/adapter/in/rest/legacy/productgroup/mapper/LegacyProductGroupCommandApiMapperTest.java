@@ -1,8 +1,6 @@
 package com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
 
 import com.ryuqq.marketplace.adapter.in.rest.legacy.product.mapper.LegacyOptionCommandApiMapper;
 import com.ryuqq.marketplace.adapter.in.rest.legacy.productgroup.LegacyProductGroupApiFixtures;
@@ -15,7 +13,6 @@ import com.ryuqq.marketplace.application.legacy.productcontext.resolver.LegacyNo
 import com.ryuqq.marketplace.application.legacy.productgroup.dto.command.LegacyMarkOutOfStockCommand;
 import com.ryuqq.marketplace.application.legacy.productgroup.dto.command.LegacyUpdateDisplayStatusCommand;
 import com.ryuqq.marketplace.application.legacy.shared.dto.response.LegacyProductRegistrationResult;
-import com.ryuqq.marketplace.domain.notice.aggregate.NoticeCategory;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -46,7 +43,8 @@ class LegacyProductGroupCommandApiMapperTest {
                         legacyImageCommandApiMapper,
                         legacyDescriptionCommandApiMapper,
                         legacyOptionCommandApiMapper,
-                        new com.ryuqq.marketplace.adapter.in.rest.legacy.product.validator.LegacyOptionValidator());
+                        new com.ryuqq.marketplace.adapter.in.rest.legacy.product.validator
+                                .LegacyOptionValidator());
     }
 
     @Nested
@@ -145,7 +143,9 @@ class LegacyProductGroupCommandApiMapperTest {
             // then
             assertThat(command.productGroupId()).isEqualTo(0L);
             assertThat(command.noticeCategoryId())
-                    .isEqualTo(com.ryuqq.marketplace.domain.legacy.notice.vo.LegacyNoticeFieldMapping.LEGACY_NOTICE_CATEGORY_ID);
+                    .isEqualTo(
+                            com.ryuqq.marketplace.domain.legacy.notice.vo.LegacyNoticeFieldMapping
+                                    .LEGACY_NOTICE_CATEGORY_ID);
             assertThat(command.entries()).isEmpty();
         }
 

@@ -16,8 +16,7 @@ import org.springframework.stereotype.Component;
 /**
  * 레거시 상품그룹 QueryFactory.
  *
- * <p>레거시 검색 파라미터를 표준 검색 파라미터로 변환합니다.
- * sellerId/brandId/categoryId를 internal ID로 resolve합니다.
+ * <p>레거시 검색 파라미터를 표준 검색 파라미터로 변환합니다. sellerId/brandId/categoryId를 internal ID로 resolve합니다.
  */
 @Component
 public class LegacyProductGroupQueryFactory {
@@ -35,9 +34,7 @@ public class LegacyProductGroupQueryFactory {
         this.categoryIdResolver = categoryIdResolver;
     }
 
-    /**
-     * 레거시 검색 파라미터를 레거시 검색 Criteria로 변환합니다 (luxurydb 직접 조회용, 하위 호환).
-     */
+    /** 레거시 검색 파라미터를 레거시 검색 Criteria로 변환합니다 (luxurydb 직접 조회용, 하위 호환). */
     public LegacyProductGroupSearchCriteria createCriteria(LegacyProductGroupSearchParams params) {
         return LegacyProductGroupSearchCriteria.of(
                 params.sellerId(),
@@ -63,24 +60,21 @@ public class LegacyProductGroupQueryFactory {
      *
      * <p>sellerId/brandId/categoryId를 internal ID로 resolve합니다.
      */
-    public ProductGroupSearchParams toStandardSearchParams(
-            LegacyProductGroupSearchParams params) {
+    public ProductGroupSearchParams toStandardSearchParams(LegacyProductGroupSearchParams params) {
         List<String> statuses = resolveStatuses(params.soldOutYn(), params.displayYn());
 
         // sellerId는 LegacyAccessChecker에서 이미 internal ID로 resolve됨
-        List<Long> sellerIds = params.sellerId() != null
-                ? List.of(params.sellerId())
-                : List.of();
+        List<Long> sellerIds = params.sellerId() != null ? List.of(params.sellerId()) : List.of();
 
-        List<Long> brandIds = params.brandId() != null
-                ? List.of(brandIdResolver.resolve(params.brandId()))
-                : List.of();
+        List<Long> brandIds =
+                params.brandId() != null
+                        ? List.of(brandIdResolver.resolve(params.brandId()))
+                        : List.of();
 
-        List<Long> categoryIds = params.categoryIds() != null
-                ? params.categoryIds().stream()
-                        .map(categoryIdResolver::resolve)
-                        .toList()
-                : List.of();
+        List<Long> categoryIds =
+                params.categoryIds() != null
+                        ? params.categoryIds().stream().map(categoryIdResolver::resolve).toList()
+                        : List.of();
 
         CommonSearchParams commonParams =
                 CommonSearchParams.of(

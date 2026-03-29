@@ -112,7 +112,7 @@ public class LegacyOrderConversionFactory {
             Instant now) {
 
         String orderId = UUID.randomUUID().toString();
-        Long orderItemId = idGeneratorPort.generateLong();
+        Long orderItemId = null; // auto_increment — persist 후 PersistenceFacade에서 할당
         OrderNumber orderNumber = OrderNumber.generate();
 
         Order order =
@@ -203,7 +203,7 @@ public class LegacyOrderConversionFactory {
             LegacyOrderResolvedIds resolvedIds,
             Instant now) {
 
-        OrderItemId id = OrderItemId.forNew(orderItemId);
+        OrderItemId id = OrderItemId.forNew();
         OrderItemNumber itemNumber = OrderItemNumber.generate(orderNumber, 1);
 
         InternalProductReference internalProduct =

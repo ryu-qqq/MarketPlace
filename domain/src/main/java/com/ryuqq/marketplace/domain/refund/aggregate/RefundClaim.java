@@ -28,7 +28,7 @@ public class RefundClaim {
 
     private final RefundClaimId id;
     private final RefundClaimNumber claimNumber;
-    private final OrderItemId orderItemId;
+    private OrderItemId orderItemId;
     private final long sellerId;
     private final int refundQty;
     private RefundStatus status;
@@ -302,7 +302,11 @@ public class RefundClaim {
     }
 
     public Long orderItemIdValue() {
-        return orderItemId.value();
+        return orderItemId != null ? orderItemId.value() : null;
+    }
+
+    public void assignOrderItemId(OrderItemId orderItemId) {
+        this.orderItemId = orderItemId;
     }
 
     public long sellerId() {

@@ -29,7 +29,6 @@ import com.ryuqq.marketplace.application.selleroption.dto.command.UpdateSellerOp
 import com.ryuqq.marketplace.domain.brand.id.BrandId;
 import com.ryuqq.marketplace.domain.category.id.CategoryId;
 import com.ryuqq.marketplace.domain.notice.aggregate.NoticeCategory;
-import com.ryuqq.marketplace.domain.notice.aggregate.NoticeField;
 import com.ryuqq.marketplace.domain.productgroup.id.ProductGroupId;
 import com.ryuqq.marketplace.domain.productgroup.vo.OptionType;
 import com.ryuqq.marketplace.domain.productgroup.vo.ProductGroupName;
@@ -40,7 +39,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.springframework.stereotype.Component;
 
@@ -56,14 +54,17 @@ public class LegacyProductGroupCommandApiMapper {
     private final LegacyImageCommandApiMapper legacyImageCommandApiMapper;
     private final LegacyDescriptionCommandApiMapper legacyDescriptionCommandApiMapper;
     private final LegacyOptionCommandApiMapper legacyOptionCommandApiMapper;
-    private final com.ryuqq.marketplace.adapter.in.rest.legacy.product.validator.LegacyOptionValidator optionValidator;
+    private final com.ryuqq.marketplace.adapter.in.rest.legacy.product.validator
+                    .LegacyOptionValidator
+            optionValidator;
 
     public LegacyProductGroupCommandApiMapper(
             LegacyNoticeCategoryResolver legacyNoticeCategoryResolver,
             LegacyImageCommandApiMapper legacyImageCommandApiMapper,
             LegacyDescriptionCommandApiMapper legacyDescriptionCommandApiMapper,
             LegacyOptionCommandApiMapper legacyOptionCommandApiMapper,
-            com.ryuqq.marketplace.adapter.in.rest.legacy.product.validator.LegacyOptionValidator optionValidator) {
+            com.ryuqq.marketplace.adapter.in.rest.legacy.product.validator.LegacyOptionValidator
+                    optionValidator) {
         this.legacyNoticeCategoryResolver = legacyNoticeCategoryResolver;
         this.legacyImageCommandApiMapper = legacyImageCommandApiMapper;
         this.legacyDescriptionCommandApiMapper = legacyDescriptionCommandApiMapper;
@@ -225,9 +226,7 @@ public class LegacyProductGroupCommandApiMapper {
                                 i -> {
                                     var img = request.productImageList().get(i);
                                     return new RegisterProductGroupCommand.ImageCommand(
-                                            convertLegacyImageType(img.type()),
-                                            img.originUrl(),
-                                            i);
+                                            convertLegacyImageType(img.type()), img.originUrl(), i);
                                 })
                         .toList();
 
@@ -245,8 +244,11 @@ public class LegacyProductGroupCommandApiMapper {
                                                 opt.quantity(),
                                                 0,
                                                 opt.options().stream()
-                                                        .map(d -> new SelectedOption(
-                                                                d.optionName(), d.optionValue()))
+                                                        .map(
+                                                                d ->
+                                                                        new SelectedOption(
+                                                                                d.optionName(),
+                                                                                d.optionValue()))
                                                         .toList()))
                         .toList();
 

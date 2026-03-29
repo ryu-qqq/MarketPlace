@@ -44,9 +44,10 @@ class LegacyProductQueryServiceTest {
         void execute_ValidLegacyGroupId_ResolvesAndReturnsLegacyResult() {
             // given
             long legacyGroupId = LegacyProductContextFixtures.LEGACY_PRODUCT_GROUP_ID;
-            ResolvedLegacyProductIds resolved = LegacyProductContextFixtures.resolvedLegacyProductIds();
-            ProductGroupDetailCompositeResult composite = createCompositeResult(
-                    resolved.resolvedProductGroupId().value());
+            ResolvedLegacyProductIds resolved =
+                    LegacyProductContextFixtures.resolvedLegacyProductIds();
+            ProductGroupDetailCompositeResult composite =
+                    createCompositeResult(resolved.resolvedProductGroupId().value());
             LegacyProductGroupDetailResult expectedResult =
                     LegacyProductGroupQueryFixtures.detailResult(legacyGroupId);
 

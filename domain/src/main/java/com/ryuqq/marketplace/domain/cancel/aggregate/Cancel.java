@@ -26,7 +26,7 @@ public class Cancel {
 
     private final CancelId id;
     private final CancelNumber cancelNumber;
-    private final OrderItemId orderItemId;
+    private OrderItemId orderItemId;
     private final long sellerId;
     private final int cancelQty;
     private final CancelType type;
@@ -274,7 +274,11 @@ public class Cancel {
     }
 
     public Long orderItemIdValue() {
-        return orderItemId.value();
+        return orderItemId != null ? orderItemId.value() : null;
+    }
+
+    public void assignOrderItemId(OrderItemId orderItemId) {
+        this.orderItemId = orderItemId;
     }
 
     public long sellerId() {

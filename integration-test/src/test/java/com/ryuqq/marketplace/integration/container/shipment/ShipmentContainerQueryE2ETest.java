@@ -76,7 +76,7 @@ class ShipmentContainerQueryE2ETest extends ContainerE2ETestBase {
         OrderJpaEntity order = OrderJpaEntityFixtures.orderedEntity(orderId);
         orderRepository.save(order);
 
-        OrderItemJpaEntity orderItem = createOrderItem(System.nanoTime(), orderId);
+        OrderItemJpaEntity orderItem = createOrderItem(orderId);
         OrderItemJpaEntity savedOrderItem = orderItemRepository.save(orderItem);
         Long orderItemId = savedOrderItem.getId();
 
@@ -85,10 +85,10 @@ class ShipmentContainerQueryE2ETest extends ContainerE2ETestBase {
         return shipmentRepository.save(shipment);
     }
 
-    private OrderItemJpaEntity createOrderItem(Long itemId, String orderId) {
+    private OrderItemJpaEntity createOrderItem(String orderId) {
         Instant now = Instant.now();
         return OrderItemJpaEntity.create(
-                itemId,
+                null,
                 "ORD-" + UUID.randomUUID().toString().substring(0, 8) + "-001",
                 orderId,
                 OrderItemJpaEntityFixtures.DEFAULT_PRODUCT_GROUP_ID,
@@ -402,7 +402,7 @@ class ShipmentContainerQueryE2ETest extends ContainerE2ETestBase {
             String paymentId = UUID.randomUUID().toString();
 
             orderRepository.save(OrderJpaEntityFixtures.orderedEntity(orderId));
-            OrderItemJpaEntity savedItem = orderItemRepository.save(createOrderItem(System.nanoTime(), orderId));
+            OrderItemJpaEntity savedItem = orderItemRepository.save(createOrderItem(orderId));
             Long orderItemId = savedItem.getId();
             paymentRepository.save(PaymentJpaEntityFixtures.completedEntity(paymentId, orderId));
 

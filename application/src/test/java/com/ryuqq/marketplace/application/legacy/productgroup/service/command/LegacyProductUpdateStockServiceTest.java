@@ -43,7 +43,8 @@ class LegacyProductUpdateStockServiceTest {
             List<UpdateProductStockCommand> commands =
                     LegacyProductContextFixtures.updateStockCommands();
             Instant now = Instant.now();
-            ResolvedLegacyProductIds resolved = LegacyProductContextFixtures.resolvedLegacyProductIds();
+            ResolvedLegacyProductIds resolved =
+                    LegacyProductContextFixtures.resolvedLegacyProductIds();
 
             given(resolveFactory.resolve(productGroupId)).willReturn(resolved);
             given(resolveFactory.now()).willReturn(now);
@@ -56,8 +57,7 @@ class LegacyProductUpdateStockServiceTest {
             then(resolveFactory).should().now();
             then(bulkCommandCoordinator)
                     .should()
-                    .updateStockByProductIds(
-                            eq(resolved.resolvedProductGroupId()), any(), eq(now));
+                    .updateStockByProductIds(eq(resolved.resolvedProductGroupId()), any(), eq(now));
         }
 
         @Test
@@ -79,8 +79,7 @@ class LegacyProductUpdateStockServiceTest {
             // then
             then(bulkCommandCoordinator)
                     .should()
-                    .updateStockByProductIds(
-                            eq(resolved.resolvedProductGroupId()), any(), eq(now));
+                    .updateStockByProductIds(eq(resolved.resolvedProductGroupId()), any(), eq(now));
         }
     }
 }

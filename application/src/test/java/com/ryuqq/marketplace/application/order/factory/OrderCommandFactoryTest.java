@@ -42,7 +42,6 @@ class OrderCommandFactoryTest {
             Instant now = CommonVoFixtures.now();
             given(timeProvider.now()).willReturn(now);
             given(idGeneratorPort.generate()).willReturn("01900000-0000-7000-8000-000000000001");
-            given(idGeneratorPort.generateLong()).willReturn(1001L);
 
             // when
             Order result = sut.createOrder(command);
@@ -52,7 +51,6 @@ class OrderCommandFactoryTest {
             assertThat(result.orderNumber()).isNotNull();
             then(timeProvider).should().now();
             then(idGeneratorPort).should().generate();
-            then(idGeneratorPort).should().generateLong();
         }
 
         @Test
@@ -63,7 +61,6 @@ class OrderCommandFactoryTest {
             Instant now = CommonVoFixtures.now();
             given(timeProvider.now()).willReturn(now);
             given(idGeneratorPort.generate()).willReturn("01900000-0000-7000-8000-000000000001");
-            given(idGeneratorPort.generateLong()).willReturn(1001L);
 
             // when
             Order result = sut.createOrder(command);
@@ -82,7 +79,6 @@ class OrderCommandFactoryTest {
             Instant now = CommonVoFixtures.now();
             given(timeProvider.now()).willReturn(now);
             given(idGeneratorPort.generate()).willReturn("01900000-0000-7000-8000-000000000001");
-            given(idGeneratorPort.generateLong()).willReturn(1001L);
 
             // when
             Order result = sut.createOrder(command);
@@ -101,7 +97,6 @@ class OrderCommandFactoryTest {
             Instant now = CommonVoFixtures.now();
             given(timeProvider.now()).willReturn(now);
             given(idGeneratorPort.generate()).willReturn("01900000-0000-7000-8000-000000000001");
-            given(idGeneratorPort.generateLong()).willReturn(1001L);
 
             // when
             Order result = sut.createOrder(command);
@@ -118,7 +113,6 @@ class OrderCommandFactoryTest {
             Instant now = CommonVoFixtures.now();
             given(timeProvider.now()).willReturn(now);
             given(idGeneratorPort.generate()).willReturn("01900000-0000-7000-8000-000000000001");
-            given(idGeneratorPort.generateLong()).willReturn(1001L);
 
             // when
             Order result = sut.createOrder(command);
@@ -135,7 +129,6 @@ class OrderCommandFactoryTest {
             Instant now = CommonVoFixtures.now();
             given(timeProvider.now()).willReturn(now);
             given(idGeneratorPort.generate()).willReturn("01900000-0000-7000-8000-000000000001");
-            given(idGeneratorPort.generateLong()).willReturn(1001L);
 
             // when
             Order result = sut.createOrder(command);
@@ -152,7 +145,6 @@ class OrderCommandFactoryTest {
             Instant now = CommonVoFixtures.now();
             given(timeProvider.now()).willReturn(now);
             given(idGeneratorPort.generate()).willReturn("01900000-0000-7000-8000-000000000002");
-            given(idGeneratorPort.generateLong()).willReturn(1002L);
 
             // when
             Order result = sut.createOrder(command);
@@ -170,7 +162,6 @@ class OrderCommandFactoryTest {
             Instant now = CommonVoFixtures.now();
             given(timeProvider.now()).willReturn(now);
             given(idGeneratorPort.generate()).willReturn("01900000-0000-7000-8000-000000000001");
-            given(idGeneratorPort.generateLong()).willReturn(1001L);
 
             // when
             Order result = sut.createOrder(command);

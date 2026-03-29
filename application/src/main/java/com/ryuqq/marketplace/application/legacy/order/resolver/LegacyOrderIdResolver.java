@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 /**
  * 레거시 주문 ID ↔ Market 주문 ID 양방향 리졸버.
  *
- * <p>legacy_order_id_mappings 테이블에서 직접 조회합니다.
- * legacyOrderId → internalOrderId(UUID) + internalOrderItemId(Long) 변환.
+ * <p>legacy_order_id_mappings 테이블에서 직접 조회합니다. legacyOrderId → internalOrderId(UUID) +
+ * internalOrderItemId(Long) 변환.
  */
 @Component
 public class LegacyOrderIdResolver {

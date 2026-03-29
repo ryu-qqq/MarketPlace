@@ -2,6 +2,7 @@ package com.ryuqq.marketplace.application.legacyconversion.manager;
 
 import com.ryuqq.marketplace.application.legacyconversion.port.out.query.LegacyOrderIdMappingQueryPort;
 import com.ryuqq.marketplace.domain.legacyconversion.aggregate.LegacyOrderIdMapping;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,5 +36,15 @@ public class LegacyOrderIdMappingReadManager {
      */
     public boolean existsByLegacyOrderId(long legacyOrderId) {
         return queryPort.existsByLegacyOrderId(legacyOrderId);
+    }
+
+    /**
+     * market orderItemId 목록으로 매핑 배치 조회.
+     *
+     * @param orderItemIds market 주문 아이템 ID 목록
+     * @return 매핑 목록
+     */
+    public List<LegacyOrderIdMapping> findByInternalOrderItemIds(List<Long> orderItemIds) {
+        return queryPort.findByInternalOrderItemIds(orderItemIds);
     }
 }

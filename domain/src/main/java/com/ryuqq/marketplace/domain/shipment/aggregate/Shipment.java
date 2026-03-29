@@ -14,7 +14,7 @@ public class Shipment {
 
     private final ShipmentId id;
     private final ShipmentNumber shipmentNumber;
-    private final OrderItemId orderItemId;
+    private OrderItemId orderItemId;
     private ShipmentStatus status;
     private ShipmentMethod shipmentMethod;
     private String trackingNumber;
@@ -181,7 +181,12 @@ public class Shipment {
     }
 
     public Long orderItemIdValue() {
-        return orderItemId.value();
+        return orderItemId != null ? orderItemId.value() : null;
+    }
+
+    /** persist 후 auto_increment로 할당된 orderItemId를 세팅합니다. */
+    public void assignOrderItemId(OrderItemId orderItemId) {
+        this.orderItemId = orderItemId;
     }
 
     public ShipmentStatus status() {

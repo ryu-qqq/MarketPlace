@@ -40,7 +40,8 @@ class LegacyProductGroupFullRegisterServiceTest {
         void execute_ValidCommand_RegistersAndReturnsResult() {
             // given
             RegisterProductGroupCommand command = ProductGroupCommandFixtures.registerCommand();
-            ProductGroupRegistrationBundle bundle = org.mockito.Mockito.mock(ProductGroupRegistrationBundle.class);
+            ProductGroupRegistrationBundle bundle =
+                    org.mockito.Mockito.mock(ProductGroupRegistrationBundle.class);
             ProductGroupRegistrationResult registrationResult =
                     new ProductGroupRegistrationResult(100L, List.of(201L, 202L));
 
@@ -63,8 +64,10 @@ class LegacyProductGroupFullRegisterServiceTest {
         @DisplayName("등록 결과의 productIds가 빈 목록인 경우도 정상 처리한다")
         void execute_EmptyProductIds_ReturnsResultWithEmptyList() {
             // given
-            RegisterProductGroupCommand command = ProductGroupCommandFixtures.registerCommandWithNoOption();
-            ProductGroupRegistrationBundle bundle = org.mockito.Mockito.mock(ProductGroupRegistrationBundle.class);
+            RegisterProductGroupCommand command =
+                    ProductGroupCommandFixtures.registerCommandWithNoOption();
+            ProductGroupRegistrationBundle bundle =
+                    org.mockito.Mockito.mock(ProductGroupRegistrationBundle.class);
             ProductGroupRegistrationResult registrationResult =
                     new ProductGroupRegistrationResult(200L, List.of());
 

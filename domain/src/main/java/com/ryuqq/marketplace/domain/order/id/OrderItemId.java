@@ -1,6 +1,6 @@
 package com.ryuqq.marketplace.domain.order.id;
 
-/** 주문 상품 ID Value Object. 외부에서 Long 값을 주입받습니다. */
+/** 주문 상품 ID Value Object. */
 public record OrderItemId(Long value) {
 
     public static OrderItemId of(Long value) {
@@ -17,7 +17,12 @@ public record OrderItemId(Long value) {
         return of(Long.parseLong(value));
     }
 
-    public static OrderItemId forNew(Long value) {
-        return of(value);
+    /** auto_increment용 — persist 후 ID가 할당됩니다. */
+    public static OrderItemId forNew() {
+        return new OrderItemId(null);
+    }
+
+    public boolean isNew() {
+        return value == null;
     }
 }

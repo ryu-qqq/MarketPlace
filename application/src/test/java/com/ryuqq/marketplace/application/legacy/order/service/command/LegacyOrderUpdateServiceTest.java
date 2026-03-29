@@ -2,7 +2,6 @@ package com.ryuqq.marketplace.application.legacy.order.service.command;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
@@ -32,8 +31,9 @@ class LegacyOrderUpdateServiceTest {
     @DisplayName("매핑이 있으면 market 라우터로 위임")
     void routeToMarket() {
         LegacyOrderUpdateCommand command = command("DELIVERY_COMPLETED");
-        LegacyOrderIdMapping mapping = LegacyOrderIdMapping.forNew(
-                5001L, 9001L, "order-uuid", 1001L, 1L, "SETOF", Instant.now());
+        LegacyOrderIdMapping mapping =
+                LegacyOrderIdMapping.forNew(
+                        5001L, 9001L, "order-uuid", 1001L, 1L, "SETOF", Instant.now());
 
         given(idResolver.resolve(5001L)).willReturn(Optional.of(mapping));
 
@@ -51,12 +51,12 @@ class LegacyOrderUpdateServiceTest {
         given(idResolver.resolve(5001L)).willReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.execute(command))
-                .isInstanceOf(com.ryuqq.marketplace.domain.order.exception.OrderNotFoundException.class);
+                .isInstanceOf(
+                        com.ryuqq.marketplace.domain.order.exception.OrderNotFoundException.class);
     }
 
     private LegacyOrderUpdateCommand command(String orderStatus) {
         return new LegacyOrderUpdateCommand(
-                "normalOrder", 5001L, orderStatus, null,
-                "사유", "상세", null, null, null);
+                "normalOrder", 5001L, orderStatus, null, "사유", "상세", null, null, null);
     }
 }

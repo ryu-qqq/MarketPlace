@@ -53,8 +53,9 @@ class LegacyOrderMarketRouterTest {
 
     @InjectMocks private LegacyOrderMarketRouter router;
 
-    private final LegacyOrderIdMapping mapping = LegacyOrderIdMapping.forNew(
-            5001L, 9001L, "order-uuid", 1001L, 1L, "SETOF", Instant.now());
+    private final LegacyOrderIdMapping mapping =
+            LegacyOrderIdMapping.forNew(
+                    5001L, 9001L, "order-uuid", 1001L, 1L, "SETOF", Instant.now());
 
     @Test
     @DisplayName("DELIVERY_COMPLETED → DeliverOrderUseCase 호출")
@@ -63,25 +64,38 @@ class LegacyOrderMarketRouterTest {
 
         router.route(command, mapping);
 
-        verify(deliverOrderUseCase).execute(
-                argThat((OrderItemStatusCommand cmd) ->
-                        cmd.orderItemIds().contains("1001") && "legacy-admin".equals(cmd.changedBy())));
+        verify(deliverOrderUseCase)
+                .execute(
+                        argThat(
+                                (OrderItemStatusCommand cmd) ->
+                                        cmd.orderItemIds().contains("1001")
+                                                && "legacy-admin".equals(cmd.changedBy())));
     }
 
     @Test
     @DisplayName("DELIVERY_PROCESSING → ShipSingleUseCase 호출 (송장번호 포함)")
     void routeShip() {
-        LegacyOrderUpdateCommand command = new LegacyOrderUpdateCommand(
-                "shipOrder", 5001L, "DELIVERY_PROCESSING", null,
-                "배송 시작", "", "1234567890", "04", "PARCEL");
+        LegacyOrderUpdateCommand command =
+                new LegacyOrderUpdateCommand(
+                        "shipOrder",
+                        5001L,
+                        "DELIVERY_PROCESSING",
+                        null,
+                        "배송 시작",
+                        "",
+                        "1234567890",
+                        "04",
+                        "PARCEL");
 
         router.route(command, mapping);
 
-        verify(shipSingleUseCase).execute(
-                argThat((ShipSingleCommand cmd) ->
-                        cmd.orderItemId() == 1001L
-                                && "1234567890".equals(cmd.trackingNumber())
-                                && "04".equals(cmd.courierCode())));
+        verify(shipSingleUseCase)
+                .execute(
+                        argThat(
+                                (ShipSingleCommand cmd) ->
+                                        cmd.orderItemId() == 1001L
+                                                && "1234567890".equals(cmd.trackingNumber())
+                                                && "04".equals(cmd.courierCode())));
     }
 
     @Test
@@ -152,7 +166,9 @@ class LegacyOrderMarketRouterTest {
                 .willReturn(Optional.empty());
 
         assertThatThrownBy(() -> router.route(command, mapping))
-                .isInstanceOf(com.ryuqq.marketplace.domain.cancel.exception.CancelNotFoundException.class);
+                .isInstanceOf(
+                        com.ryuqq.marketplace.domain.cancel.exception.CancelNotFoundException
+                                .class);
     }
 
     @Test
@@ -167,7 +183,6 @@ class LegacyOrderMarketRouterTest {
 
     private LegacyOrderUpdateCommand command(String orderStatus) {
         return new LegacyOrderUpdateCommand(
-                "normalOrder", 5001L, orderStatus, null,
-                "사유", "상세 사유", null, null, null);
+                "normalOrder", 5001L, orderStatus, null, "사유", "상세 사유", null, null, null);
     }
 }

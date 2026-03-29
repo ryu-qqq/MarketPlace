@@ -65,14 +65,13 @@ public class LegacyOrderListQueryService implements LegacyOrderListQueryUseCase 
     private LegacyOrderPageResult convertFromMarket(ProductOrderPageResult pageResult) {
         List<ProductOrderListResult> items = pageResult.productOrders();
 
-        List<Long> orderItemIds = items.stream()
-                .map(i -> i.productOrder().orderItemId())
-                .toList();
+        List<Long> orderItemIds = items.stream().map(i -> i.productOrder().orderItemId()).toList();
         Map<Long, LegacyOrderIdMapping> mappingMap =
                 mappingReadManager.findByInternalOrderItemIds(orderItemIds).stream()
-                        .collect(Collectors.toMap(
-                                LegacyOrderIdMapping::internalOrderItemId,
-                                Function.identity()));
+                        .collect(
+                                Collectors.toMap(
+                                        LegacyOrderIdMapping::internalOrderItemId,
+                                        Function.identity()));
 
         List<OrderItemId> itemIdList = orderItemIds.stream().map(OrderItemId::of).toList();
         Map<Long, Shipment> shipmentMap =
@@ -95,51 +94,49 @@ public class LegacyOrderListQueryService implements LegacyOrderListQueryUseCase 
         }
 
         long totalElements = pageResult.pageMeta().totalElements();
-        Long lastDomainId = converted.isEmpty()
-                ? null
-                : converted.getLast().order().orderId();
+        Long lastDomainId = converted.isEmpty() ? null : converted.getLast().order().orderId();
 
         return new LegacyOrderPageResult(converted, totalElements, lastDomainId);
     }
 
     private OrderSearchParams toMarketSearchParams(LegacyOrderSearchParams params) {
-        CommonSearchParams commonParams = CommonSearchParams.of(
-                false,
-                params.startDate() != null ? params.startDate().toLocalDate() : null,
-                params.endDate() != null ? params.endDate().toLocalDate() : null,
-                "createdAt",
-                "DESC",
-                0,
-                params.size());
+        CommonSearchParams commonParams =
+                CommonSearchParams.of(
+                        false,
+                        params.startDate() != null ? params.startDate().toLocalDate() : null,
+                        params.endDate() != null ? params.endDate().toLocalDate() : null,
+                        "createdAt",
+                        "DESC",
+                        0,
+                        params.size());
 
         List<String> marketStatuses = convertLegacyStatuses(params.orderStatusList());
 
         return new OrderSearchParams(
-                marketStatuses,
-                null,
-                null,
-                null,
-                params.sellerId(),
-                commonParams);
+                marketStatuses, null, null, null, params.sellerId(), commonParams);
     }
 
     private List<String> convertLegacyStatuses(List<String> legacyStatuses) {
         if (legacyStatuses == null || legacyStatuses.isEmpty()) {
             return List.of();
         }
-        return legacyStatuses.stream()
-                .map(this::toLegacyToMarketStatus)
-                .distinct()
-                .toList();
+        return legacyStatuses.stream().map(this::toLegacyToMarketStatus).distinct().toList();
     }
 
     private String toLegacyToMarketStatus(String legacyStatus) {
         return switch (legacyStatus) {
             case "ORDER_PROCESSING", "ORDER_COMPLETED" -> "READY";
-            case "DELIVERY_PENDING", "DELIVERY_PROCESSING", "DELIVERY_COMPLETED",
-                 "SETTLEMENT_PROCESSING", "SETTLEMENT_COMPLETED" -> "CONFIRMED";
-            case "CANCEL_REQUEST_COMPLETED", "CANCEL_REQUEST_CONFIRMED",
-                 "SALE_CANCELLED", "SALE_CANCELLED_COMPLETED" -> "CANCELLED";
+            case "DELIVERY_PENDING",
+                            "DELIVERY_PROCESSING",
+                            "DELIVERY_COMPLETED",
+                            "SETTLEMENT_PROCESSING",
+                            "SETTLEMENT_COMPLETED" ->
+                    "CONFIRMED";
+            case "CANCEL_REQUEST_COMPLETED",
+                            "CANCEL_REQUEST_CONFIRMED",
+                            "SALE_CANCELLED",
+                            "SALE_CANCELLED_COMPLETED" ->
+                    "CANCELLED";
             case "RETURN_REQUEST", "RETURN_REQUEST_CONFIRMED" -> "RETURN_REQUESTED";
             case "RETURN_REQUEST_COMPLETED", "RETURN_REQUEST_REJECTED" -> "RETURNED";
             default -> "READY";

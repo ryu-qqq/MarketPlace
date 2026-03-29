@@ -23,10 +23,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class LegacyInboundApiMapper {
 
-    private final com.ryuqq.marketplace.adapter.in.rest.legacy.product.validator.LegacyOptionValidator optionValidator;
+    private final com.ryuqq.marketplace.adapter.in.rest.legacy.product.validator
+                    .LegacyOptionValidator
+            optionValidator;
 
     public LegacyInboundApiMapper(
-            com.ryuqq.marketplace.adapter.in.rest.legacy.product.validator.LegacyOptionValidator optionValidator) {
+            com.ryuqq.marketplace.adapter.in.rest.legacy.product.validator.LegacyOptionValidator
+                    optionValidator) {
         this.optionValidator = optionValidator;
     }
 

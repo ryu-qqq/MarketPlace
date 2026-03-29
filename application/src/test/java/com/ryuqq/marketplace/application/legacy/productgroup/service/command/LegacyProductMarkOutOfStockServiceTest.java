@@ -44,7 +44,8 @@ class LegacyProductMarkOutOfStockServiceTest {
             long productGroupId = LegacyProductContextFixtures.LEGACY_PRODUCT_GROUP_ID;
             LegacyMarkOutOfStockCommand command = new LegacyMarkOutOfStockCommand(productGroupId);
             Instant now = Instant.now();
-            ResolvedLegacyProductIds resolved = LegacyProductContextFixtures.resolvedLegacyProductIds();
+            ResolvedLegacyProductIds resolved =
+                    LegacyProductContextFixtures.resolvedLegacyProductIds();
             LegacyProductGroupDetailResult expectedResult =
                     LegacyProductGroupQueryFixtures.detailResult(productGroupId);
 

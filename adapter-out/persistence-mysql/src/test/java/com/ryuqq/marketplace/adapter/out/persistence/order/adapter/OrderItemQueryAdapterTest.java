@@ -56,8 +56,8 @@ class OrderItemQueryAdapterTest {
         void findAllByIds_WithValidIds_ReturnsOrderItems() {
             // given
             String orderId = OrderJpaEntityFixtures.DEFAULT_ID;
-            OrderItemJpaEntity entity1 = OrderItemJpaEntityFixtures.defaultItem(orderId);
-            OrderItemJpaEntity entity2 = OrderItemJpaEntityFixtures.defaultItem(orderId);
+            OrderItemJpaEntity entity1 = OrderItemJpaEntityFixtures.defaultItemWithId(orderId);
+            OrderItemJpaEntity entity2 = OrderItemJpaEntityFixtures.defaultItemWithId(orderId);
             List<Long> rawIds = List.of(entity1.getId(), entity2.getId());
             List<OrderItemId> orderItemIds = rawIds.stream().map(OrderItemId::of).toList();
             OrderItem domain1 = OrderFixtures.reconstitutedOrderItem();
@@ -96,7 +96,7 @@ class OrderItemQueryAdapterTest {
         void findAllByIds_WithPartiallyExistingIds_ReturnsFoundEntities() {
             // given
             String orderId = OrderJpaEntityFixtures.DEFAULT_ID;
-            OrderItemJpaEntity entity = OrderItemJpaEntityFixtures.defaultItem(orderId);
+            OrderItemJpaEntity entity = OrderItemJpaEntityFixtures.defaultItemWithId(orderId);
             Long nonExistingId = 99999L;
             List<Long> rawIds = List.of(entity.getId(), nonExistingId);
             List<OrderItemId> orderItemIds = rawIds.stream().map(OrderItemId::of).toList();

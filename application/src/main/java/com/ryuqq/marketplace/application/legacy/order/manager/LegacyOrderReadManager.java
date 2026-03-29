@@ -28,8 +28,9 @@ public class LegacyOrderReadManager {
         return queryPort
                 .fetchOrderDetail(orderId)
                 .orElseThrow(
-                        () -> new com.ryuqq.marketplace.domain.order.exception.OrderNotFoundException(
-                                String.valueOf(orderId)));
+                        () ->
+                                new com.ryuqq.marketplace.domain.order.exception
+                                        .OrderNotFoundException(String.valueOf(orderId)));
     }
 
     public Optional<LegacyOrderDetailResult> fetchOrderDetailOptional(long orderId) {

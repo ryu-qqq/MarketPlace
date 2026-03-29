@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service;
 /**
  * 레거시 productGroupId로 sellerId 조회 서비스.
  *
- * <p>요청 PK를 market PK로 resolve 후, market에서 ProductGroup의 셀러ID를 조회합니다.
- * 반환되는 sellerId는 market internal 셀러ID입니다.
+ * <p>요청 PK를 market PK로 resolve 후, market에서 ProductGroup의 셀러ID를 조회합니다. 반환되는 sellerId는 market
+ * internal 셀러ID입니다.
  */
 @Service
 public class ResolveLegacyProductGroupSellerIdService
@@ -40,7 +40,8 @@ public class ResolveLegacyProductGroupSellerIdService
             ProductGroup pg = productGroupReadManager.getById(ProductGroupId.of(resolvedId));
             return Optional.of(pg.sellerId().value());
         } catch (Exception e) {
-            log.debug("상품그룹 셀러 조회 실패: productGroupId={}, resolvedId={}", productGroupId, resolvedId);
+            log.debug(
+                    "상품그룹 셀러 조회 실패: productGroupId={}, resolvedId={}", productGroupId, resolvedId);
             return Optional.empty();
         }
     }

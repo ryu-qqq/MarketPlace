@@ -28,9 +28,7 @@ public class LegacyBrandIdResolver {
                 .resolveInternalBrandId(SETOF_SOURCE_ID, String.valueOf(legacyBrandId))
                 .orElseGet(
                         () -> {
-                            log.warn(
-                                    "레거시 브랜드 ID 매핑 실패. 원본 ID 사용: legacyBrandId={}",
-                                    legacyBrandId);
+                            log.warn("레거시 브랜드 ID 매핑 실패. 원본 ID 사용: legacyBrandId={}", legacyBrandId);
                             return legacyBrandId;
                         });
     }

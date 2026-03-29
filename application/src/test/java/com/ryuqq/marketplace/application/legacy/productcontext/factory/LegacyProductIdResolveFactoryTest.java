@@ -10,7 +10,6 @@ import com.ryuqq.marketplace.application.legacy.productcontext.resolver.LegacyPr
 import com.ryuqq.marketplace.application.product.dto.command.UpdateProductsCommand;
 import com.ryuqq.marketplace.application.productgroup.dto.command.UpdateProductGroupFullCommand;
 import com.ryuqq.marketplace.domain.legacyconversion.vo.ResolvedLegacyProductIds;
-import com.ryuqq.marketplace.domain.product.id.ProductId;
 import java.time.Instant;
 import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
