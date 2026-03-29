@@ -160,7 +160,7 @@ tasks.bootRun {
 tasks.register('copyRestDocs', Copy) {
     dependsOn ':adapter-in:rest-api:asciidoctor'
     from "${project(':adapter-in:rest-api').buildDir}/docs/asciidoc"
-    into "${sourceSets.main.output.resourcesDir}/static/docs"
+    into "${sourceSets.main.output.resourcesDir}/static/api/v1/market/docs"
 }
 
 // REST docs는 test 실행 시에만 포함 (CI에서 -x test 빌드 시 스킵)
