@@ -84,8 +84,8 @@ class OrderCommandControllerRestDocsTest {
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     pathParameters(
-                                            parameterWithName("orderItemId")
-                                                    .description("상품주문 ID (UUIDv7)")),
+                                            parameterWithName("orderId")
+                                                    .description("주문 ID (V4 간극: 내부 orderItemId)")),
                                     requestFields(
                                             fieldWithPath("message")
                                                     .type(JsonFieldType.STRING)

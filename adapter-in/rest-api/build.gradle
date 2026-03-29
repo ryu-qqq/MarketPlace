@@ -105,7 +105,7 @@ asciidoctor {
         'sectlinks'  : '',
         'sectanchors': '',
         'nofooter'   : '',
-        'stylesdir'  : file('src/docs').absolutePath,
+        'stylesdir'  : file('src/docs/asciidocs').absolutePath,
         'stylesheet' : 'custom-style.css'
     ]
 }

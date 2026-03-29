@@ -7,6 +7,657 @@
 <meta name="generator" content="Asciidoctor 2.0.18">
 <title>SETOF Commerce Admin API Documentation</title>
 <style>
+/* SETOF Commerce Admin API - Custom Documentation Style */
+
+/* Base Settings */
+:root {
+    --primary-color: #2563eb;
+    --primary-dark: #1d4ed8;
+    --secondary-color: #64748b;
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --error-color: #ef4444;
+    --bg-color: #ffffff;
+    --bg-secondary: #f8fafc;
+    --text-color: #1e293b;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    --code-bg: #f1f5f9;
+    --sidebar-width: 300px;
+}
+
+/* Body & Layout - Left TOC Layout */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    margin: 0;
+    padding: 0;
+}
+
+body.toc2 {
+    padding-left: var(--sidebar-width);
+}
+
+body.toc2.toc-left {
+    padding-left: var(--sidebar-width);
+    padding-right: 0;
+}
+
+/* Table of Contents - Fixed Left Sidebar */
+#toc {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: var(--sidebar-width);
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: var(--bg-secondary);
+    border-right: 1px solid var(--border-color);
+    padding: 1.5rem;
+    box-sizing: border-box;
+    font-size: 0.875rem;
+    z-index: 1000;
+}
+
+#toc ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#toc ul ul {
+    padding-left: 1rem;
+    margin-top: 0.25rem;
+}
+
+#toc li {
+    margin: 0.25rem 0;
+}
+
+#toc a {
+    color: var(--text-color);
+    text-decoration: none;
+    display: block;
+    padding: 0.4rem 0.5rem;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    word-wrap: break-word;
+}
+
+#toc a:hover {
+    color: var(--primary-color);
+    background-color: rgba(37, 99, 235, 0.08);
+}
+
+#toctitle {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--primary-color);
+    color: var(--primary-color);
+}
+
+/* Content Area - Right of TOC */
+#content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 3rem;
+}
+
+/* Header */
+#header {
+    padding: 2rem 3rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+#header h1 {
+    margin-top: 0;
+}
+
+/* Headers */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    line-height: 1.3;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+}
+
+h1 { font-size: 2.25rem; border-bottom: 2px solid var(--primary-color); padding-bottom: 0.5rem; }
+h2 { font-size: 1.75rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-top: 3rem; }
+h3 { font-size: 1.375rem; color: var(--primary-dark); }
+h4 { font-size: 1.125rem; }
+h5 { font-size: 1rem; }
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.95rem;
+}
+
+table th {
+    background-color: var(--bg-secondary);
+    color: var(--text-color);
+    font-weight: 600;
+    text-align: left;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+}
+
+table td {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    vertical-align: top;
+}
+
+table tr:nth-child(even) {
+    background-color: var(--bg-secondary);
+}
+
+table tr:hover {
+    background-color: rgba(37, 99, 235, 0.04);
+}
+
+/* Code Blocks */
+pre, code {
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: 0.875rem;
+}
+
+code {
+    background-color: var(--code-bg);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    color: #e11d48;
+}
+
+pre {
+    background-color: #1e293b;
+    color: #e2e8f0;
+    padding: 1.25rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 1rem 0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+}
+
+/* Listing Blocks */
+.listingblock {
+    margin: 1.5rem 0;
+}
+
+.listingblock .title {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+/* Admonition Blocks */
+.admonitionblock {
+    margin: 1.5rem 0;
+    padding: 1rem 1.25rem;
+    border-radius: 8px;
+    border-left: 4px solid;
+}
+
+.admonitionblock.note {
+    background-color: #eff6ff;
+    border-left-color: var(--primary-color);
+}
+
+.admonitionblock.tip {
+    background-color: #ecfdf5;
+    border-left-color: var(--success-color);
+}
+
+.admonitionblock.warning {
+    background-color: #fffbeb;
+    border-left-color: var(--warning-color);
+}
+
+.admonitionblock.caution,
+.admonitionblock.important {
+    background-color: #fef2f2;
+    border-left-color: var(--error-color);
+}
+
+.admonitionblock td.icon {
+    font-weight: 600;
+    padding-right: 0.75rem;
+    vertical-align: top;
+}
+
+/* Inline Links */
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+    color: var(--primary-dark);
+}
+
+/* HTTP Method Badges */
+.http-method {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ==============================
+   TOC - Section Group Styling
+   ============================== */
+
+/* Level 1: API Modules (인증, 셀러 관리, 배송정책, ...) */
+#toc .sectlevel1 > li > a {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--primary-dark);
+    background-color: rgba(37, 99, 235, 0.06);
+    border-left: 4px solid var(--primary-color);
+    padding: 0.5rem 0.75rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.15rem;
+    border-radius: 0 4px 4px 0;
+    letter-spacing: -0.01em;
+}
+
+#toc .sectlevel1 > li > a:hover {
+    background-color: rgba(37, 99, 235, 0.12);
+    color: var(--primary-color);
+}
+
+/* Divider between top-level sections */
+#toc .sectlevel1 > li + li {
+    border-top: 1px solid var(--border-color);
+    padding-top: 0.35rem;
+    margin-top: 0.35rem;
+}
+
+/* First top-level item */
+#toc .sectlevel1 > li:first-child > a {
+    margin-top: 0;
+}
+
+#toc .sectlevel1 > li:first-child {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
+}
+
+/* "개요" section - subtle style (not an API module) */
+#toc .sectlevel1 > li:first-child > a {
+    font-weight: 600;
+    color: var(--text-muted);
+    background-color: transparent;
+    border-left: 4px solid var(--border-color);
+    font-size: 0.85rem;
+}
+
+#toc .sectlevel1 > li:first-child > a:hover {
+    color: var(--text-color);
+    background-color: rgba(100, 116, 139, 0.06);
+}
+
+/* "개요" sub-items - subtle */
+#toc .sectlevel1 > li:first-child .sectlevel2 > li > a {
+    font-weight: 400;
+    font-size: 0.775rem;
+    color: var(--text-muted);
+    border-left: none;
+    padding: 0.2rem 0.4rem;
+    opacity: 0.75;
+}
+
+#toc .sectlevel1 > li:first-child .sectlevel2 > li > a:hover {
+    opacity: 1;
+    color: var(--text-color);
+}
+
+/* Level 2: Endpoints (POST 로그인, GET 셀러 조회, ...) - default */
+#toc .sectlevel2 > li > a {
+    font-weight: 500;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    padding: 0.25rem 0.5rem;
+    margin-top: 0;
+    line-height: 1.4;
+    border-left: none;
+    background-color: transparent;
+}
+
+#toc .sectlevel2 > li {
+    margin: 0.1rem 0;
+}
+
+#toc .sectlevel2 > li > a:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+/* Level 3: Sub-sections (Request Fields, Response, Path Parameters ...) */
+#toc .sectlevel3 > li > a {
+    font-weight: 400;
+    font-size: 0.725rem;
+    color: var(--text-muted);
+    padding: 0.15rem 0.4rem;
+    line-height: 1.3;
+    opacity: 0.65;
+}
+
+#toc .sectlevel3 > li {
+    margin: 0.02rem 0;
+}
+
+#toc .sectlevel3 > li > a:hover {
+    opacity: 1;
+    color: var(--text-color);
+    background-color: rgba(0, 0, 0, 0.03);
+}
+
+/* ==============================
+   TOC - HTTP Method Colors (Level 2 endpoints)
+   ============================== */
+
+/* GET - Green */
+#toc .sectlevel2 a[href*="get-"],
+#toc .sectlevel2 a[href*="-get"],
+#toc .sectlevel2 a[href*="search"],
+#toc .sectlevel2 a[href*="-me"],
+#toc .sectlevel2 a[href*="조회"] {
+    color: #059669;
+    border-left: 3px solid #10b981;
+    padding-left: 0.6rem;
+}
+
+#toc .sectlevel2 a[href*="get-"]:hover,
+#toc .sectlevel2 a[href*="-get"]:hover,
+#toc .sectlevel2 a[href*="search"]:hover,
+#toc .sectlevel2 a[href*="-me"]:hover,
+#toc .sectlevel2 a[href*="조회"]:hover {
+    color: #047857;
+    background-color: rgba(16, 185, 129, 0.08);
+}
+
+/* POST - Blue */
+#toc .sectlevel2 a[href*="register"],
+#toc .sectlevel2 a[href*="apply"],
+#toc .sectlevel2 a[href*="approve"],
+#toc .sectlevel2 a[href*="reject"],
+#toc .sectlevel2 a[href*="login"],
+#toc .sectlevel2 a[href*="logout"],
+#toc .sectlevel2 a[href*="reset"],
+#toc .sectlevel2 a[href*="bulk-"],
+#toc .sectlevel2 a[href*="등록"] {
+    color: #2563eb;
+    border-left: 3px solid #3b82f6;
+    padding-left: 0.6rem;
+}
+
+#toc .sectlevel2 a[href*="register"]:hover,
+#toc .sectlevel2 a[href*="apply"]:hover,
+#toc .sectlevel2 a[href*="approve"]:hover,
+#toc .sectlevel2 a[href*="reject"]:hover,
+#toc .sectlevel2 a[href*="login"]:hover,
+#toc .sectlevel2 a[href*="logout"]:hover,
+#toc .sectlevel2 a[href*="reset"]:hover,
+#toc .sectlevel2 a[href*="bulk-"]:hover,
+#toc .sectlevel2 a[href*="등록"]:hover {
+    color: #1d4ed8;
+    background-color: rgba(59, 130, 246, 0.08);
+}
+
+/* PUT - Orange */
+#toc .sectlevel2 a[href*="update-full"],
+#toc .sectlevel2 a[href*="shipping-policy-update"],
+#toc .sectlevel2 a[href*="common-code-update"],
+#toc .sectlevel2 a[href*="common-code-type-update"] {
+    color: #d97706;
+    border-left: 3px solid #f59e0b;
+    padding-left: 0.6rem;
+}
+
+#toc .sectlevel2 a[href*="update-full"]:hover,
+#toc .sectlevel2 a[href*="shipping-policy-update"]:hover,
+#toc .sectlevel2 a[href*="common-code-update"]:hover,
+#toc .sectlevel2 a[href*="common-code-type-update"]:hover {
+    color: #b45309;
+    background-color: rgba(245, 158, 11, 0.08);
+}
+
+/* PATCH - Purple */
+#toc .sectlevel2 a[href*="seller-update"],
+#toc .sectlevel2 a[href*="change"],
+#toc .sectlevel2 a[href*="변경"] {
+    color: #7c3aed;
+    border-left: 3px solid #8b5cf6;
+    padding-left: 0.6rem;
+}
+
+#toc .sectlevel2 a[href*="seller-update"]:hover,
+#toc .sectlevel2 a[href*="change"]:hover,
+#toc .sectlevel2 a[href*="변경"]:hover {
+    color: #6d28d9;
+    background-color: rgba(139, 92, 246, 0.08);
+}
+
+/* Prevent seller-update-full from matching PATCH (should be PUT) */
+#toc .sectlevel2 a[href*="seller-update-full"] {
+    color: #d97706 !important;
+    border-left-color: #f59e0b !important;
+}
+
+#toc .sectlevel2 a[href*="seller-update-full"]:hover {
+    color: #b45309 !important;
+    background-color: rgba(245, 158, 11, 0.08) !important;
+}
+
+/* DELETE - Red */
+#toc .sectlevel2 a[href*="delete"],
+#toc .sectlevel2 a[href*="삭제"] {
+    color: #dc2626;
+    border-left: 3px solid #ef4444;
+    padding-left: 0.6rem;
+}
+
+#toc .sectlevel2 a[href*="delete"]:hover,
+#toc .sectlevel2 a[href*="삭제"]:hover {
+    color: #b91c1c;
+    background-color: rgba(239, 68, 68, 0.08);
+}
+
+/* HTTP Method Labels in Content */
+h3:has(+ .listingblock),
+h4:has(+ .listingblock) {
+    position: relative;
+}
+
+/* Style section titles with HTTP methods */
+.sect2 > h3::before,
+.sect3 > h4::before {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.15rem 0.4rem;
+    border-radius: 3px;
+    margin-right: 0.5rem;
+    vertical-align: middle;
+}
+
+/* GET Method - Green */
+h3[id*="get-"]::before, h3[id*="-get"]::before,
+h3[id*="search"]::before, h3[id*="-me"]::before,
+h3[id*="조회"]::before,
+h4[id*="get-"]::before, h4[id*="-get"]::before,
+h4[id*="search"]::before, h4[id*="-me"]::before,
+h4[id*="조회"]::before {
+    content: "GET";
+    background-color: #ecfdf5;
+    color: #059669;
+    border: 1px solid #10b981;
+}
+
+/* POST Method - Blue */
+h3[id*="post-"]::before, h3[id*="-post"]::before,
+h3[id*="register"]::before, h3[id*="-apply"]::before,
+h3[id*="-approve"]::before, h3[id*="-reject"]::before,
+h3[id*="-login"]::before, h3[id*="-logout"]::before,
+h3[id*="reset-password"]::before, h3[id*="bulk-"]::before,
+h3[id*="등록"]::before,
+h4[id*="post-"]::before, h4[id*="-post"]::before,
+h4[id*="register"]::before, h4[id*="-apply"]::before,
+h4[id*="-approve"]::before, h4[id*="-reject"]::before,
+h4[id*="-login"]::before, h4[id*="-logout"]::before,
+h4[id*="reset-password"]::before, h4[id*="bulk-"]::before,
+h4[id*="등록"]::before {
+    content: "POST";
+    background-color: #eff6ff;
+    color: #2563eb;
+    border: 1px solid #3b82f6;
+}
+
+/* PUT Method - Orange */
+h3[id*="put-"]::before, h3[id*="-put"]::before,
+h3[id*="update"]::before, h3[id*="수정"]::before,
+h4[id*="put-"]::before, h4[id*="-put"]::before,
+h4[id*="update"]::before, h4[id*="수정"]::before {
+    content: "PUT";
+    background-color: #fffbeb;
+    color: #d97706;
+    border: 1px solid #f59e0b;
+}
+
+/* PATCH Method - Purple */
+h3[id*="patch-"]::before, h3[id*="-patch"]::before,
+h3[id*="change"]::before, h3[id*="변경"]::before,
+h4[id*="patch-"]::before, h4[id*="-patch"]::before,
+h4[id*="change"]::before, h4[id*="변경"]::before {
+    content: "PATCH";
+    background-color: #f5f3ff;
+    color: #7c3aed;
+    border: 1px solid #8b5cf6;
+}
+
+/* DELETE Method - Red */
+h3[id*="delete-"]::before, h3[id*="-delete"]::before,
+h3[id*="삭제"]::before,
+h4[id*="delete-"]::before, h4[id*="-delete"]::before,
+h4[id*="삭제"]::before {
+    content: "DELETE";
+    background-color: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #ef4444;
+}
+
+/* Prevent badges on update-full (should be PUT, not match PATCH update) */
+h3[id*="update-full"]::before,
+h4[id*="update-full"]::before {
+    content: "PUT" !important;
+    background-color: #fffbeb !important;
+    color: #d97706 !important;
+    border: 1px solid #f59e0b !important;
+}
+
+/* Paragraph Styling */
+p {
+    margin: 1rem 0;
+}
+
+/* Lists */
+ul, ol {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+}
+
+li {
+    margin: 0.5rem 0;
+}
+
+/* Section Links */
+.sectlink {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-left: 0.5rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+h2:hover .sectlink,
+h3:hover .sectlink,
+h4:hover .sectlink {
+    opacity: 1;
+}
+
+/* Response/Request Examples */
+.content pre.highlight {
+    position: relative;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    :root {
+        --sidebar-width: 260px;
+    }
+}
+
+@media (max-width: 768px) {
+    body.toc2,
+    body.toc2.toc-left {
+        padding-left: 0;
+    }
+
+    #toc {
+        position: relative;
+        width: 100%;
+        height: auto;
+        max-height: 50vh;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    #content,
+    #header {
+        padding: 1rem;
+    }
+
+    table {
+        font-size: 0.85rem;
+    }
+
+    table th, table td {
+        padding: 0.5rem;
+    }
+}
+
+/* Print Styles */
+@media print {
+    #toc {
+        display: none;
+    }
+
+    pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+}
 
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/github.min.css">
@@ -1482,8 +2133,8 @@ Host: localhost:8080
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
-Set-Cookie: access_token=eyJhbGciOiJIUzI1NiJ9.access; Path=/; Max-Age=3600; Expires=Fri, 27 Mar 2026 03:20:05 GMT; Secure; HttpOnly; SameSite=Strict
-Set-Cookie: refresh_token=eyJhbGciOiJIUzI1NiJ9.refresh; Path=/; Max-Age=604800; Expires=Fri, 3 Apr 2026 02:20:05 GMT; Secure; HttpOnly; SameSite=Strict
+Set-Cookie: access_token=eyJhbGciOiJIUzI1NiJ9.access; Path=/; Max-Age=3600; Expires=Sun, 29 Mar 2026 15:19:29 GMT; Secure; HttpOnly; SameSite=Strict
+Set-Cookie: refresh_token=eyJhbGciOiJIUzI1NiJ9.refresh; Path=/; Max-Age=604800; Expires=Sun, 5 Apr 2026 14:19:29 GMT; Secure; HttpOnly; SameSite=Strict
 Content-Type: application/json
 Content-Length: 270
 
@@ -1494,8 +2145,8 @@ Content-Length: 270
     "tokenType" : "Bearer",
     "expiresIn" : 3600
   },
-  "timestamp" : "2026-03-27 11:20:05",
-  "requestId" : "4d41c3c0-c916-481f-9ead-74f761039e23"
+  "timestamp" : "2026-03-29 23:19:29",
+  "requestId" : "556a496a-5006-44ac-986b-7a18625ddaf0"
 }</code></pre>
 </div>
 </div>
@@ -1585,8 +2236,8 @@ Content-Length: 114
 
 {
   "data" : null,
-  "timestamp" : "2026-03-27 11:20:05",
-  "requestId" : "f4398e2a-29f0-4d82-a48e-2aeb4388463a"
+  "timestamp" : "2026-03-29 23:19:29",
+  "requestId" : "66fb8e33-c3ff-49a1-a713-03fa5708fed7"
 }</code></pre>
 </div>
 </div>
@@ -1674,8 +2325,8 @@ Content-Length: 610
     "sellerId" : 1,
     "phoneNumber" : "010-1234-5678"
   },
-  "timestamp" : "2026-03-27 11:20:06",
-  "requestId" : "8e3a2c95-5d0b-4306-ac8a-8d17a8f5ca55"
+  "timestamp" : "2026-03-29 23:19:29",
+  "requestId" : "f058cf13-5d6d-4113-92d2-6db3e868334b"
 }</code></pre>
 </div>
 </div>
@@ -1841,8 +2492,8 @@ Content-Length: 477
       } ]
     } ]
   },
-  "timestamp" : "2026-03-27 11:20:05",
-  "requestId" : "3350a175-07c3-40e5-9c88-1b62823e83d5"
+  "timestamp" : "2026-03-29 23:19:28",
+  "requestId" : "2b23c449-84bb-4c76-b3ca-d7016301dff0"
 }</code></pre>
 </div>
 </div>
@@ -2044,8 +2695,8 @@ Content-Length: 1201
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-03-27 11:20:06",
-  "requestId" : "1f03d741-1214-4943-9768-3d03cf8edae0"
+  "timestamp" : "2026-03-29 23:19:30",
+  "requestId" : "bd4ab901-3eba-4f88-b1e5-715b4b0bbf69"
 }</code></pre>
 </div>
 </div>
@@ -2344,8 +2995,8 @@ Content-Length: 1582
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-03-27 11:20:07",
-  "requestId" : "3626e45e-1373-40f6-ba50-9268c1adba4b"
+  "timestamp" : "2026-03-29 23:19:31",
+  "requestId" : "42a412ae-f35d-4bb3-8dce-f851992890e4"
 }</code></pre>
 </div>
 </div>
@@ -2599,8 +3250,8 @@ Content-Length: 113
 
 {
   "data" : 100,
-  "timestamp" : "2026-03-27 11:20:08",
-  "requestId" : "9c46a7d2-9e01-4247-b0e4-eae52b45650e"
+  "timestamp" : "2026-03-29 23:19:32",
+  "requestId" : "4fb422c5-3c72-4e56-94dc-b2d0f50b5738"
 }</code></pre>
 </div>
 </div>
@@ -2731,8 +3382,8 @@ Content-Length: 114
 
 {
   "data" : null,
-  "timestamp" : "2026-03-27 11:20:08",
-  "requestId" : "c067f622-6b18-4528-bb1c-059ed9743a77"
+  "timestamp" : "2026-03-29 23:19:32",
+  "requestId" : "df0c17a9-f751-4bb6-8255-7d6cb6282c3d"
 }</code></pre>
 </div>
 </div>
@@ -2841,8 +3492,8 @@ Content-Length: 114
 
 {
   "data" : null,
-  "timestamp" : "2026-03-27 11:20:08",
-  "requestId" : "d37b16ef-3259-4c3e-beeb-9ab112a97127"
+  "timestamp" : "2026-03-29 23:19:32",
+  "requestId" : "707dd502-a933-462d-bbfc-c5e7ea2d21b1"
 }</code></pre>
 </div>
 </div>
@@ -2995,8 +3646,8 @@ Content-Length: 1024
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-03-27 11:20:09",
-  "requestId" : "0bab38b9-a72e-474b-82b0-0ab9027ecc57"
+  "timestamp" : "2026-03-29 23:19:33",
+  "requestId" : "d4d50cfb-5e4e-4d21-a68d-f58508d3d1e4"
 }</code></pre>
 </div>
 </div>
@@ -3208,8 +3859,8 @@ Content-Length: 111
 
 {
   "data" : 1,
-  "timestamp" : "2026-03-27 11:20:09",
-  "requestId" : "41b1064b-43fc-451c-b95a-e10d16f750ac"
+  "timestamp" : "2026-03-29 23:19:33",
+  "requestId" : "413caa22-d756-414e-8274-61c451c53708"
 }</code></pre>
 </div>
 </div>
@@ -3347,8 +3998,8 @@ Content-Length: 114
 
 {
   "data" : null,
-  "timestamp" : "2026-03-27 11:20:09",
-  "requestId" : "0306d87e-6784-4252-995c-b3c90ff76b0c"
+  "timestamp" : "2026-03-29 23:19:33",
+  "requestId" : "95ba72e7-519d-45ac-91ec-b5b2a02b7175"
 }</code></pre>
 </div>
 </div>
@@ -3457,8 +4108,8 @@ Content-Length: 114
 
 {
   "data" : null,
-  "timestamp" : "2026-03-27 11:20:09",
-  "requestId" : "8c66e6e5-2016-446f-bd9a-c7b38d8dc6c9"
+  "timestamp" : "2026-03-29 23:19:33",
+  "requestId" : "501798cd-3dc6-4f82-a99a-2fd8bbca4992"
 }</code></pre>
 </div>
 </div>
@@ -3621,8 +4272,8 @@ Content-Length: 1141
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-03-27 11:20:09",
-  "requestId" : "d06e4466-f9be-4260-9277-a0d3a8331805"
+  "timestamp" : "2026-03-29 23:19:33",
+  "requestId" : "4058e98d-c4b2-43df-aac0-df5c48b5357a"
 }</code></pre>
 </div>
 </div>
@@ -3938,8 +4589,8 @@ Content-Length: 134
   "data" : {
     "sellerId" : 1
   },
-  "timestamp" : "2026-03-27 11:20:18",
-  "requestId" : "4af9dd34-33b8-4284-ad57-40ab4a083db8"
+  "timestamp" : "2026-03-29 23:19:42",
+  "requestId" : "dee4603a-52aa-4cd7-8445-643d588aa2b5"
 }</code></pre>
 </div>
 </div>
@@ -4629,8 +5280,8 @@ Content-Length: 1881
       "updatedAt" : "2025-01-23 10:30:00"
     }
   },
-  "timestamp" : "2026-03-27 11:20:19",
-  "requestId" : "11162436-7856-4b00-ad03-ec116fe4fc10"
+  "timestamp" : "2026-03-29 23:19:42",
+  "requestId" : "79716941-0417-4b51-b08c-bc9de0871067"
 }</code></pre>
 </div>
 </div>
@@ -5040,8 +5691,8 @@ Content-Length: 1234
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-03-27 11:20:19",
-  "requestId" : "687bf4e1-29db-4f61-995b-f790945b881d"
+  "timestamp" : "2026-03-29 23:19:42",
+  "requestId" : "bd243966-5137-4025-bf1a-e0bc0d20527e"
 }</code></pre>
 </div>
 </div>
@@ -5224,8 +5875,8 @@ Content-Length: 273
     "companyName" : "테스트컴퍼니",
     "representative" : "홍길동"
   },
-  "timestamp" : "2026-03-27 11:20:19",
-  "requestId" : "d5da4ba3-0f53-4f9d-9b83-a7a90e53fa99"
+  "timestamp" : "2026-03-29 23:19:42",
+  "requestId" : "e300c6f3-46d5-4c6c-b73d-d8a2d5ae08d3"
 }</code></pre>
 </div>
 </div>
@@ -5417,8 +6068,8 @@ Content-Length: 136
   "data" : {
     "addressId" : 10
   },
-  "timestamp" : "2026-03-27 11:20:19",
-  "requestId" : "b07e3354-8c60-4902-8a45-a4dcbfb36afe"
+  "timestamp" : "2026-03-29 23:19:43",
+  "requestId" : "1a923c56-543d-4c1c-b819-ce8172d91abd"
 }</code></pre>
 </div>
 </div>
@@ -5756,8 +6407,8 @@ Content-Length: 1369
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-03-27 11:20:19",
-  "requestId" : "7dd3e90c-26ff-461c-88a0-97e5adcf3bb4"
+  "timestamp" : "2026-03-29 23:19:43",
+  "requestId" : "ba13d879-e53f-4137-b5f5-3d12818eaed4"
 }</code></pre>
 </div>
 </div>
@@ -5962,8 +6613,8 @@ Content-Length: 385
     "hasDefaultShippingPolicy" : true,
     "hasDefaultRefundPolicy" : true
   },
-  "timestamp" : "2026-03-27 11:20:19",
-  "requestId" : "79c18cd8-f73d-49b2-9761-fb52ee23f507"
+  "timestamp" : "2026-03-29 23:19:43",
+  "requestId" : "c6a6deb5-ba21-4031-b24d-07b60cc808e8"
 }</code></pre>
 </div>
 </div>
@@ -6148,8 +6799,8 @@ Content-Length: 176
   "data" : {
     "sellerAdminId" : "01956f4a-2b3c-7d8e-9f0a-1b2c3d4e5f60"
   },
-  "timestamp" : "2026-03-27 11:20:20",
-  "requestId" : "c0cdf24d-a21c-49d8-b2ac-ebd8e18c5b05"
+  "timestamp" : "2026-03-29 23:19:43",
+  "requestId" : "cf224995-fdea-4227-8893-0ec24eab0d5f"
 }</code></pre>
 </div>
 </div>
@@ -6243,8 +6894,8 @@ Content-Length: 176
   "data" : {
     "sellerAdminId" : "01956f4a-2b3c-7d8e-9f0a-1b2c3d4e5f60"
   },
-  "timestamp" : "2026-03-27 11:20:19",
-  "requestId" : "ee801826-fd7c-4fdf-86ce-141547cd9292"
+  "timestamp" : "2026-03-29 23:19:43",
+  "requestId" : "38336cb8-457e-4273-a733-42bf14c1b464"
 }</code></pre>
 </div>
 </div>
@@ -6407,8 +7058,8 @@ Content-Length: 506
       "errorMessage" : null
     } ]
   },
-  "timestamp" : "2026-03-27 11:20:19",
-  "requestId" : "14e8d47f-45d9-40e1-bfa9-16ddaab121ec"
+  "timestamp" : "2026-03-29 23:19:43",
+  "requestId" : "2fd0e3d7-e334-4b2b-b922-bc939df41d4e"
 }</code></pre>
 </div>
 </div>
@@ -6731,8 +7382,8 @@ Content-Length: 440
     "createdAt" : "2025-02-05T01:30:00Z",
     "updatedAt" : "2025-02-05T01:30:00Z"
   },
-  "timestamp" : "2026-03-27 11:20:20",
-  "requestId" : "2902bbbc-d4b2-46fd-bed7-d1b5b1f11c06"
+  "timestamp" : "2026-03-29 23:19:43",
+  "requestId" : "c4efdb20-fb3e-4469-84be-5c82d69183b6"
 }</code></pre>
 </div>
 </div>
@@ -6954,8 +7605,8 @@ Content-Length: 1270
     "totalElements" : 3,
     "totalPages" : 1
   },
-  "timestamp" : "2026-03-27 11:20:20",
-  "requestId" : "10ecdd8f-be48-428c-8173-703e8585db45"
+  "timestamp" : "2026-03-29 23:19:43",
+  "requestId" : "b31ff4b9-b835-49f4-824b-ae87779da9fb"
 }</code></pre>
 </div>
 </div>
@@ -7344,8 +7995,8 @@ Content-Length: 139
   "data" : {
     "applicationId" : 1
   },
-  "timestamp" : "2026-03-27 11:20:20",
-  "requestId" : "be22a45f-f30c-4485-bb75-06621cde0181"
+  "timestamp" : "2026-03-29 23:19:44",
+  "requestId" : "dc255492-64bb-4c6f-a7dc-e426634ec003"
 }</code></pre>
 </div>
 </div>
@@ -7439,8 +8090,8 @@ Content-Length: 136
   "data" : {
     "sellerId" : 100
   },
-  "timestamp" : "2026-03-27 11:20:20",
-  "requestId" : "b84c1f2b-7e6f-4307-ba9b-c6637e54e6e0"
+  "timestamp" : "2026-03-29 23:19:44",
+  "requestId" : "049c587f-5dae-4149-a094-2c48db11e3a1"
 }</code></pre>
 </div>
 </div>
@@ -7769,8 +8420,8 @@ Content-Length: 3973
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-03-27 11:20:20",
-  "requestId" : "30ae5b5e-3c22-4560-8b8f-b4af1ce46e12"
+  "timestamp" : "2026-03-29 23:19:44",
+  "requestId" : "2a07ba56-ad89-4482-a61e-10a7ab81079a"
 }</code></pre>
 </div>
 </div>
@@ -8099,8 +8750,8 @@ Content-Length: 1268
     "rejectionReason" : null,
     "approvedSellerId" : null
   },
-  "timestamp" : "2026-03-27 11:20:20",
-  "requestId" : "e8d1bf7a-7550-4f58-82d4-143dabbec9e3"
+  "timestamp" : "2026-03-29 23:19:44",
+  "requestId" : "ee460ec1-d25e-41bb-aee4-828fe74f29e4"
 }</code></pre>
 </div>
 </div>
@@ -8379,8 +9030,8 @@ Content-Length: 132
   "data" : {
     "shopId" : 1
   },
-  "timestamp" : "2026-03-27 11:20:22",
-  "requestId" : "ad49d188-babd-401d-8887-59424cc11c38"
+  "timestamp" : "2026-03-29 23:19:46",
+  "requestId" : "382be5f9-1622-4389-b30c-4bd182b56f70"
 }</code></pre>
 </div>
 </div>
@@ -8632,8 +9283,8 @@ Content-Length: 970
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-03-27 11:20:22",
-  "requestId" : "860a93c6-ceeb-40d8-9594-1c46b06b0e58"
+  "timestamp" : "2026-03-29 23:19:46",
+  "requestId" : "951743d1-b6f2-4fab-ab29-c687acee99e9"
 }</code></pre>
 </div>
 </div>
@@ -8898,8 +9549,8 @@ Content-Length: 134
   "data" : {
     "policyId" : 1
   },
-  "timestamp" : "2026-03-27 11:20:17",
-  "requestId" : "46eb981f-781b-4230-b013-e1c9a95b38cc"
+  "timestamp" : "2026-03-29 23:19:41",
+  "requestId" : "e04befba-4175-40a3-a147-1f1297de4fa8"
 }</code></pre>
 </div>
 </div>
@@ -9337,8 +9988,8 @@ Content-Length: 2644
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-03-27 11:20:17",
-  "requestId" : "affbf535-fbc0-4a8e-a761-37049c513d8d"
+  "timestamp" : "2026-03-29 23:19:41",
+  "requestId" : "d67f6ad9-bbf2-4b32-9bd9-56f05c3b127b"
 }</code></pre>
 </div>
 </div>
@@ -9686,8 +10337,8 @@ Content-Length: 135
   "data" : {
     "policyId" : 10
   },
-  "timestamp" : "2026-03-27 11:20:22",
-  "requestId" : "43c630e2-e99a-48d2-a0f8-0e8c657b91e5"
+  "timestamp" : "2026-03-29 23:19:46",
+  "requestId" : "181ea3e4-4d48-47d7-9271-13c4ba7ebc93"
 }</code></pre>
 </div>
 </div>
@@ -10139,8 +10790,8 @@ Content-Length: 2080
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-03-27 11:20:22",
-  "requestId" : "6fff8f86-8fb3-43c7-9f4d-d601595ad4d9"
+  "timestamp" : "2026-03-29 23:19:46",
+  "requestId" : "425170fd-f44f-4524-8ea9-d5067b0f2c2a"
 }</code></pre>
 </div>
 </div>
@@ -10415,8 +11066,8 @@ Content-Length: 152
     "id" : 1,
     "createdAt" : null
   },
-  "timestamp" : "2026-03-27 11:20:06",
-  "requestId" : "640567ce-f5c1-424b-99b3-07349c4bd386"
+  "timestamp" : "2026-03-29 23:19:30",
+  "requestId" : "e5a43816-4a2c-452d-b31b-4ab14802ee20"
 }</code></pre>
 </div>
 </div>
@@ -10618,8 +11269,8 @@ Content-Length: 138
   "data" : {
     "deletedCount" : 3
   },
-  "timestamp" : "2026-03-27 11:20:06",
-  "requestId" : "4bde0fe1-c5c8-4ffb-a333-c0e5ad07e681"
+  "timestamp" : "2026-03-29 23:19:30",
+  "requestId" : "58ed0873-dcb8-40c9-a1c3-207e297b3d55"
 }</code></pre>
 </div>
 </div>
@@ -10798,8 +11449,8 @@ Content-Length: 1384
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-03-27 11:20:06",
-  "requestId" : "8653858a-1458-483b-8193-cb9a50f9f220"
+  "timestamp" : "2026-03-29 23:19:30",
+  "requestId" : "164ec234-0f76-485e-adf1-1af6953d9183"
 }</code></pre>
 </div>
 </div>
@@ -11007,8 +11658,8 @@ Content-Length: 700
     "createdAt" : "2025-02-10 10:30:00",
     "updatedAt" : "2025-02-10 10:30:00"
   },
-  "timestamp" : "2026-03-27 11:20:06",
-  "requestId" : "f4d4b3e0-1e4b-433a-b004-afd7c60c890c"
+  "timestamp" : "2026-03-29 23:19:30",
+  "requestId" : "89140f01-bbf2-4371-8016-7cb793298a99"
 }</code></pre>
 </div>
 </div>
@@ -11223,8 +11874,8 @@ Content-Length: 152
     "id" : 1,
     "createdAt" : null
   },
-  "timestamp" : "2026-03-27 11:20:08",
-  "requestId" : "75750fa0-2dbc-4ce8-8172-be06fb57ba9b"
+  "timestamp" : "2026-03-29 23:19:32",
+  "requestId" : "3a8c3994-97c0-4e11-88d7-5ac08b49e6af"
 }</code></pre>
 </div>
 </div>
@@ -11426,8 +12077,8 @@ Content-Length: 138
   "data" : {
     "deletedCount" : 3
   },
-  "timestamp" : "2026-03-27 11:20:08",
-  "requestId" : "51753447-0fce-41e2-a146-605a481de189"
+  "timestamp" : "2026-03-29 23:19:32",
+  "requestId" : "8835893a-5eb8-4c1c-a7b0-b70e5a994c04"
 }</code></pre>
 </div>
 </div>
@@ -11606,8 +12257,8 @@ Content-Length: 1432
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-03-27 11:20:08",
-  "requestId" : "508b69d2-9592-49b3-bbdb-4cbf1e579a56"
+  "timestamp" : "2026-03-29 23:19:32",
+  "requestId" : "e2c42296-e657-4cf7-b2d1-5f9794386a06"
 }</code></pre>
 </div>
 </div>
@@ -11815,8 +12466,8 @@ Content-Length: 749
     "createdAt" : "2025-02-10 10:30:00",
     "updatedAt" : "2025-02-10 10:30:00"
   },
-  "timestamp" : "2026-03-27 11:20:08",
-  "requestId" : "6dc9e52b-1eac-4eab-bddb-ed70b9226aab"
+  "timestamp" : "2026-03-29 23:19:32",
+  "requestId" : "f541e18e-e153-49f7-b9bb-4f7415794d5f"
 }</code></pre>
 </div>
 </div>
@@ -12016,8 +12667,8 @@ Content-Length: 543
     } ],
     "createdAt" : "2025-01-23 10:30:00"
   },
-  "timestamp" : "2026-03-27 11:20:07",
-  "requestId" : "916ae710-4586-4a32-8064-4329f69ae2b1"
+  "timestamp" : "2026-03-29 23:19:31",
+  "requestId" : "64260b32-bffa-4053-864e-072ff3c0ae61"
 }</code></pre>
 </div>
 </div>
@@ -12274,8 +12925,8 @@ Content-Length: 1678
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-03-27 11:20:07",
-  "requestId" : "214d0dee-6366-4afd-aa68-6d7081fbe26a"
+  "timestamp" : "2026-03-29 23:19:31",
+  "requestId" : "20eb2f47-4ebc-491d-8480-715deae99250"
 }</code></pre>
 </div>
 </div>
@@ -12492,8 +13143,8 @@ Content-Length: 140
   "data" : {
     "salesChannelId" : 1
   },
-  "timestamp" : "2026-03-27 11:20:17",
-  "requestId" : "90099f24-3899-4b6b-8bc1-cac6d541ea8d"
+  "timestamp" : "2026-03-29 23:19:41",
+  "requestId" : "b3a8f1f7-fe0b-434b-8d01-7cec8c67f69e"
 }</code></pre>
 </div>
 </div>
@@ -12727,8 +13378,8 @@ Content-Length: 768
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-03-27 11:20:17",
-  "requestId" : "af7ea1d1-dd56-4391-8951-c9f6341ea481"
+  "timestamp" : "2026-03-29 23:19:41",
+  "requestId" : "643f0e13-ab65-4a23-b67a-13c10e5f0f5e"
 }</code></pre>
 </div>
 </div>
@@ -12932,8 +13583,8 @@ Content-Length: 140
   "data" : {
     "brandIds" : [ 100 ]
   },
-  "timestamp" : "2026-03-27 11:20:18",
-  "requestId" : "073c13da-4651-49f7-a706-a06d31e774cc"
+  "timestamp" : "2026-03-29 23:19:41",
+  "requestId" : "7c050a0a-e12f-498c-ba55-bf3861cd1925"
 }</code></pre>
 </div>
 </div>
@@ -13110,8 +13761,8 @@ Content-Length: 985
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-03-27 11:20:18",
-  "requestId" : "094e5dee-a45e-479e-897b-902934f9f651"
+  "timestamp" : "2026-03-29 23:19:41",
+  "requestId" : "e043aaa6-d517-41f4-b706-e735097a6b2a"
 }</code></pre>
 </div>
 </div>
@@ -13369,8 +14020,8 @@ Content-Length: 143
   "data" : {
     "categoryIds" : [ 100 ]
   },
-  "timestamp" : "2026-03-27 11:20:18",
-  "requestId" : "4ea055a9-5d77-45f3-aece-60bc8b73125c"
+  "timestamp" : "2026-03-29 23:19:42",
+  "requestId" : "e7f38db7-63e7-4284-a4dc-5b7bc6d577c2"
 }</code></pre>
 </div>
 </div>
@@ -13577,8 +14228,8 @@ Content-Length: 1336
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-03-27 11:20:18",
-  "requestId" : "5aea4ff4-4d0f-4df4-8658-48da6d359b93"
+  "timestamp" : "2026-03-29 23:19:42",
+  "requestId" : "0f1e1967-7f75-4c9b-b314-2086634025cb"
 }</code></pre>
 </div>
 </div>
@@ -13849,8 +14500,8 @@ Content-Length: 964
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-03-27 11:20:13",
-  "requestId" : "24df9938-9b3b-479d-84d0-31a0e16034dc"
+  "timestamp" : "2026-03-29 23:19:37",
+  "requestId" : "e139f9d5-97f8-4795-915f-b15a3ecfb2ec"
 }</code></pre>
 </div>
 </div>
@@ -14046,8 +14697,8 @@ Content-Length: 595
     } ],
     "createdAt" : "2025-02-10 10:30:00"
   },
-  "timestamp" : "2026-03-27 11:20:13",
-  "requestId" : "3ffa0f43-070f-4179-8c97-950b83226a3a"
+  "timestamp" : "2026-03-29 23:19:37",
+  "requestId" : "9dd03d3d-f7e2-4c36-bcb1-961e70c17854"
 }</code></pre>
 </div>
 </div>
@@ -14495,8 +15146,8 @@ Content-Length: 140
   "data" : {
     "productGroupId" : 1
   },
-  "timestamp" : "2026-03-27 11:20:15",
-  "requestId" : "8428c443-3b86-49b1-b1da-63207bbd8dae"
+  "timestamp" : "2026-03-29 23:19:39",
+  "requestId" : "cc431689-9894-46c2-9009-acb3c094df13"
 }</code></pre>
 </div>
 </div>
@@ -15585,8 +16236,8 @@ Content-Length: 584
       "errorMessage" : null
     } ]
   },
-  "timestamp" : "2026-03-27 11:20:15",
-  "requestId" : "eb46e097-ecd6-4385-97cf-2b5724aada58"
+  "timestamp" : "2026-03-29 23:19:39",
+  "requestId" : "0d8927f6-5d17-4bcc-90b6-02c506b850ec"
 }</code></pre>
 </div>
 </div>
@@ -16403,8 +17054,8 @@ Content-Length: 3259
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-03-27 11:20:15",
-  "requestId" : "f86537a5-0816-42fc-bf1a-4820211063e6"
+  "timestamp" : "2026-03-29 23:19:39",
+  "requestId" : "50249a60-adcc-4b0a-a47d-0cd8f446fe40"
 }</code></pre>
 </div>
 </div>
@@ -16955,8 +17606,8 @@ Content-Length: 6575
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-03-27 11:20:15",
-  "requestId" : "0874f6f6-a7d4-4321-a2bb-1f3c445e4d9b"
+  "timestamp" : "2026-03-29 23:19:39",
+  "requestId" : "64043f18-628b-425e-b7ec-ef9d3279f7f6"
 }</code></pre>
 </div>
 </div>
@@ -17611,8 +18262,8 @@ Content-Length: 4219
       "updatedAt" : "2025-02-10 10:30:00"
     }
   },
-  "timestamp" : "2026-03-27 11:20:15",
-  "requestId" : "82b71677-f6a7-4519-a462-4662a401d35f"
+  "timestamp" : "2026-03-29 23:19:39",
+  "requestId" : "62cb8704-7966-4eb0-b7ae-49cf3598f371"
 }</code></pre>
 </div>
 </div>
@@ -19655,8 +20306,8 @@ Content-Length: 832
       "errorMessage" : null
     } ]
   },
-  "timestamp" : "2026-03-27 11:20:15",
-  "requestId" : "1f627ee1-855b-4c39-b902-e2f2af4805c1"
+  "timestamp" : "2026-03-29 23:19:39",
+  "requestId" : "ecd49e71-8c68-40e1-b459-5cd7cfc9128b"
 }</code></pre>
 </div>
 </div>
@@ -19938,8 +20589,8 @@ Content-Length: 786
       "errorMessage" : null
     } ]
   },
-  "timestamp" : "2026-03-27 11:20:16",
-  "requestId" : "83fdffa6-a972-4add-a6cd-58d778eaee0a"
+  "timestamp" : "2026-03-29 23:19:39",
+  "requestId" : "bce72ada-585d-4468-9e18-d84d0e3b7103"
 }</code></pre>
 </div>
 </div>
@@ -20349,8 +21000,8 @@ Content-Length: 722
     "width" : null,
     "height" : null
   } ],
-  "timestamp" : "2026-03-27 11:20:11",
-  "requestId" : "33ad2323-b97b-409d-8ab3-7d3ac334d2e6"
+  "timestamp" : "2026-03-29 23:19:34",
+  "requestId" : "a901708d-a1fc-4ac4-a755-c3b1c1ae8e44"
 }</code></pre>
 </div>
 </div>
@@ -20586,8 +21237,8 @@ Content-Length: 430
     "expiresAt" : "2025-02-20T10:15:00Z",
     "accessUrl" : "https://cdn.example.com/product-images/2025/02/image.jpg"
   },
-  "timestamp" : "2026-03-27 11:20:20",
-  "requestId" : "00da4978-08cb-4adc-8f6a-5fa4f3a878d6"
+  "timestamp" : "2026-03-29 23:19:44",
+  "requestId" : "716966ce-2fd5-4c2e-adca-7d7b6ef011a6"
 }</code></pre>
 </div>
 </div>
@@ -20742,8 +21393,8 @@ Content-Length: 114
 
 {
   "data" : null,
-  "timestamp" : "2026-03-27 11:20:20",
-  "requestId" : "d9ec0c97-2b87-4843-83f7-b1b79f2054d9"
+  "timestamp" : "2026-03-29 23:19:44",
+  "requestId" : "c67fd0c9-3d9c-4106-80e7-03d753cbea18"
 }</code></pre>
 </div>
 </div>
@@ -20909,8 +21560,8 @@ Content-Length: 1771
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-03-27 11:20:16",
-  "requestId" : "93bda2f9-239f-4f46-8718-47f9457cdbc5"
+  "timestamp" : "2026-03-29 23:19:40",
+  "requestId" : "a1928ea9-855c-476d-a15a-81e46e62f64e"
 }</code></pre>
 </div>
 </div>
@@ -21150,8 +21801,8 @@ Content-Length: 1039
     "createdAt" : "2025-02-10T01:30:00Z",
     "updatedAt" : "2025-02-10T01:30:00Z"
   },
-  "timestamp" : "2026-03-27 11:20:16",
-  "requestId" : "9ac7052d-95b5-46b4-b25b-86869cfe8039"
+  "timestamp" : "2026-03-29 23:19:40",
+  "requestId" : "7ad4055b-1a3d-4e67-a5cf-fe1044a66161"
 }</code></pre>
 </div>
 </div>
@@ -21403,8 +22054,8 @@ Content-Length: 114
 
 {
   "data" : null,
-  "timestamp" : "2026-03-27 11:20:16",
-  "requestId" : "6caf9c40-fbeb-4140-9083-0c6722158e99"
+  "timestamp" : "2026-03-29 23:19:40",
+  "requestId" : "579928a6-686d-4417-9d1c-cec56c70bf96"
 }</code></pre>
 </div>
 </div>
@@ -21550,12 +22201,12 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 8407
+Content-Length: 8311
 
 {
   "data" : {
     "content" : [ {
-      "orderId" : "01940001-0000-7000-8000-000000000001",
+      "orderId" : "1001",
       "orderNumber" : "ORD-20260101-0001-001",
       "buyerInfo" : {
         "buyerName" : "홍길동",
@@ -21640,7 +22291,7 @@ Content-Length: 8407
         "latest" : null
       }
     }, {
-      "orderId" : "01940001-0000-7000-8000-000000000001",
+      "orderId" : "1001",
       "orderNumber" : "ORD-20260101-0001-001",
       "buyerInfo" : {
         "buyerName" : "홍길동",
@@ -21725,7 +22376,7 @@ Content-Length: 8407
         "latest" : null
       }
     }, {
-      "orderId" : "01940001-0000-7000-8000-000000000001",
+      "orderId" : "1001",
       "orderNumber" : "ORD-20260101-0001-001",
       "buyerInfo" : {
         "buyerName" : "홍길동",
@@ -21817,8 +22468,8 @@ Content-Length: 8407
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-03-27 11:20:14",
-  "requestId" : "19fa98ca-6abd-4610-b469-ab91310ff4fd"
+  "timestamp" : "2026-03-29 23:19:37",
+  "requestId" : "e67a8c7d-1d5e-451a-9c25-e338e171f1a5"
 }</code></pre>
 </div>
 </div>
@@ -21998,7 +22649,7 @@ Content-Length: 8407
 <h4 id="_http_request_99"><a class="anchor" href="#_http_request_99"></a><a class="link" href="#_http_request_99">HTTP Request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/market/orders/01940001-0000-7000-8000-000000000001 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/market/orders/1001 HTTP/1.1
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -22006,7 +22657,7 @@ Host: localhost:8080</code></pre>
 <div class="sect3">
 <h4 id="_path_parameters_56"><a class="anchor" href="#_path_parameters_56"></a><a class="link" href="#_path_parameters_56">Path Parameters</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 56. /api/v1/market/orders/{orderItemId}</caption>
+<caption class="title">Table 56. /api/v1/market/orders/{orderId}</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -22019,8 +22670,8 @@ Host: localhost:8080</code></pre>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>orderItemId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">상품주문 ID</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>orderId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">주문 ID (V4 간극: 내부 orderItemId)</p></td>
 </tr>
 </tbody>
 </table>
@@ -22031,11 +22682,11 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 4295
+Content-Length: 4263
 
 {
   "data" : {
-    "orderId" : "01940001-0000-7000-8000-000000000001",
+    "orderId" : "1001",
     "orderNumber" : "ORD-20250115-0001-001",
     "buyerInfo" : {
       "buyerName" : "홍길동",
@@ -22175,8 +22826,8 @@ Content-Length: 4295
       "createdAt" : "2026-01-01 09:00:00"
     } ]
   },
-  "timestamp" : "2026-03-27 11:20:13",
-  "requestId" : "1c4c8740-d1b4-45c1-9f38-fe5f6a18d273"
+  "timestamp" : "2026-03-29 23:19:37",
+  "requestId" : "44fa6a6b-14a5-4cc2-b018-a9e6203cb485"
 }</code></pre>
 </div>
 </div>
@@ -22314,7 +22965,7 @@ Content-Length: 4295
 <h4 id="_http_request_100"><a class="anchor" href="#_http_request_100"></a><a class="link" href="#_http_request_100">HTTP Request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/market/orders/01940001-0000-7000-8000-000000000001/histories?page=0&amp;size=20 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/v1/market/orders/1001/histories?page=0&amp;size=20 HTTP/1.1
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -22322,7 +22973,7 @@ Host: localhost:8080</code></pre>
 <div class="sect3">
 <h4 id="_path_parameters_57"><a class="anchor" href="#_path_parameters_57"></a><a class="link" href="#_path_parameters_57">Path Parameters</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 57. /api/v1/market/orders/{orderItemId}/histories</caption>
+<caption class="title">Table 57. /api/v1/market/orders/{orderId}/histories</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -22335,8 +22986,8 @@ Host: localhost:8080</code></pre>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>orderItemId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">상품주문 ID (UUIDv7)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>orderId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">주문 ID (V4 간극: 내부 orderItemId)</p></td>
 </tr>
 </tbody>
 </table>
@@ -22415,8 +23066,8 @@ Content-Length: 899
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-03-27 11:20:13",
-  "requestId" : "6aaee18f-c44c-45a3-801a-0b087e8b64c1"
+  "timestamp" : "2026-03-29 23:19:37",
+  "requestId" : "35062091-ea7f-4d5e-b498-291ca3e94b43"
 }</code></pre>
 </div>
 </div>
@@ -22560,7 +23211,7 @@ Content-Length: 899
 <h4 id="_http_request_101"><a class="anchor" href="#_http_request_101"></a><a class="link" href="#_http_request_101">HTTP Request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/v1/market/orders/01940001-0000-7000-8000-000000000001/histories HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/v1/market/orders/1001/histories HTTP/1.1
 Content-Type: application/json
 Content-Length: 57
 Host: localhost:8080
@@ -22574,7 +23225,7 @@ Host: localhost:8080
 <div class="sect3">
 <h4 id="_path_parameters_58"><a class="anchor" href="#_path_parameters_58"></a><a class="link" href="#_path_parameters_58">Path Parameters</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 58. /api/v1/market/orders/{orderItemId}/histories</caption>
+<caption class="title">Table 58. /api/v1/market/orders/{orderId}/histories</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -22587,8 +23238,8 @@ Host: localhost:8080
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>orderItemId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">상품주문 ID (UUIDv7)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>orderId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">주문 ID (V4 간극: 내부 orderItemId)</p></td>
 </tr>
 </tbody>
 </table>
@@ -22632,8 +23283,8 @@ Content-Length: 150
   "data" : {
     "historyId" : "HIST-ORDER-001"
   },
-  "timestamp" : "2026-03-27 11:20:13",
-  "requestId" : "cbd6a426-92dc-4cdc-86a4-cc582af14ba6"
+  "timestamp" : "2026-03-29 23:19:37",
+  "requestId" : "e677b3c2-b89a-4cb6-addf-c4251b8ec706"
 }</code></pre>
 </div>
 </div>
@@ -22715,8 +23366,8 @@ Content-Length: 257
     "failed" : 2,
     "cancelled" : 3
   },
-  "timestamp" : "2026-03-27 11:20:21",
-  "requestId" : "3c223913-b6d1-4966-8032-d48804c9455c"
+  "timestamp" : "2026-03-29 23:19:45",
+  "requestId" : "b3c93765-6984-4a5e-9d96-a790ea71c5ec"
 }</code></pre>
 </div>
 </div>
@@ -22876,7 +23527,7 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 6442
+Content-Length: 6346
 
 {
   "data" : {
@@ -22910,7 +23561,7 @@ Content-Length: 6442
         "updatedAt" : "2025-01-23 10:30:00"
       },
       "productOrder" : {
-        "orderItemId" : "01940001-0000-7000-8000-000000000001",
+        "orderItemId" : "1001",
         "productGroupId" : 100,
         "productId" : 200,
         "skuCode" : "SKU-001",
@@ -22967,7 +23618,7 @@ Content-Length: 6442
         "updatedAt" : "2025-01-23 10:30:00"
       },
       "productOrder" : {
-        "orderItemId" : "01940001-0000-7000-8000-000000000001",
+        "orderItemId" : "1001",
         "productGroupId" : 100,
         "productId" : 200,
         "skuCode" : "SKU-001",
@@ -23024,7 +23675,7 @@ Content-Length: 6442
         "updatedAt" : "2025-01-23 10:30:00"
       },
       "productOrder" : {
-        "orderItemId" : "01940001-0000-7000-8000-000000000001",
+        "orderItemId" : "1001",
         "productGroupId" : 100,
         "productId" : 200,
         "skuCode" : "SKU-001",
@@ -23059,8 +23710,8 @@ Content-Length: 6442
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-03-27 11:20:21",
-  "requestId" : "c3470221-5743-4531-9f3e-28eaa6cdcd83"
+  "timestamp" : "2026-03-29 23:19:45",
+  "requestId" : "73997b56-ea80-437a-82d0-37778ae5538f"
 }</code></pre>
 </div>
 </div>
@@ -23495,7 +24146,7 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 2358
+Content-Length: 2326
 
 {
   "data" : {
@@ -23528,7 +24179,7 @@ Content-Length: 2358
       "updatedAt" : "2025-01-23 10:30:00"
     },
     "productOrder" : {
-      "orderItemId" : "01940001-0000-7000-8000-000000000001",
+      "orderItemId" : "1001",
       "productGroupId" : 100,
       "productId" : 200,
       "skuCode" : "SKU-001",
@@ -23566,8 +24217,8 @@ Content-Length: 2358
       "canceledAt" : null
     }
   },
-  "timestamp" : "2026-03-27 11:20:21",
-  "requestId" : "263dd313-4e31-4c93-8bb8-7ab12b338765"
+  "timestamp" : "2026-03-29 23:19:45",
+  "requestId" : "b03faa80-20f3-4d87-8cdc-63047e0ee780"
 }</code></pre>
 </div>
 </div>
@@ -24049,8 +24700,8 @@ Content-Length: 540
       "errorMessage" : null
     } ]
   },
-  "timestamp" : "2026-03-27 11:20:21",
-  "requestId" : "620b7184-133b-4d11-8169-8495da09733d"
+  "timestamp" : "2026-03-29 23:19:45",
+  "requestId" : "2dbe006a-d045-4274-bd84-0311e8ab7b16"
 }</code></pre>
 </div>
 </div>
@@ -24260,8 +24911,8 @@ Content-Length: 428
       "errorMessage" : null
     } ]
   },
-  "timestamp" : "2026-03-27 11:20:21",
-  "requestId" : "456dd703-aabc-4d40-9151-d788edc2a5f8"
+  "timestamp" : "2026-03-29 23:19:45",
+  "requestId" : "ea7efc39-12d3-4970-b8d0-8613fa8f80be"
 }</code></pre>
 </div>
 </div>
@@ -24357,7 +25008,7 @@ Content-Length: 428
 <h4 id="_http_request_107"><a class="anchor" href="#_http_request_107"></a><a class="link" href="#_http_request_107">HTTP Request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/v1/market/shipments/orders/01940001-0000-7000-8000-000000000001/ship HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/v1/market/shipments/orders/1001/ship HTTP/1.1
 Content-Type: application/json
 Content-Length: 133
 Host: localhost:8080
@@ -24448,8 +25099,8 @@ Content-Length: 114
 
 {
   "data" : null,
-  "timestamp" : "2026-03-27 11:20:21",
-  "requestId" : "5852d761-70df-4012-9cf3-b7cfee786fb9"
+  "timestamp" : "2026-03-29 23:19:45",
+  "requestId" : "cd5dcbd8-a3e8-4100-b768-c31fc5ba0d87"
 }</code></pre>
 </div>
 </div>
@@ -24821,8 +25472,8 @@ Content-Length: 234
     "status" : "CONVERTED",
     "action" : "CREATED"
   },
-  "timestamp" : "2026-03-27 11:20:12",
-  "requestId" : "b5bb4f49-ee46-41de-a95d-51545e81444b"
+  "timestamp" : "2026-03-29 23:19:36",
+  "requestId" : "24794d23-1ca5-4729-84ad-7e81da9841d9"
 }</code></pre>
 </div>
 </div>
@@ -24963,8 +25614,8 @@ Content-Length: 800
       } ]
     } ]
   },
-  "timestamp" : "2026-03-27 11:20:12",
-  "requestId" : "c1a85923-15cb-4a9f-b8f5-b650b8255f93"
+  "timestamp" : "2026-03-29 23:19:36",
+  "requestId" : "344174fe-88e0-43dd-ae71-a39fcea89895"
 }</code></pre>
 </div>
 </div>
@@ -25762,8 +26413,8 @@ Content-Length: 128
   "data" : {
     "id" : 1
   },
-  "timestamp" : "2026-03-27 11:20:11",
-  "requestId" : "6eb4fe83-0274-4007-9360-3ca9516cd0cb"
+  "timestamp" : "2026-03-29 23:19:35",
+  "requestId" : "d8648af9-5dd8-4f54-9b03-38f96386be15"
 }</code></pre>
 </div>
 </div>
@@ -25891,8 +26542,8 @@ Content-Length: 118
 
 {
   "data" : [ 1, 2 ],
-  "timestamp" : "2026-03-27 11:20:11",
-  "requestId" : "0420610e-25f4-40ee-b9ec-35752d3f7942"
+  "timestamp" : "2026-03-29 23:19:35",
+  "requestId" : "d500bc86-625a-4bf0-b56b-07fcac952dfc"
 }</code></pre>
 </div>
 </div>
@@ -26142,8 +26793,8 @@ Content-Length: 1093
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-03-27 11:20:11",
-  "requestId" : "3aba1aaa-8637-4b5b-bc27-f935f032e8dc"
+  "timestamp" : "2026-03-29 23:19:35",
+  "requestId" : "973f2c8e-c40a-4919-bbfe-9a8bed686d3d"
 }</code></pre>
 </div>
 </div>
@@ -26350,8 +27001,8 @@ Content-Length: 128
   "data" : {
     "id" : 1
   },
-  "timestamp" : "2026-03-27 11:20:11",
-  "requestId" : "7dc56733-8d23-4384-9239-5db12a2a00ed"
+  "timestamp" : "2026-03-29 23:19:35",
+  "requestId" : "f862314b-14c3-4aba-ab7b-c1ae414eee2c"
 }</code></pre>
 </div>
 </div>
@@ -26479,8 +27130,8 @@ Content-Length: 118
 
 {
   "data" : [ 1, 2 ],
-  "timestamp" : "2026-03-27 11:20:11",
-  "requestId" : "32fa264f-55aa-4aab-b8bb-374f80292e23"
+  "timestamp" : "2026-03-29 23:19:35",
+  "requestId" : "605718b3-75a8-4434-87d9-d4e3dc575409"
 }</code></pre>
 </div>
 </div>
@@ -26730,8 +27381,8 @@ Content-Length: 1123
     "first" : true,
     "last" : true
   },
-  "timestamp" : "2026-03-27 11:20:11",
-  "requestId" : "496c6b91-0f13-46f8-a0d9-cf90d98d54d4"
+  "timestamp" : "2026-03-29 23:19:35",
+  "requestId" : "ed29e855-8262-424c-9ceb-5af41656b238"
 }</code></pre>
 </div>
 </div>

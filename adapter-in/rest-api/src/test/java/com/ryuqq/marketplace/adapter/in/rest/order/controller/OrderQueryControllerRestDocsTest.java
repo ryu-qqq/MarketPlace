@@ -303,8 +303,8 @@ class OrderQueryControllerRestDocsTest {
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     pathParameters(
-                                            parameterWithName("orderItemId")
-                                                    .description("상품주문 ID (UUIDv7)")),
+                                            parameterWithName("orderId")
+                                                    .description("주문 ID (V4 간극: 내부 orderItemId)")),
                                     queryParameters(
                                             parameterWithName("claimType")
                                                     .description(
@@ -465,8 +465,8 @@ class OrderQueryControllerRestDocsTest {
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     pathParameters(
-                                            parameterWithName("orderItemId")
-                                                    .description("상품주문 ID")),
+                                            parameterWithName("orderId")
+                                                    .description("주문 ID (V4 간극: 내부 orderItemId)")),
                                     relaxedResponseFields(
                                             // V4 구조 (주요 필드만 문서화)
                                             fieldWithPath("data.orderId")

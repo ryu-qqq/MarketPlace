@@ -67,15 +67,15 @@ public class OrderQueryController {
 
     @Operation(
             summary = "상품주문 상세 조회",
-            description = "상품주문(아이템) 단위 상세. V4 스펙 형태로 반환 (경로 orderItemId, 실상 orderItem 데이터)")
+            description = "상품주문(아이템) 단위 상세. V4 간극: 경로 orderId = 내부 orderItemId")
     @PreAuthorize("@access.hasPermission('order:read')")
     @RequirePermission(value = "order:read", description = "주문 상세 조회")
     @GetMapping(OrderAdminEndpoints.ORDER_ITEM_ID)
     public ResponseEntity<ApiResponse<OrderDetailApiResponseV4>> getOrderDetail(
-            @PathVariable(OrderAdminEndpoints.PATH_ORDER_ITEM_ID) String orderItemId) {
+            @PathVariable(OrderAdminEndpoints.PATH_ORDER_ITEM_ID) String orderId) {
 
         ProductOrderDetailResult result =
-                getOrderDetailUseCase.execute(Long.parseLong(orderItemId));
+                getOrderDetailUseCase.execute(Long.parseLong(orderId));
         OrderDetailApiResponseV4 response = mapper.toDetailResponseV4(result);
 
         return ResponseEntity.ok(ApiResponse.of(response));
@@ -88,10 +88,10 @@ public class OrderQueryController {
     @RequirePermission(value = "order:read", description = "주문 클레임 이력 조회")
     @GetMapping(OrderAdminEndpoints.HISTORIES)
     public ResponseEntity<ApiResponse<PageApiResponse<ClaimHistoryApiResponse>>> getClaimHistories(
-            @PathVariable(OrderAdminEndpoints.PATH_ORDER_ITEM_ID) String orderItemId,
+            @PathVariable(OrderAdminEndpoints.PATH_ORDER_ITEM_ID) String orderId,
             @Valid @ParameterObject SearchOrderClaimHistoriesApiRequest request) {
 
-        ClaimHistoryPageCriteria criteria = mapper.toClaimHistoryCriteria(orderItemId, request);
+        ClaimHistoryPageCriteria criteria = mapper.toClaimHistoryCriteria(orderId, request);
         ClaimHistoryPageResult result = getOrderClaimHistoriesUseCase.execute(criteria);
         PageApiResponse<ClaimHistoryApiResponse> response =
                 mapper.toClaimHistoryPageResponse(result);

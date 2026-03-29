@@ -45,12 +45,12 @@ public class OrderCommandController {
     @RequirePermission(value = "order:write", description = "주문 수기 메모 등록")
     @PostMapping(OrderAdminEndpoints.HISTORIES)
     public ResponseEntity<ApiResponse<ClaimHistoryMemoApiResponse>> addMemo(
-            @PathVariable(OrderAdminEndpoints.PATH_ORDER_ITEM_ID) String orderItemId,
+            @PathVariable(OrderAdminEndpoints.PATH_ORDER_ITEM_ID) String orderId,
             @RequestBody @Valid AddClaimHistoryMemoApiRequest request) {
         ActorInfo actor = accessChecker.resolveActorInfo();
         String historyId =
                 addClaimHistoryMemoUseCase.execute(
-                        mapper.toAddMemoCommand(orderItemId, request, actor));
+                        mapper.toAddMemoCommand(orderId, request, actor));
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.of(new ClaimHistoryMemoApiResponse(historyId)));
     }
