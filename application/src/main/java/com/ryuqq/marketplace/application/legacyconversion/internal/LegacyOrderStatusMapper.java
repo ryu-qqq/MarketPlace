@@ -21,9 +21,9 @@ public class LegacyOrderStatusMapper {
             case "DELIVERY_PENDING" -> OrderStatusResolution.normalOrder(ShipmentStatus.READY);
             case "DELIVERY_PROCESSING" ->
                     OrderStatusResolution.normalOrder(ShipmentStatus.IN_TRANSIT);
+            case "ORDER_COMPLETED" -> OrderStatusResolution.normalOrder(ShipmentStatus.READY);
             case "DELIVERY_COMPLETED",
                             "DELIVERY_COMPLETE",
-                            "ORDER_COMPLETED",
                             "SETTLEMENT_PROCESSING",
                             "SETTLEMENT_COMPLETED" ->
                     OrderStatusResolution.normalOrder(ShipmentStatus.DELIVERED);

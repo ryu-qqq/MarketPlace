@@ -218,7 +218,9 @@ public class LegacyOrderQueryApiMapper {
         if (optionValues == null || optionValues.isEmpty()) {
             return List.of();
         }
-        return optionValues.stream().map(value -> new OptionInfo(0, 0, "", value)).toList();
+        return optionValues.stream()
+                .map(value -> new OptionInfo(0, 0, "DEFAULT_ONE", value))
+                .toList();
     }
 
     private String formatDate(Instant instant) {

@@ -280,8 +280,22 @@ public class LegacyProductGroupQueryApiMapper {
                                 new LegacyOptionDto(
                                         m.optionGroupId(),
                                         m.optionDetailId(),
-                                        m.optionGroupName(),
+                                        toLegacyOptionName(m.optionGroupName()),
                                         m.optionValue()))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    /** 한국어 옵션 그룹명 → 레거시 enum (SIZE, COLOR, DEFAULT_ONE, DEFAULT_TWO). */
+    private String toLegacyOptionName(String optionGroupName) {
+        if (optionGroupName == null) {
+            return "DEFAULT_ONE";
+        }
+        return switch (optionGroupName) {
+            case "사이즈", "SIZE", "size" -> "SIZE";
+            case "컬러", "색상", "COLOR", "color" -> "COLOR";
+            case "DEFAULT_ONE" -> "DEFAULT_ONE";
+            case "DEFAULT_TWO" -> "DEFAULT_TWO";
+            default -> "DEFAULT_ONE";
+        };
     }
 }
