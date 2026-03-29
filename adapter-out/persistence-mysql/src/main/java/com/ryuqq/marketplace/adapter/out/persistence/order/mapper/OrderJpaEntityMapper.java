@@ -160,6 +160,22 @@ public class OrderJpaEntityMapper {
                 .toList();
     }
 
+    /** auto_increment로 할당된 orderItemId를 사용하여 history 엔티티를 생성합니다. */
+    public OrderItemHistoryJpaEntity toOrderItemHistoryEntityWithId(
+            OrderItemHistory history, Long orderItemId) {
+        return OrderItemHistoryJpaEntity.create(
+                history.id(),
+                orderItemId,
+                history.fromStatus() != null ? history.fromStatus().name() : null,
+                history.toStatus().name(),
+                history.changedBy(),
+                history.reason(),
+                history.quantity(),
+                history.changedAt(),
+                history.changedAt(),
+                history.changedAt());
+    }
+
     /** Entity → Domain 변환 (Query Phase에서 활용). */
     public Order toDomain(
             OrderJpaEntity entity,

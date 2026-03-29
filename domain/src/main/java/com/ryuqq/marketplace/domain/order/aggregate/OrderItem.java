@@ -17,7 +17,7 @@ import java.util.List;
 /** 주문 상품. Order Aggregate 내부 구성 요소. */
 public class OrderItem {
 
-    private final OrderItemId id;
+    private OrderItemId id;
     private final OrderItemNumber orderItemNumber;
     private final InternalProductReference internalProduct;
     private final ExternalProductSnapshot externalProduct;
@@ -242,7 +242,12 @@ public class OrderItem {
     }
 
     public Long idValue() {
-        return id.value();
+        return id != null ? id.value() : null;
+    }
+
+    /** persist 후 auto_increment로 할당된 ID를 세팅합니다. */
+    public void assignId(OrderItemId id) {
+        this.id = id;
     }
 
     public OrderItemNumber orderItemNumber() {
