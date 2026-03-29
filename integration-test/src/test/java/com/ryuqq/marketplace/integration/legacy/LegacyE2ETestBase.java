@@ -95,7 +95,7 @@ public abstract class LegacyE2ETestBase {
     /**
      * 비인증 요청 시작 (인증 헤더 없음).
      *
-     * <p>LegacySecurityConfig의 anyRequest().authenticated() 규칙에 의해 /api/v1/legacy/auth/** 외 경로는 401
+     * <p>LegacySecurityConfig의 anyRequest().authenticated() 규칙에 의해 /api/v1/auth/** 외 경로는 401
      * Unauthorized를 반환합니다.
      */
     protected RequestSpecification givenUnauthenticated() {

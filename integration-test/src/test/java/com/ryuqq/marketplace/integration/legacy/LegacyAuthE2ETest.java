@@ -15,7 +15,7 @@ import org.springframework.http.HttpStatus;
 /**
  * 레거시 인증 API E2E 테스트.
  *
- * <p>테스트 대상: POST /api/v1/legacy/auth/authentication - 레거시 토큰 발급
+ * <p>테스트 대상: POST /api/v1/auth/authentication - 레거시 토큰 발급
  *
  * <p>인증 없이 접근 가능한 퍼블릭 엔드포인트입니다.
  *
@@ -28,10 +28,10 @@ import org.springframework.http.HttpStatus;
 @DisplayName("레거시 인증 API E2E 테스트")
 class LegacyAuthE2ETest extends LegacyE2ETestBase {
 
-    private static final String AUTH_TOKEN_URL = "/api/v1/legacy/auth/authentication";
+    private static final String AUTH_TOKEN_URL = "/api/v1/auth/authentication";
 
     @Nested
-    @DisplayName("POST /api/v1/legacy/auth/authentication - 레거시 토큰 발급")
+    @DisplayName("POST /api/v1/auth/authentication - 레거시 토큰 발급")
     class GetAccessTokenTest {
 
         @Test

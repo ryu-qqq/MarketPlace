@@ -42,7 +42,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @DisplayName("LegacyAuthController REST Docs 테스트")
 class LegacyAuthControllerRestDocsTest {
 
-    private static final String BASE_URL = "/api/v1/legacy/auth/authentication";
+    private static final String BASE_URL = "/api/v1/auth/authentication";
 
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;

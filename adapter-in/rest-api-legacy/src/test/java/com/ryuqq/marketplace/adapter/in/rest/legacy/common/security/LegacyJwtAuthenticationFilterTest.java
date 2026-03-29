@@ -75,7 +75,7 @@ class LegacyJwtAuthenticationFilterTest {
         @Test
         @DisplayName("인증 경로는 필터링 안 함")
         void authPath_ShouldNotFilter() {
-            request.setRequestURI("/api/v1/legacy/auth/authentication");
+            request.setRequestURI("/api/v1/auth/authentication");
             assertThat(filter.shouldNotFilter(request)).isTrue();
         }
 

@@ -82,7 +82,7 @@ public class LegacySecurityConfig {
                         auth ->
                                 auth
                                         // 레거시 인증 (토큰 발급은 인증 없이 허용)
-                                        .requestMatchers("/api/v1/legacy/auth/**")
+                                        .requestMatchers("/api/v1/auth/**")
                                         .permitAll()
 
                                         // Actuator
