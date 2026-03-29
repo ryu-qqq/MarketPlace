@@ -5,7 +5,7 @@ public final class LegacyQnAEndpoints {
 
     private LegacyQnAEndpoints() {}
 
-    private static final String BASE = "/api/v1/legacy";
+    private static final String BASE = "/api/v1";
 
     /** GET - QnA 단건 상세 조회 */
     public static final String QNA_ID = BASE + "/qna/{qnaId}";

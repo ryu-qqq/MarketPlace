@@ -96,24 +96,25 @@ public class LegacyOrderQueryController {
     public ResponseEntity<LegacyApiResponse<List<OrderHistoryInfo>>> getOrderHistory(
             @PathVariable long orderId) {
 
-        LegacyOrderIdMapping mapping = idResolver
-                .resolve(orderId)
-                .orElseThrow(() -> new com.ryuqq.marketplace.domain.order.exception
-                        .OrderNotFoundException(String.valueOf(orderId)));
+        LegacyOrderIdMapping mapping =
+                idResolver
+                        .resolve(orderId)
+                        .orElseThrow(
+                                () ->
+                                        new com.ryuqq.marketplace.domain.order.exception
+                                                .OrderNotFoundException(String.valueOf(orderId)));
 
         Long orderItemId = mapping.internalOrderItemId();
         var detail = getOrderDetailUseCase.execute(orderItemId);
 
-        Shipment shipment = shipmentReadManager
-                .findByOrderItemId(OrderItemId.of(orderItemId))
-                .orElse(null);
+        Shipment shipment =
+                shipmentReadManager.findByOrderItemId(OrderItemId.of(orderItemId)).orElse(null);
 
         List<LegacyOrderHistoryResult> timeline =
                 assembler.toUnifiedTimeline(detail, mapping.legacyOrderId(), shipment);
 
-        List<OrderHistoryInfo> response = timeline.stream()
-                .map(h -> queryApiMapper.toOrderHistoryInfo(h))
-                .toList();
+        List<OrderHistoryInfo> response =
+                timeline.stream().map(h -> queryApiMapper.toOrderHistoryInfo(h)).toList();
 
         return ResponseEntity.ok(LegacyApiResponse.success(response));
     }

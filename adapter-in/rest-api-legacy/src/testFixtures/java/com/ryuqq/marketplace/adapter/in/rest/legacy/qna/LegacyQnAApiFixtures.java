@@ -139,6 +139,7 @@ public final class LegacyQnAApiFixtures {
                 "GENERAL",
                 2L,
                 1L,
+                "테스트셀러",
                 "MEMBERS",
                 DEFAULT_AUTHOR,
                 LocalDateTime.of(2025, 2, 10, 10, 30, 0),

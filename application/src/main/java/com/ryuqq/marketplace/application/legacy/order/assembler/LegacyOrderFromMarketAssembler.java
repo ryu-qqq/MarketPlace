@@ -3,6 +3,7 @@ package com.ryuqq.marketplace.application.legacy.order.assembler;
 import com.ryuqq.marketplace.application.legacy.order.dto.result.LegacyOrderDetailResult;
 import com.ryuqq.marketplace.application.legacy.order.dto.result.LegacyOrderDetailWithHistoryResult;
 import com.ryuqq.marketplace.application.legacy.order.dto.result.LegacyOrderHistoryResult;
+import com.ryuqq.marketplace.application.legacyconversion.manager.LegacySellerIdMappingReadManager;
 import com.ryuqq.marketplace.application.order.dto.response.OrderCancelResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderClaimResult;
 import com.ryuqq.marketplace.application.order.dto.response.OrderHistoryResult;
@@ -13,13 +14,11 @@ import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResu
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResult.OrderInfo;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResult.ProductOrderInfo;
 import com.ryuqq.marketplace.application.order.dto.response.ProductOrderListResult.ReceiverInfo;
-import com.ryuqq.marketplace.application.legacyconversion.manager.LegacySellerIdMappingReadManager;
 import com.ryuqq.marketplace.domain.cancel.vo.CancelStatus;
 import com.ryuqq.marketplace.domain.legacyconversion.aggregate.LegacyOrderIdMapping;
 import com.ryuqq.marketplace.domain.refund.vo.RefundStatus;
 import com.ryuqq.marketplace.domain.shipment.aggregate.Shipment;
 import com.ryuqq.marketplace.domain.shipment.vo.ShipmentStatus;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -283,34 +282,47 @@ public class LegacyOrderFromMarketAssembler {
      * <p>OrderHistory + Cancel + Refund + Shipment 이벤트를 시간순으로 병합합니다.
      */
     public List<LegacyOrderHistoryResult> toUnifiedTimeline(
-            ProductOrderDetailResult detail,
-            long legacyOrderId,
-            Shipment shipment) {
+            ProductOrderDetailResult detail, long legacyOrderId, Shipment shipment) {
 
         List<LegacyOrderHistoryResult> timeline = new ArrayList<>();
 
         // 1. 주문 상태 변경 이력
         if (detail.timeLine() != null) {
-            detail.timeLine().forEach(h -> timeline.add(new LegacyOrderHistoryResult(
-                    h.historyId(), legacyOrderId,
-                    safe(h.toStatus()), safe(h.changedBy()), safe(h.reason()),
-                    h.changedAt())));
+            detail.timeLine()
+                    .forEach(
+                            h ->
+                                    timeline.add(
+                                            new LegacyOrderHistoryResult(
+                                                    h.historyId(),
+                                                    legacyOrderId,
+                                                    safe(h.toStatus()),
+                                                    safe(h.changedBy()),
+                                                    safe(h.reason()),
+                                                    h.changedAt())));
         }
 
         // 2. 취소 이력
         if (detail.cancels() != null) {
             for (OrderCancelResult c : detail.cancels()) {
                 if (c.requestedAt() != null) {
-                    timeline.add(new LegacyOrderHistoryResult(
-                            0L, legacyOrderId, "SALE_CANCELLED",
-                            safe(c.reasonType()), safe(c.reasonDetail()),
-                            c.requestedAt()));
+                    timeline.add(
+                            new LegacyOrderHistoryResult(
+                                    0L,
+                                    legacyOrderId,
+                                    "SALE_CANCELLED",
+                                    safe(c.reasonType()),
+                                    safe(c.reasonDetail()),
+                                    c.requestedAt()));
                 }
                 if (c.completedAt() != null) {
-                    timeline.add(new LegacyOrderHistoryResult(
-                            0L, legacyOrderId, "SALE_CANCELLED_COMPLETED",
-                            safe(c.reasonType()), safe(c.reasonDetail()),
-                            c.completedAt()));
+                    timeline.add(
+                            new LegacyOrderHistoryResult(
+                                    0L,
+                                    legacyOrderId,
+                                    "SALE_CANCELLED_COMPLETED",
+                                    safe(c.reasonType()),
+                                    safe(c.reasonDetail()),
+                                    c.completedAt()));
                 }
             }
         }
@@ -319,22 +331,34 @@ public class LegacyOrderFromMarketAssembler {
         if (detail.claims() != null) {
             for (OrderClaimResult r : detail.claims()) {
                 if (r.requestedAt() != null) {
-                    timeline.add(new LegacyOrderHistoryResult(
-                            0L, legacyOrderId, "RETURN_REQUEST",
-                            safe(r.reasonType()), safe(r.reasonDetail()),
-                            r.requestedAt()));
+                    timeline.add(
+                            new LegacyOrderHistoryResult(
+                                    0L,
+                                    legacyOrderId,
+                                    "RETURN_REQUEST",
+                                    safe(r.reasonType()),
+                                    safe(r.reasonDetail()),
+                                    r.requestedAt()));
                 }
                 if (r.completedAt() != null) {
-                    timeline.add(new LegacyOrderHistoryResult(
-                            0L, legacyOrderId, "RETURN_REQUEST_COMPLETED",
-                            safe(r.reasonType()), safe(r.reasonDetail()),
-                            r.completedAt()));
+                    timeline.add(
+                            new LegacyOrderHistoryResult(
+                                    0L,
+                                    legacyOrderId,
+                                    "RETURN_REQUEST_COMPLETED",
+                                    safe(r.reasonType()),
+                                    safe(r.reasonDetail()),
+                                    r.completedAt()));
                 }
                 if (r.rejectedAt() != null) {
-                    timeline.add(new LegacyOrderHistoryResult(
-                            0L, legacyOrderId, "RETURN_REQUEST_REJECTED",
-                            safe(r.reasonType()), safe(r.reasonDetail()),
-                            r.rejectedAt()));
+                    timeline.add(
+                            new LegacyOrderHistoryResult(
+                                    0L,
+                                    legacyOrderId,
+                                    "RETURN_REQUEST_REJECTED",
+                                    safe(r.reasonType()),
+                                    safe(r.reasonDetail()),
+                                    r.rejectedAt()));
                 }
             }
         }
@@ -342,23 +366,34 @@ public class LegacyOrderFromMarketAssembler {
         // 4. 배송 이력
         if (shipment != null) {
             if (shipment.shippedAt() != null) {
-                String invoiceInfo = shipment.trackingNumber() != null
-                        ? "송장: " + shipment.trackingNumber() : "";
-                timeline.add(new LegacyOrderHistoryResult(
-                        0L, legacyOrderId, "DELIVERY_PROCESSING",
-                        invoiceInfo, "", shipment.shippedAt()));
+                String invoiceInfo =
+                        shipment.trackingNumber() != null ? "송장: " + shipment.trackingNumber() : "";
+                timeline.add(
+                        new LegacyOrderHistoryResult(
+                                0L,
+                                legacyOrderId,
+                                "DELIVERY_PROCESSING",
+                                invoiceInfo,
+                                "",
+                                shipment.shippedAt()));
             }
             if (shipment.deliveredAt() != null) {
-                timeline.add(new LegacyOrderHistoryResult(
-                        0L, legacyOrderId, "DELIVERY_COMPLETED",
-                        "", "", shipment.deliveredAt()));
+                timeline.add(
+                        new LegacyOrderHistoryResult(
+                                0L,
+                                legacyOrderId,
+                                "DELIVERY_COMPLETED",
+                                "",
+                                "",
+                                shipment.deliveredAt()));
             }
         }
 
         // 시간순 정렬
-        timeline.sort(Comparator.comparing(
-                LegacyOrderHistoryResult::createdAt,
-                Comparator.nullsLast(Comparator.naturalOrder())));
+        timeline.sort(
+                Comparator.comparing(
+                        LegacyOrderHistoryResult::createdAt,
+                        Comparator.nullsLast(Comparator.naturalOrder())));
 
         return timeline;
     }

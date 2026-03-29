@@ -88,50 +88,51 @@ public class OrderJpaEntityMapper {
 
     public OrderItemJpaEntity toOrderItemEntity(
             OrderItem item, String orderId, Instant createdAt, Instant updatedAt) {
-        OrderItemJpaEntity entity = OrderItemJpaEntity.create(
-                item.idValue(),
-                item.orderItemNumberValue(),
-                orderId,
-                item.internalProduct().productGroupId(),
-                item.internalProduct().sellerId(),
-                item.internalProduct().brandId(),
-                item.internalProduct().productId(),
-                item.internalProduct().skuCode(),
-                item.internalProduct().productGroupName(),
-                item.internalProduct().brandName(),
-                item.internalProduct().sellerName(),
-                item.internalProduct().mainImageUrl(),
-                item.externalProduct().externalProductId(),
-                item.externalProduct().externalOptionId(),
-                item.externalProduct().externalProductName(),
-                item.externalProduct().externalOptionName(),
-                item.externalProduct().externalImageUrl(),
-                item.price().unitPrice().value(),
-                item.price().quantity(),
-                item.price().totalAmount().value(),
-                item.price().discountAmount().value(),
-                item.price().sellerBurdenDiscountAmount().value(),
-                item.price().paymentAmount().value(),
-                item.receiverInfo().receiverName(),
-                item.receiverInfo().receiverPhone() != null
-                        ? item.receiverInfo().receiverPhone().value()
-                        : null,
-                item.receiverInfo().address() != null
-                        ? item.receiverInfo().address().zipcode()
-                        : null,
-                item.receiverInfo().address() != null
-                        ? item.receiverInfo().address().line1()
-                        : null,
-                item.receiverInfo().address() != null
-                        ? item.receiverInfo().address().line2()
-                        : null,
-                item.receiverInfo().deliveryRequest(),
-                item.status().name(),
-                item.externalOrderStatus(),
-                item.cancelledQty(),
-                item.returnedQty(),
-                createdAt,
-                updatedAt);
+        OrderItemJpaEntity entity =
+                OrderItemJpaEntity.create(
+                        item.idValue(),
+                        item.orderItemNumberValue(),
+                        orderId,
+                        item.internalProduct().productGroupId(),
+                        item.internalProduct().sellerId(),
+                        item.internalProduct().brandId(),
+                        item.internalProduct().productId(),
+                        item.internalProduct().skuCode(),
+                        item.internalProduct().productGroupName(),
+                        item.internalProduct().brandName(),
+                        item.internalProduct().sellerName(),
+                        item.internalProduct().mainImageUrl(),
+                        item.externalProduct().externalProductId(),
+                        item.externalProduct().externalOptionId(),
+                        item.externalProduct().externalProductName(),
+                        item.externalProduct().externalOptionName(),
+                        item.externalProduct().externalImageUrl(),
+                        item.price().unitPrice().value(),
+                        item.price().quantity(),
+                        item.price().totalAmount().value(),
+                        item.price().discountAmount().value(),
+                        item.price().sellerBurdenDiscountAmount().value(),
+                        item.price().paymentAmount().value(),
+                        item.receiverInfo().receiverName(),
+                        item.receiverInfo().receiverPhone() != null
+                                ? item.receiverInfo().receiverPhone().value()
+                                : null,
+                        item.receiverInfo().address() != null
+                                ? item.receiverInfo().address().zipcode()
+                                : null,
+                        item.receiverInfo().address() != null
+                                ? item.receiverInfo().address().line1()
+                                : null,
+                        item.receiverInfo().address() != null
+                                ? item.receiverInfo().address().line2()
+                                : null,
+                        item.receiverInfo().deliveryRequest(),
+                        item.status().name(),
+                        item.externalOrderStatus(),
+                        item.cancelledQty(),
+                        item.returnedQty(),
+                        createdAt,
+                        updatedAt);
         return entity;
     }
 

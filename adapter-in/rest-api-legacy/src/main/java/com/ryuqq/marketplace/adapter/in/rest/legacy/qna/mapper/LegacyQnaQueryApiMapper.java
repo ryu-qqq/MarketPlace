@@ -35,7 +35,7 @@ public class LegacyQnaQueryApiMapper {
                 request.privateYn(),
                 request.lastDomainId(),
                 effectiveSellerId != null ? effectiveSellerId : request.sellerId(),
-                request.searchKeyword(),
+                request.searchText(),
                 request.startDate(),
                 request.endDate(),
                 size);
@@ -94,7 +94,7 @@ public class LegacyQnaQueryApiMapper {
                 nullToEmpty(result.qnaStatus()),
                 nullToEmpty(result.qnaType()),
                 nullToEmpty(result.qnaDetailType()),
-                "",
+                nullToEmpty(result.sellerName()),
                 userInfo,
                 target,
                 images,

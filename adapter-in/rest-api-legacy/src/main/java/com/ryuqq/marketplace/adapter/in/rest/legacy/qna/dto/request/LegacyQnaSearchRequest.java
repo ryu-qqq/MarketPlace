@@ -15,6 +15,6 @@ public record LegacyQnaSearchRequest(
         String privateYn,
         Long lastDomainId,
         Long sellerId,
-        String searchKeyword,
+        String searchText,
         LocalDateTime startDate,
         LocalDateTime endDate) {}

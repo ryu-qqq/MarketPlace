@@ -34,6 +34,7 @@ public record LegacyQnaDetailResult(
         String qnaDetailType,
         Long userId,
         Long sellerId,
+        String sellerName,
         String userType,
         String insertOperator,
         LocalDateTime insertDate,

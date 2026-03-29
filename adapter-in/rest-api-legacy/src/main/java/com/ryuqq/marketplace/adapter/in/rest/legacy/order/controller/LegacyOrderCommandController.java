@@ -54,13 +54,17 @@ public class LegacyOrderCommandController {
     @PutMapping(ORDERS)
     public ResponseEntity<LegacyApiResponse<List<LegacyUpdateOrderResponse>>> modifyOrderStatusList(
             @RequestBody List<LegacyUpdateOrderRequest> requests) {
-        List<LegacyUpdateOrderResponse> responses = requests.stream()
-                .map(request -> {
-                    LegacyOrderUpdateCommand command = commandApiMapper.toCommand(request);
-                    LegacyOrderUpdateResult result = orderUpdateUseCase.execute(command);
-                    return commandApiMapper.toResponse(result);
-                })
-                .toList();
+        List<LegacyUpdateOrderResponse> responses =
+                requests.stream()
+                        .map(
+                                request -> {
+                                    LegacyOrderUpdateCommand command =
+                                            commandApiMapper.toCommand(request);
+                                    LegacyOrderUpdateResult result =
+                                            orderUpdateUseCase.execute(command);
+                                    return commandApiMapper.toResponse(result);
+                                })
+                        .toList();
         return ResponseEntity.ok(LegacyApiResponse.success(responses));
     }
 }

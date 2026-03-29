@@ -31,9 +31,14 @@ class LegacyOrderFromMarketAssemblerTest {
 
     @BeforeEach
     void setUp() {
-        com.ryuqq.marketplace.application.legacyconversion.manager.LegacySellerIdMappingReadManager mockManager =
-                org.mockito.Mockito.mock(com.ryuqq.marketplace.application.legacyconversion.manager.LegacySellerIdMappingReadManager.class);
-        org.mockito.Mockito.when(mockManager.findLegacySellerIdByInternalSellerId(org.mockito.ArgumentMatchers.anyLong()))
+        com.ryuqq.marketplace.application.legacyconversion.manager.LegacySellerIdMappingReadManager
+                mockManager =
+                        org.mockito.Mockito.mock(
+                                com.ryuqq.marketplace.application.legacyconversion.manager
+                                        .LegacySellerIdMappingReadManager.class);
+        org.mockito.Mockito.when(
+                        mockManager.findLegacySellerIdByInternalSellerId(
+                                org.mockito.ArgumentMatchers.anyLong()))
                 .thenAnswer(inv -> java.util.Optional.of(inv.getArgument(0, Long.class)));
         assembler = new LegacyOrderFromMarketAssembler(mockManager);
         mapping =
