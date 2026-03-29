@@ -448,9 +448,14 @@ module "ecs_service" {
     { name = "LEGACY_DB_USERNAME", value = "admin" },
     # Legacy Order Conversion Scheduler
     { name = "SCHEDULER_JOBS_LEGACY_ORDER_CONVERSION_SEEDER_ENABLED", value = "true" },
-    { name = "SCHEDULER_JOBS_LEGACY_ORDER_CONVERSION_SEEDER_CRON", value = "*/30 * * * * *" },
     { name = "SCHEDULER_JOBS_LEGACY_ORDER_CONVERSION_ENABLED", value = "true" },
-    { name = "SCHEDULER_JOBS_LEGACY_ORDER_CONVERSION_CRON", value = "*/30 * * * * *" }
+    # Inbound Order Polling - 셀릭만 (2시간 주기)
+    { name = "SCHEDULER_JOBS_INBOUND_ORDER_POLLING_ENABLED", value = "true" },
+    { name = "SCHEDULER_JOBS_INBOUND_ORDER_POLLING_ENTRIES_0_SALESCHANNELID", value = "16" },
+    { name = "SCHEDULER_JOBS_INBOUND_ORDER_POLLING_ENTRIES_0_ENABLED", value = "true" },
+    { name = "SCHEDULER_JOBS_INBOUND_ORDER_POLLING_ENTRIES_0_CRON", value = "0 0 */2 * * *" },
+    { name = "SCHEDULER_JOBS_INBOUND_ORDER_POLLING_ENTRIES_0_TIMEZONE", value = "Asia/Seoul" },
+    { name = "SCHEDULER_JOBS_INBOUND_ORDER_POLLING_ENTRIES_0_BATCHSIZE", value = "50" }
   ]
 
   # Container Secrets

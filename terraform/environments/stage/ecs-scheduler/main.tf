@@ -482,7 +482,22 @@ module "ecs_service" {
     { name = "SENTRY_DSN", value = local.sentry_dsn },
     # Legacy DB (same host, different schema)
     { name = "LEGACY_DB_NAME", value = "luxurydb" },
-    { name = "LEGACY_DB_USERNAME", value = "admin" }
+    { name = "LEGACY_DB_USERNAME", value = "admin" },
+    # Legacy Order Conversion Scheduler
+    { name = "SCHEDULER_JOBS_LEGACY_ORDER_CONVERSION_SEEDER_ENABLED", value = "true" },
+    { name = "SCHEDULER_JOBS_LEGACY_ORDER_CONVERSION_ENABLED", value = "true" },
+    # Inbound Order Polling - 셀릭(2시간) + 네이버(1시간)
+    { name = "SCHEDULER_JOBS_INBOUND_ORDER_POLLING_ENABLED", value = "true" },
+    { name = "SCHEDULER_JOBS_INBOUND_ORDER_POLLING_ENTRIES_0_SALESCHANNELID", value = "16" },
+    { name = "SCHEDULER_JOBS_INBOUND_ORDER_POLLING_ENTRIES_0_ENABLED", value = "true" },
+    { name = "SCHEDULER_JOBS_INBOUND_ORDER_POLLING_ENTRIES_0_CRON", value = "0 0 */2 * * *" },
+    { name = "SCHEDULER_JOBS_INBOUND_ORDER_POLLING_ENTRIES_0_TIMEZONE", value = "Asia/Seoul" },
+    { name = "SCHEDULER_JOBS_INBOUND_ORDER_POLLING_ENTRIES_0_BATCHSIZE", value = "50" },
+    { name = "SCHEDULER_JOBS_INBOUND_ORDER_POLLING_ENTRIES_1_SALESCHANNELID", value = "2" },
+    { name = "SCHEDULER_JOBS_INBOUND_ORDER_POLLING_ENTRIES_1_ENABLED", value = "true" },
+    { name = "SCHEDULER_JOBS_INBOUND_ORDER_POLLING_ENTRIES_1_CRON", value = "0 0 */1 * * *" },
+    { name = "SCHEDULER_JOBS_INBOUND_ORDER_POLLING_ENTRIES_1_TIMEZONE", value = "Asia/Seoul" },
+    { name = "SCHEDULER_JOBS_INBOUND_ORDER_POLLING_ENTRIES_1_BATCHSIZE", value = "50" }
   ]
 
   # Container Secrets
