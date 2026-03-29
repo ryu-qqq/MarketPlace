@@ -29,11 +29,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @DisplayName("ExecuteQnaOutboxService 단위 테스트")
 class ExecuteQnaOutboxServiceTest {
 
-    @InjectMocks private ExecuteQnaOutboxService sut;
+    private ExecuteQnaOutboxService sut;
 
     @Mock private QnaOutboxReadManager readManager;
     @Mock private QnaOutboxCommandManager commandManager;
     @Mock private QnaAnswerSyncStrategy syncStrategy;
+
+    @org.junit.jupiter.api.BeforeEach
+    void setUp() {
+        sut = new ExecuteQnaOutboxService(readManager, commandManager, java.util.Optional.of(syncStrategy));
+    }
 
     @Nested
     @DisplayName("execute() - QnA 아웃박스 실행")

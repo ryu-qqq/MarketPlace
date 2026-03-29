@@ -71,7 +71,7 @@ public class LegacyOrderFromMarketAssembler {
         return new LegacyOrderDetailResult(
                 mapping.legacyOrderId(),
                 mapping.legacyPaymentId(),
-                product.productId(),
+                parseLongSafe(product.externalProductId(), product.productId()),
                 order.shopId(),
                 0L,
                 product.paymentAmount(),
@@ -119,7 +119,7 @@ public class LegacyOrderFromMarketAssembler {
         return new LegacyOrderDetailResult(
                 mapping.legacyOrderId(),
                 mapping.legacyPaymentId(),
-                product.productId(),
+                parseLongSafe(product.externalProductId(), product.productId()),
                 order.shopId(),
                 0L,
                 product.paymentAmount(),
@@ -307,6 +307,17 @@ public class LegacyOrderFromMarketAssembler {
             return RefundStatus.valueOf(status);
         } catch (IllegalArgumentException e) {
             return RefundStatus.REQUESTED;
+        }
+    }
+
+    private long parseLongSafe(String value, long fallback) {
+        if (value == null || value.isBlank()) {
+            return fallback;
+        }
+        try {
+            return Long.parseLong(value);
+        } catch (NumberFormatException e) {
+            return fallback;
         }
     }
 

@@ -11,4 +11,9 @@ package com.ryuqq.marketplace.application.legacyconversion.dto.result;
  * @param brandName 브랜드명 (order_snapshot_product_group에서 조회 — 현재 luxurydb에 별도 컬럼 없으므로 null 가능)
  */
 public record LegacyOrderResolvedIds(
-        long internalProductGroupId, long internalProductId, String sellerName, String brandName) {}
+        long internalProductGroupId,
+        long internalProductId,
+        Long internalSellerId,
+        Long internalBrandId,
+        String sellerName,
+        String brandName) {}

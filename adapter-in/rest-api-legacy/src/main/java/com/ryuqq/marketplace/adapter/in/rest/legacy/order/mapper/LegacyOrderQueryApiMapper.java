@@ -89,7 +89,8 @@ public class LegacyOrderQueryApiMapper {
                         nullToEmpty(result.deliveryRequest()));
 
         PaymentShipmentInfo paymentShipmentInfo =
-                new PaymentShipmentInfo("DELIVERY_PENDING", "REFER_DETAIL", "", "");
+                new PaymentShipmentInfo(
+                        nullToEmpty(result.orderStatus()), "REFER_DETAIL", "", "");
 
         double commissionRateDouble = result.commissionRate();
         double fee = result.orderAmount() * commissionRateDouble / 100.0;

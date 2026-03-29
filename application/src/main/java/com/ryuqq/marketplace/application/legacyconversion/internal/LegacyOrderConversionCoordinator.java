@@ -171,17 +171,27 @@ public class LegacyOrderConversionCoordinator {
                         .map(LegacyProductIdMapping::internalProductId)
                         .orElse(composite.legacyProductId());
 
-        // 셀러명 조회
+        // 셀러 ID + 이름 조회
+        Long internalSellerId =
+                sellerIdMappingReadManager
+                        .findInternalSellerIdByLegacySellerId(composite.legacySellerId())
+                        .orElse(null);
         String sellerName =
                 sellerIdMappingReadManager
                         .findSellerNameByLegacySellerId(composite.legacySellerId())
                         .orElse(null);
 
-        // 브랜드명은 luxurydb brand 테이블 JOIN으로 조회됨
+        // 브랜드 ID + 이름
+        Long internalBrandId = composite.brandId();
         String brandName = composite.brandName();
 
         return new LegacyOrderResolvedIds(
-                internalProductGroupId, internalProductId, sellerName, brandName);
+                internalProductGroupId,
+                internalProductId,
+                internalSellerId,
+                internalBrandId,
+                sellerName,
+                brandName);
     }
 
     private void completeOutbox(LegacyOrderConversionOutbox outbox, Instant now) {

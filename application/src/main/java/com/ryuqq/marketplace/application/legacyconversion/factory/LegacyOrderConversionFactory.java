@@ -171,10 +171,12 @@ public class LegacyOrderConversionFactory {
         OrderId id = OrderId.forNew(orderId);
         BuyerInfo buyerInfo = buildBuyerInfo(composite);
         PaymentInfo paymentInfo = buildPaymentInfo(composite);
+        long shopId =
+                resolvedIds.internalSellerId() != null ? resolvedIds.internalSellerId() : 0L;
         ExternalOrderReference externalRef =
                 ExternalOrderReference.of(
                         channel.salesChannelId(),
-                        DEFAULT_SHOP_ID,
+                        shopId,
                         channel.channelName(),
                         channel.channelName(),
                         externalOrderNo,
@@ -210,8 +212,8 @@ public class LegacyOrderConversionFactory {
                 InternalProductReference.of(
                         resolvedIds.internalProductGroupId(),
                         resolvedIds.internalProductId(),
-                        null,
-                        null,
+                        resolvedIds.internalSellerId(),
+                        resolvedIds.internalBrandId(),
                         null,
                         composite.productGroupName(),
                         resolvedIds.brandName(),
@@ -236,8 +238,12 @@ public class LegacyOrderConversionFactory {
                         externalOptionName,
                         composite.mainImageUrl());
 
-        Money unitPrice = Money.of((int) composite.currentPrice());
-        Money totalAmount = unitPrice.multiply(composite.quantity());
+        int salePrice =
+                composite.quantity() > 0
+                        ? (int) (composite.orderAmount() / composite.quantity())
+                        : (int) composite.orderAmount();
+        Money unitPrice = Money.of(salePrice);
+        Money totalAmount = Money.of((int) composite.orderAmount());
         ExternalOrderItemPrice price =
                 ExternalOrderItemPrice.of(
                         unitPrice,

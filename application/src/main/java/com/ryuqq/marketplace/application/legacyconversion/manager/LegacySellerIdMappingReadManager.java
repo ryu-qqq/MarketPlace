@@ -35,6 +35,17 @@ public class LegacySellerIdMappingReadManager {
     }
 
     /**
+     * 레거시 셀러 ID로 내부 셀러 ID Optional 조회.
+     *
+     * @param legacySellerId luxurydb seller.seller_id
+     * @return 내부 셀러 ID Optional
+     */
+    @Transactional(readOnly = true)
+    public Optional<Long> findInternalSellerIdByLegacySellerId(long legacySellerId) {
+        return queryPort.findInternalSellerIdByLegacySellerId(legacySellerId);
+    }
+
+    /**
      * 레거시 셀러 ID로 셀러명 조회.
      *
      * @param legacySellerId luxurydb seller.seller_id
