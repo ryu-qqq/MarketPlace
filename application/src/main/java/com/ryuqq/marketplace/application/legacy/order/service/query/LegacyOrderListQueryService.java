@@ -115,8 +115,12 @@ public class LegacyOrderListQueryService implements LegacyOrderListQueryUseCase 
         String searchField = convertSearchKeyword(params.searchKeyword());
 
         return new OrderSearchParams(
-                marketStatuses, searchField, params.searchWord(), dateField,
-                params.sellerId(), commonParams);
+                marketStatuses,
+                searchField,
+                params.searchWord(),
+                dateField,
+                params.sellerId(),
+                commonParams);
     }
 
     /** 레거시 periodType → market dateField 변환. */
@@ -125,10 +129,10 @@ public class LegacyOrderListQueryService implements LegacyOrderListQueryUseCase 
             return null;
         }
         return switch (periodType) {
-            case "PAYMENT" -> "createdAt";
-            case "SETTLEMENT" -> "settlementDate";
-            case "ORDER_HISTORY" -> "updatedAt";
-            default -> "createdAt";
+            case "PAYMENT" -> "ORDERED";
+            case "SETTLEMENT" -> "ORDERED";
+            case "ORDER_HISTORY" -> "ORDERED";
+            default -> "ORDERED";
         };
     }
 

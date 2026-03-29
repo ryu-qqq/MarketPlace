@@ -201,7 +201,7 @@ public class LegacyProductGroupQueryApiMapper {
 
     private String extractMainImageUrl(List<LegacyImageResult> images) {
         if (images == null || images.isEmpty()) {
-            return null;
+            return "";
         }
         return images.stream()
                 .filter(img -> "MAIN".equals(img.imageType()))
