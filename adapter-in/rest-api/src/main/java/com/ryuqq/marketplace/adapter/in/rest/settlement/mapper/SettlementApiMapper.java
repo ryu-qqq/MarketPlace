@@ -12,8 +12,11 @@ import com.ryuqq.marketplace.adapter.in.rest.settlement.dto.response.DailySettle
 import com.ryuqq.marketplace.adapter.in.rest.settlement.dto.response.DailySettlementApiResponse.FeeApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.settlement.dto.response.DailySettlementApiResponse.MileageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.settlement.dto.response.SettlementListItemApiResponse;
-import com.ryuqq.marketplace.adapter.in.rest.settlement.dto.response.SettlementListItemApiResponse.HoldInfoApiResponse;
-import com.ryuqq.marketplace.adapter.in.rest.settlement.dto.response.SettlementListItemApiResponse.SettlementAmountsApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.settlement.dto.response.SettlementListItemApiResponse.HoldInfoV4;
+import com.ryuqq.marketplace.adapter.in.rest.settlement.dto.response.SettlementListItemApiResponse.SettlementAmountsV4;
+import com.ryuqq.marketplace.adapter.in.rest.settlement.mapper.SettlementOrderEnricher.OrderContext;
+import com.ryuqq.marketplace.application.order.dto.response.OrderItemResult;
+import com.ryuqq.marketplace.application.order.dto.response.OrderListResult;
 import com.ryuqq.marketplace.application.settlement.dto.query.DailySettlementSearchParams;
 import com.ryuqq.marketplace.application.settlement.dto.response.DailySettlementResult;
 import com.ryuqq.marketplace.application.settlement.dto.response.SettlementEntryPageResult;
@@ -37,6 +40,12 @@ public class SettlementApiMapper {
             DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final ZoneId ZONE_ID = ZoneId.of("Asia/Seoul");
 
+    private final SettlementOrderEnricher enricher;
+
+    public SettlementApiMapper(SettlementOrderEnricher enricher) {
+        this.enricher = enricher;
+    }
+
     // ==================== Request → Application Params ====================
 
     /**
@@ -57,13 +66,30 @@ public class SettlementApiMapper {
                 request.size() != null ? request.size() : 20);
     }
 
-    // ==================== Result → API Response ====================
+    // ==================== Result → API Response (V4 Enriched) ====================
 
-    /** 페이지 결과를 API 응답으로 변환합니다. */
+    /**
+     * 페이지 결과를 V4 API 응답으로 변환합니다.
+     *
+     * <p>SettlementOrderEnricher 를 사용하여 orderItemId 목록으로 주문 데이터를 배치 조회한 뒤, orderProduct /
+     * buyer / seller / payment 중첩 필드를 채웁니다.
+     */
     public PageApiResponse<SettlementListItemApiResponse> toPageResponse(
             SettlementEntryPageResult result) {
+
+        List<SettlementEntryListResult> entries = result.entries();
+
+        List<Long> orderItemIds =
+                entries.stream()
+                        .map(SettlementEntryListResult::orderItemId)
+                        .filter(id -> id != null && id != 0L)
+                        .toList();
+
+        OrderContext ctx = enricher.loadOrderContext(orderItemIds);
+
         List<SettlementListItemApiResponse> items =
-                result.entries().stream().map(this::toListItemResponse).toList();
+                entries.stream().map(entry -> toListItemResponse(entry, ctx)).toList();
+
         return PageApiResponse.of(
                 items,
                 result.pageMeta().page(),
@@ -71,38 +97,46 @@ public class SettlementApiMapper {
                 result.pageMeta().totalElements());
     }
 
-    private SettlementListItemApiResponse toListItemResponse(SettlementEntryListResult entry) {
+    private SettlementListItemApiResponse toListItemResponse(
+            SettlementEntryListResult entry, OrderContext ctx) {
+
         String apiStatus = mapStatus(entry.entryStatus());
         boolean isCompleted = "COMPLETED".equals(apiStatus);
+        Long orderItemId = entry.orderItemId();
 
-        SettlementAmountsApiResponse amounts =
-                new SettlementAmountsApiResponse(
+        SettlementAmountsV4 amounts =
+                new SettlementAmountsV4(
                         entry.salesAmount(),
                         entry.commissionAmount(),
                         entry.commissionRate(),
                         entry.settlementAmount(),
                         isCompleted ? entry.settlementAmount() : 0);
 
-        HoldInfoApiResponse holdInfo = buildHoldInfo(entry);
-
+        HoldInfoV4 holdInfo = buildHoldInfo(entry);
         String expectedSettlementDay = formatDate(entry.eligibleAt());
         String settlementDay = isCompleted ? formatDate(entry.createdAt()) : null;
+
+        OrderItemResult item = orderItemId != null ? ctx.getItem(orderItemId) : null;
+        OrderListResult order = orderItemId != null ? ctx.getOrder(orderItemId) : null;
 
         return new SettlementListItemApiResponse(
                 entry.entryId(),
                 apiStatus,
-                entry.orderItemId() != null
-                        ? String.valueOf(entry.orderItemId())
-                        : "", // V4 간극: orderItemId → orderId
-                "", // orderNumber: Entry에 없음
-                entry.sellerId(),
+                orderItemId != null ? String.valueOf(orderItemId) : "",
+                order != null ? nullToEmpty(order.orderNumber()) : "",
+                enricher.toOrderProductV4(item),
+                enricher.toBuyerInfoV4(order),
+                enricher.toSellerInfoV4(entry.sellerId(), item),
+                enricher.toPaymentInfoV4(order),
                 amounts,
-                "", // orderedAt: Entry에 없음
-                null, // deliveredAt
+                order != null ? formatInstant(order.createdAt()) : "",
+                item != null ? "" : null,
                 expectedSettlementDay,
                 settlementDay,
                 holdInfo);
     }
+
+    // ==================== 상태 매핑 ====================
 
     /**
      * 내부 상태를 API 상태로 매핑합니다.
@@ -120,13 +154,13 @@ public class SettlementApiMapper {
         };
     }
 
-    private HoldInfoApiResponse buildHoldInfo(SettlementEntryListResult entry) {
+    private HoldInfoV4 buildHoldInfo(SettlementEntryListResult entry) {
         if (!"HOLD".equals(entry.entryStatus())) {
             return null;
         }
         String holdAt =
                 entry.holdAt() != null ? DateTimeFormatUtils.formatIso8601(entry.holdAt()) : null;
-        return new HoldInfoApiResponse(nullToEmpty(entry.holdReason()), holdAt);
+        return new HoldInfoV4(nullToEmpty(entry.holdReason()), holdAt);
     }
 
     // ==================== Daily 변환 ====================
@@ -153,8 +187,8 @@ public class SettlementApiMapper {
                 result.settlementDay().format(DATE_FORMATTER),
                 null,
                 result.entryCount(),
-                0, // ourMallOrderCount: 채널 구분 없음
-                0, // externalMallOrderCount: 채널 구분 없음
+                0,
+                0,
                 result.totalSalesAmount(),
                 DiscountApiResponse.zero(),
                 MileageApiResponse.zero(),
@@ -210,6 +244,11 @@ public class SettlementApiMapper {
         }
         LocalDate date = instant.atZone(ZONE_ID).toLocalDate();
         return date.format(DATE_FORMATTER);
+    }
+
+    private String formatInstant(Instant instant) {
+        String formatted = DateTimeFormatUtils.formatDisplay(instant);
+        return formatted != null ? formatted : "";
     }
 
     private String nullToEmpty(String value) {

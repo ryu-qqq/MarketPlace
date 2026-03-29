@@ -10,8 +10,14 @@ import com.ryuqq.marketplace.adapter.in.rest.settlement.dto.response.DailySettle
 import com.ryuqq.marketplace.adapter.in.rest.settlement.dto.response.DailySettlementApiResponse.FeeApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.settlement.dto.response.DailySettlementApiResponse.MileageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.settlement.dto.response.SettlementListItemApiResponse;
-import com.ryuqq.marketplace.adapter.in.rest.settlement.dto.response.SettlementListItemApiResponse.HoldInfoApiResponse;
-import com.ryuqq.marketplace.adapter.in.rest.settlement.dto.response.SettlementListItemApiResponse.SettlementAmountsApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.settlement.dto.response.SettlementListItemApiResponse.BrandV4;
+import com.ryuqq.marketplace.adapter.in.rest.settlement.dto.response.SettlementListItemApiResponse.BuyerInfoV4;
+import com.ryuqq.marketplace.adapter.in.rest.settlement.dto.response.SettlementListItemApiResponse.HoldInfoV4;
+import com.ryuqq.marketplace.adapter.in.rest.settlement.dto.response.SettlementListItemApiResponse.OrderProductV4;
+import com.ryuqq.marketplace.adapter.in.rest.settlement.dto.response.SettlementListItemApiResponse.PaymentInfoV4;
+import com.ryuqq.marketplace.adapter.in.rest.settlement.dto.response.SettlementListItemApiResponse.PriceV4;
+import com.ryuqq.marketplace.adapter.in.rest.settlement.dto.response.SettlementListItemApiResponse.SellerInfoV4;
+import com.ryuqq.marketplace.adapter.in.rest.settlement.dto.response.SettlementListItemApiResponse.SettlementAmountsV4;
 import java.util.List;
 
 /**
@@ -73,11 +79,31 @@ public final class SettlementApiFixtures {
         return new SettlementEntryListApiRequest(null, null, null, null, null, null, page, size);
     }
 
+    // ===== V4 공통 빈 객체 =====
+
+    public static OrderProductV4 emptyOrderProduct() {
+        return new OrderProductV4(
+                "", "", "", new PriceV4(0, 0, 0, 0, 0, 0), new BrandV4(0L, ""), 0L, 0L, "", "", "",
+                0, "", 0, 0, 0, "", "", List.of());
+    }
+
+    public static BuyerInfoV4 emptyBuyer() {
+        return new BuyerInfoV4("", "");
+    }
+
+    public static SellerInfoV4 defaultSeller() {
+        return new SellerInfoV4(DEFAULT_SELLER_ID, "");
+    }
+
+    public static PaymentInfoV4 emptyPayment() {
+        return new PaymentInfoV4("", "", 0, "");
+    }
+
     // ===== SettlementListItemApiResponse =====
 
     public static SettlementListItemApiResponse pendingListItemResponse() {
-        SettlementAmountsApiResponse amounts =
-                new SettlementAmountsApiResponse(
+        SettlementAmountsV4 amounts =
+                new SettlementAmountsV4(
                         DEFAULT_SALES_AMOUNT,
                         DEFAULT_COMMISSION_AMOUNT,
                         DEFAULT_COMMISSION_RATE,
@@ -88,7 +114,10 @@ public final class SettlementApiFixtures {
                 "PENDING",
                 String.valueOf(DEFAULT_ORDER_ITEM_ID),
                 "",
-                DEFAULT_SELLER_ID,
+                emptyOrderProduct(),
+                emptyBuyer(),
+                defaultSeller(),
+                emptyPayment(),
                 amounts,
                 "",
                 null,
@@ -98,21 +127,23 @@ public final class SettlementApiFixtures {
     }
 
     public static SettlementListItemApiResponse holdListItemResponse() {
-        SettlementAmountsApiResponse amounts =
-                new SettlementAmountsApiResponse(
+        SettlementAmountsV4 amounts =
+                new SettlementAmountsV4(
                         DEFAULT_SALES_AMOUNT,
                         DEFAULT_COMMISSION_AMOUNT,
                         DEFAULT_COMMISSION_RATE,
                         DEFAULT_SETTLEMENT_AMOUNT,
                         0);
-        HoldInfoApiResponse holdInfo =
-                new HoldInfoApiResponse(DEFAULT_HOLD_REASON, "2026-03-19 10:00:00");
+        HoldInfoV4 holdInfo = new HoldInfoV4(DEFAULT_HOLD_REASON, "2026-03-19 10:00:00");
         return new SettlementListItemApiResponse(
                 DEFAULT_SETTLEMENT_ID,
                 "HOLD",
                 String.valueOf(DEFAULT_ORDER_ITEM_ID),
                 "",
-                DEFAULT_SELLER_ID,
+                emptyOrderProduct(),
+                emptyBuyer(),
+                defaultSeller(),
+                emptyPayment(),
                 amounts,
                 "",
                 null,
@@ -122,8 +153,8 @@ public final class SettlementApiFixtures {
     }
 
     public static SettlementListItemApiResponse completedListItemResponse() {
-        SettlementAmountsApiResponse amounts =
-                new SettlementAmountsApiResponse(
+        SettlementAmountsV4 amounts =
+                new SettlementAmountsV4(
                         DEFAULT_SALES_AMOUNT,
                         DEFAULT_COMMISSION_AMOUNT,
                         DEFAULT_COMMISSION_RATE,
@@ -134,7 +165,10 @@ public final class SettlementApiFixtures {
                 "COMPLETED",
                 String.valueOf(DEFAULT_ORDER_ITEM_ID),
                 "",
-                DEFAULT_SELLER_ID,
+                emptyOrderProduct(),
+                emptyBuyer(),
+                defaultSeller(),
+                emptyPayment(),
                 amounts,
                 "",
                 null,

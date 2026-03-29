@@ -1,6 +1,8 @@
 package com.ryuqq.marketplace.adapter.in.rest.settlement.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.BDDMockito.given;
 
 import com.ryuqq.marketplace.adapter.in.rest.common.dto.PageApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.settlement.SettlementApiFixtures;
@@ -11,6 +13,7 @@ import com.ryuqq.marketplace.adapter.in.rest.settlement.dto.request.SettlementHo
 import com.ryuqq.marketplace.adapter.in.rest.settlement.dto.request.SettlementReleaseBatchApiRequest;
 import com.ryuqq.marketplace.adapter.in.rest.settlement.dto.response.DailySettlementApiResponse;
 import com.ryuqq.marketplace.adapter.in.rest.settlement.dto.response.SettlementListItemApiResponse;
+import com.ryuqq.marketplace.adapter.in.rest.settlement.mapper.SettlementOrderEnricher.OrderContext;
 import com.ryuqq.marketplace.application.settlement.SettlementEntryQueryFixtures;
 import com.ryuqq.marketplace.application.settlement.dto.query.DailySettlementSearchParams;
 import com.ryuqq.marketplace.application.settlement.dto.response.DailySettlementResult;
@@ -24,21 +27,39 @@ import com.ryuqq.marketplace.domain.common.vo.PageMeta;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @Tag("unit")
+@ExtendWith(MockitoExtension.class)
 @DisplayName("SettlementApiMapper 단위 테스트")
 class SettlementApiMapperTest {
+
+    @Mock private SettlementOrderEnricher enricher;
 
     private SettlementApiMapper mapper;
 
     @BeforeEach
     void setUp() {
-        mapper = new SettlementApiMapper();
+        mapper = new SettlementApiMapper(enricher);
+    }
+
+    private void givenEmptyOrderContext() {
+        given(enricher.loadOrderContext(anyList()))
+                .willReturn(new OrderContext(Map.of(), Map.of()));
+        given(enricher.toOrderProductV4(null)).willReturn(SettlementApiFixtures.emptyOrderProduct());
+        given(enricher.toBuyerInfoV4(null)).willReturn(SettlementApiFixtures.emptyBuyer());
+        given(enricher.toSellerInfoV4(
+                        SettlementApiFixtures.DEFAULT_SELLER_ID, null))
+                .willReturn(SettlementApiFixtures.defaultSeller());
+        given(enricher.toPaymentInfoV4(null)).willReturn(SettlementApiFixtures.emptyPayment());
     }
 
     @Nested
@@ -116,6 +137,7 @@ class SettlementApiMapperTest {
             PageMeta pageMeta = new PageMeta(0, 20, 1L, 1);
             SettlementEntryPageResult pageResult =
                     new SettlementEntryPageResult(List.of(entry), pageMeta);
+            givenEmptyOrderContext();
 
             // when
             PageApiResponse<SettlementListItemApiResponse> response =
@@ -135,6 +157,8 @@ class SettlementApiMapperTest {
             PageMeta pageMeta = new PageMeta(0, 20, 0L, 0);
             SettlementEntryPageResult pageResult =
                     new SettlementEntryPageResult(List.of(), pageMeta);
+            given(enricher.loadOrderContext(anyList()))
+                    .willReturn(new OrderContext(Map.of(), Map.of()));
 
             // when
             PageApiResponse<SettlementListItemApiResponse> response =
@@ -159,6 +183,7 @@ class SettlementApiMapperTest {
             PageMeta pageMeta = new PageMeta(0, 20, 1L, 1);
             SettlementEntryPageResult pageResult =
                     new SettlementEntryPageResult(List.of(entry), pageMeta);
+            givenEmptyOrderContext();
 
             // when
             PageApiResponse<SettlementListItemApiResponse> response =
@@ -177,6 +202,7 @@ class SettlementApiMapperTest {
             PageMeta pageMeta = new PageMeta(0, 20, 1L, 1);
             SettlementEntryPageResult pageResult =
                     new SettlementEntryPageResult(List.of(entry), pageMeta);
+            givenEmptyOrderContext();
 
             // when
             PageApiResponse<SettlementListItemApiResponse> response =
@@ -211,6 +237,15 @@ class SettlementApiMapperTest {
             SettlementEntryPageResult pageResult =
                     new SettlementEntryPageResult(List.of(holdEntry), pageMeta);
 
+            given(enricher.loadOrderContext(anyList()))
+                    .willReturn(new OrderContext(Map.of(), Map.of()));
+            given(enricher.toOrderProductV4(null))
+                    .willReturn(SettlementApiFixtures.emptyOrderProduct());
+            given(enricher.toBuyerInfoV4(null)).willReturn(SettlementApiFixtures.emptyBuyer());
+            given(enricher.toSellerInfoV4(100L, null))
+                    .willReturn(SettlementApiFixtures.defaultSeller());
+            given(enricher.toPaymentInfoV4(null)).willReturn(SettlementApiFixtures.emptyPayment());
+
             // when
             PageApiResponse<SettlementListItemApiResponse> response =
                     mapper.toPageResponse(pageResult);
@@ -231,6 +266,7 @@ class SettlementApiMapperTest {
             PageMeta pageMeta = new PageMeta(0, 20, 1L, 1);
             SettlementEntryPageResult pageResult =
                     new SettlementEntryPageResult(List.of(entry), pageMeta);
+            givenEmptyOrderContext();
 
             // when
             PageApiResponse<SettlementListItemApiResponse> response =
