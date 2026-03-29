@@ -177,6 +177,8 @@ public class ProductGroupCompositionQueryDslRepository {
                                 conditionBuilder.categoryIdIn(criteria.categoryIds()),
                                 conditionBuilder.statusIn(criteria),
                                 conditionBuilder.searchCondition(criteria),
+                                conditionBuilder.createdAtGoe(criteria),
+                                conditionBuilder.createdAtLoe(criteria),
                                 conditionBuilder.statusNotDeleted())
                         .orderBy(resolveOrderSpecifier(criteria))
                         .offset(criteria.offset())
@@ -232,6 +234,8 @@ public class ProductGroupCompositionQueryDslRepository {
                                 conditionBuilder.categoryIdIn(criteria.categoryIds()),
                                 conditionBuilder.statusIn(criteria),
                                 conditionBuilder.searchCondition(criteria),
+                                conditionBuilder.createdAtGoe(criteria),
+                                conditionBuilder.createdAtLoe(criteria),
                                 conditionBuilder.statusNotDeleted())
                         .fetchOne();
         return count != null ? count : 0L;
@@ -250,6 +254,8 @@ public class ProductGroupCompositionQueryDslRepository {
                                 product.productGroupId,
                                 product.currentPrice.min(),
                                 product.currentPrice.max(),
+                                product.regularPrice.min(),
+                                product.salePrice.min(),
                                 product.discountRate.max())
                         .from(product)
                         .where(
@@ -266,6 +272,8 @@ public class ProductGroupCompositionQueryDslRepository {
                     new int[] {
                         safeInt(t.get(product.currentPrice.min())),
                         safeInt(t.get(product.currentPrice.max())),
+                        safeInt(t.get(product.regularPrice.min())),
+                        safeInt(t.get(product.salePrice.min())),
                         safeInt(t.get(product.discountRate.max()))
                     });
         }
@@ -275,11 +283,11 @@ public class ProductGroupCompositionQueryDslRepository {
 
         List<ProductGroupEnrichmentResult> results = new ArrayList<>();
         for (Long pgId : productGroupIds) {
-            int[] prices = priceMap.getOrDefault(pgId, new int[] {0, 0, 0});
+            int[] prices = priceMap.getOrDefault(pgId, new int[] {0, 0, 0, 0, 0});
             List<OptionGroupSummaryResult> options = optionMap.getOrDefault(pgId, List.of());
             results.add(
                     new ProductGroupEnrichmentResult(
-                            pgId, prices[0], prices[1], prices[2], options));
+                            pgId, prices[0], prices[1], prices[2], prices[3], prices[4], options));
         }
         return results;
     }
@@ -370,6 +378,8 @@ public class ProductGroupCompositionQueryDslRepository {
                                 product.productGroupId,
                                 product.currentPrice.min(),
                                 product.currentPrice.max(),
+                                product.regularPrice.min(),
+                                product.salePrice.min(),
                                 product.discountRate.max())
                         .from(product)
                         .where(
@@ -386,6 +396,8 @@ public class ProductGroupCompositionQueryDslRepository {
                     new int[] {
                         safeInt(t.get(product.currentPrice.min())),
                         safeInt(t.get(product.currentPrice.max())),
+                        safeInt(t.get(product.regularPrice.min())),
+                        safeInt(t.get(product.salePrice.min())),
                         safeInt(t.get(product.discountRate.max()))
                     });
         }
@@ -400,11 +412,13 @@ public class ProductGroupCompositionQueryDslRepository {
                         .map(
                                 base -> {
                                     int[] prices =
-                                            priceMap.getOrDefault(base.id(), new int[] {0, 0, 0});
+                                            priceMap.getOrDefault(
+                                                    base.id(), new int[] {0, 0, 0, 0, 0});
                                     List<OptionGroupSummaryResult> options =
                                             optionMap.getOrDefault(base.id(), List.of());
                                     return base.withEnrichment(
-                                            prices[0], prices[1], prices[2], options);
+                                            prices[0], prices[1], prices[2], prices[3], prices[4],
+                                            options);
                                 })
                         .toList();
 
@@ -777,6 +791,7 @@ public class ProductGroupCompositionQueryDslRepository {
         boolean isAsc = direction.isAscending();
 
         return switch (sortKey) {
+            case ID -> isAsc ? pg.id.asc() : pg.id.desc();
             case CREATED_AT -> isAsc ? pg.createdAt.asc() : pg.createdAt.desc();
             case UPDATED_AT -> isAsc ? pg.updatedAt.asc() : pg.updatedAt.desc();
             case NAME -> isAsc ? pg.productGroupName.asc() : pg.productGroupName.desc();

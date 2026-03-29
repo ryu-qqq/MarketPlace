@@ -9,6 +9,9 @@ import com.ryuqq.marketplace.domain.common.vo.SortKey;
  */
 public enum ProductGroupSortKey implements SortKey {
 
+    /** 상품그룹 ID 순 */
+    ID("id"),
+
     /** 등록일시 순 (기본값) */
     CREATED_AT("createdAt"),
 

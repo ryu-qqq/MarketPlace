@@ -45,10 +45,7 @@ services:
       DB_PORT: 13308
       # DB_NAME, DB_USERNAME, DB_PASSWORD -> .env.aws.stage
 
-      # Legacy Database (same RDS, different schema)
-      LEGACY_DB_NAME: "${LEGACY_DB_NAME}"
-      LEGACY_DB_USERNAME: "${LEGACY_DB_USERNAME}"
-      LEGACY_DB_PASSWORD: "${LEGACY_DB_PASSWORD}"
+      # Legacy Database / AuthHub / FileFlow -> .env.aws.stage
 
       # Redis (local container)
       REDIS_HOST: redis
@@ -56,14 +53,9 @@ services:
       REDIS_PASSWORD: ""
       REDIS_SSL_ENABLED: "false"
 
-      # AuthHub Client
+      # Client base URLs
       AUTHHUB_BASE_URL: "http://authhub-web-api-stage.connectly.local"
-      AUTHHUB_SERVICE_TOKEN: "${AUTHHUB_SERVICE_TOKEN}"
-      SECURITY_SERVICE_TOKEN_SECRET: "${AUTHHUB_SERVICE_TOKEN}"
-
-      # FileFlow Client
       FILEFLOW_BASE_URL: "http://fileflow-web-api-stage.connectly.local"
-      FILEFLOW_SERVICE_TOKEN: "${FILEFLOW_SERVICE_TOKEN}"
 
       # SQS Queue URLs (dummy for local)
       SQS_QUEUES_INTELLIGENCE_ORCHESTRATION: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-orchestration"
@@ -108,10 +100,7 @@ services:
       DB_PORT: 13308
       # DB_NAME, DB_USERNAME, DB_PASSWORD -> .env.aws.stage
 
-      # Legacy Database (same RDS, different schema)
-      LEGACY_DB_NAME: "${LEGACY_DB_NAME}"
-      LEGACY_DB_USERNAME: "${LEGACY_DB_USERNAME}"
-      LEGACY_DB_PASSWORD: "${LEGACY_DB_PASSWORD}"
+      # Legacy Database (same RDS, different schema) -> .env.aws.stage
       LEGACY_DB_ENABLED: "true"
 
       # Redis (local container)
@@ -120,17 +109,9 @@ services:
       REDIS_PASSWORD: ""
       REDIS_SSL_ENABLED: "false"
 
-      # AuthHub Client
+      # AuthHub / FileFlow / Legacy Token -> .env.aws.stage
       AUTHHUB_BASE_URL: "http://authhub-web-api-stage.connectly.local"
-      AUTHHUB_SERVICE_TOKEN: "${AUTHHUB_SERVICE_TOKEN}"
-      SECURITY_SERVICE_TOKEN_SECRET: "${AUTHHUB_SERVICE_TOKEN}"
-
-      # FileFlow Client
       FILEFLOW_BASE_URL: "http://fileflow-web-api-stage.connectly.local"
-      FILEFLOW_SERVICE_TOKEN: "${FILEFLOW_SERVICE_TOKEN}"
-
-      # Legacy Auth JWT
-      LEGACY_TOKEN_SECRET: "${LEGACY_TOKEN_SECRET}"
 
       # SQS Queue URLs (dummy for local)
       SQS_QUEUES_INTELLIGENCE_ORCHESTRATION: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-orchestration"
@@ -178,10 +159,7 @@ services:
       DB_PORT: 13308
       # DB_NAME, DB_USERNAME, DB_PASSWORD -> .env.aws.stage
 
-      # Legacy Database (same RDS, different schema)
-      LEGACY_DB_NAME: "${LEGACY_DB_NAME}"
-      LEGACY_DB_USERNAME: "${LEGACY_DB_USERNAME}"
-      LEGACY_DB_PASSWORD: "${LEGACY_DB_PASSWORD}"
+      # Legacy Database / AuthHub / FileFlow / Naver / Sellic -> .env.aws.stage
 
       # Redis (host machine - 로컬에 이미 떠있는 Redis 사용)
       REDIS_HOST: host.docker.internal
@@ -189,13 +167,9 @@ services:
       REDIS_PASSWORD: ""
       REDIS_SSL_ENABLED: "false"
 
-      # AuthHub Client
+      # Client base URLs
       AUTHHUB_BASE_URL: "http://authhub-web-api-stage.connectly.local"
-      AUTHHUB_SERVICE_TOKEN: "${AUTHHUB_SERVICE_TOKEN}"
-
-      # FileFlow Client
       FILEFLOW_BASE_URL: "http://fileflow-web-api-stage.connectly.local"
-      FILEFLOW_SERVICE_TOKEN: "${FILEFLOW_SERVICE_TOKEN}"
 
       # SQS Queue URLs (dummy for local)
       SQS_QUEUES_INTELLIGENCE_ORCHESTRATION: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-orchestration"
@@ -208,15 +182,6 @@ services:
       SQS_QUEUES_REFUND_OUTBOX: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-refund-outbox"
       SQS_QUEUES_EXCHANGE_OUTBOX: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-exchange-outbox"
       SQS_QUEUES_SHIPMENT_OUTBOX: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-shipment-outbox"
-
-      # Naver Commerce
-      NAVER_COMMERCE_CLIENT_ID: "${NAVER_COMMERCE_CLIENT_ID}"
-      NAVER_COMMERCE_CLIENT_SECRET: "${NAVER_COMMERCE_CLIENT_SECRET}"
-
-      # Sellic Commerce
-      SELLIC_COMMERCE_BASE_URL: "${SELLIC_COMMERCE_BASE_URL}"
-      SELLIC_COMMERCE_CUSTOMER_ID: "${SELLIC_COMMERCE_CUSTOMER_ID}"
-      SELLIC_COMMERCE_API_KEY: "${SELLIC_COMMERCE_API_KEY}"
 
       # OpenTelemetry disabled (local)
       OTEL_JAVAAGENT_ENABLED: "false"
@@ -250,10 +215,7 @@ services:
       DB_PORT: 13308
       # DB_NAME, DB_USERNAME, DB_PASSWORD -> .env.aws.stage
 
-      # Legacy Database (same RDS, different schema)
-      LEGACY_DB_NAME: "${LEGACY_DB_NAME}"
-      LEGACY_DB_USERNAME: "${LEGACY_DB_USERNAME}"
-      LEGACY_DB_PASSWORD: "${LEGACY_DB_PASSWORD}"
+      # Legacy Database / AuthHub / FileFlow -> .env.aws.stage
 
       # Redis (local container)
       REDIS_HOST: redis
@@ -261,13 +223,9 @@ services:
       REDIS_PASSWORD: ""
       REDIS_SSL_ENABLED: "false"
 
-      # AuthHub Client
+      # Client base URLs
       AUTHHUB_BASE_URL: "http://authhub-web-api-stage.connectly.local"
-      AUTHHUB_SERVICE_TOKEN: "${AUTHHUB_SERVICE_TOKEN}"
-
-      # FileFlow Client
       FILEFLOW_BASE_URL: "http://fileflow-web-api-stage.connectly.local"
-      FILEFLOW_SERVICE_TOKEN: "${FILEFLOW_SERVICE_TOKEN}"
 
       # SQS Queue URLs (dummy for local - no SQS in local)
       SQS_QUEUES_INTELLIGENCE_ORCHESTRATION: "https://sqs.ap-northeast-2.amazonaws.com/000000000000/dummy-orchestration"

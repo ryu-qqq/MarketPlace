@@ -39,16 +39,24 @@ public class LegacyOrderQueryService implements LegacyOrderQueryUseCase {
     @Override
     @Transactional(readOnly = true)
     public LegacyOrderDetailResult execute(long orderId) {
-        LegacyOrderIdMapping mapping =
-                idResolver
-                        .resolve(orderId)
-                        .orElseThrow(
-                                () ->
-                                        new com.ryuqq.marketplace.domain.order.exception
-                                                .OrderNotFoundException(String.valueOf(orderId)));
+        LegacyOrderIdMapping mapping = idResolver.resolve(orderId).orElse(null);
 
-        Long orderItemId = mapping.internalOrderItemId();
+        Long orderItemId;
+        if (mapping != null) {
+            orderItemId = mapping.internalOrderItemId();
+        } else {
+            // 매핑 없는 주문 (셀릭/네이버 폴링) — orderId가 market orderItemId
+            orderItemId = orderId;
+        }
+
         var detail = getOrderDetailUseCase.execute(orderItemId);
+
+        if (mapping == null) {
+            mapping =
+                    LegacyOrderIdMapping.fallback(
+                            orderItemId, orderItemId, detail.order().orderId());
+        }
+
         Shipment shipment =
                 shipmentReadManager.findByOrderItemId(OrderItemId.of(orderItemId)).orElse(null);
         return assembler.toDetailResult(detail, mapping, shipment);

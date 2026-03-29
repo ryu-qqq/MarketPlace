@@ -1,5 +1,6 @@
 package com.ryuqq.marketplace.application.legacy.shared.assembler;
 
+import com.ryuqq.marketplace.application.legacy.productcontext.resolver.LegacyProductIdResolver;
 import com.ryuqq.marketplace.application.legacy.productgroup.dto.response.LegacyProductGroupPageResult;
 import com.ryuqq.marketplace.application.legacy.shared.dto.result.LegacyProductGroupDetailResult;
 import com.ryuqq.marketplace.application.legacy.shared.dto.result.LegacyProductGroupDetailResult.LegacyDeliveryResult;
@@ -39,6 +40,12 @@ public class LegacyProductGroupFromMarketAssembler {
 
     private static final ZoneId SEOUL = ZoneId.of("Asia/Seoul");
     private static final String DEFAULT_PRODUCT_CONDITION = "NEW";
+
+    private final LegacyProductIdResolver productIdResolver;
+
+    public LegacyProductGroupFromMarketAssembler(LegacyProductIdResolver productIdResolver) {
+        this.productIdResolver = productIdResolver;
+    }
 
     /** 표준 상세 조회 결과 → 레거시 상세 결과. */
     public LegacyProductGroupDetailResult toDetailResult(
@@ -94,7 +101,7 @@ public class LegacyProductGroupFromMarketAssembler {
                 toProductResults(products, reverseProductMap));
     }
 
-    /** 표준 목록 조회 결과 → 레거시 목록 결과. */
+    /** 표준 목록 조회 결과 → 레거시 목록 결과. PK를 레거시 PK로 역매핑합니다. */
     public LegacyProductGroupPageResult toPageResult(
             ProductGroupPageResult pageResult, int page, int size) {
         List<LegacyProductGroupDetailResult> items =
@@ -105,8 +112,9 @@ public class LegacyProductGroupFromMarketAssembler {
 
     private LegacyProductGroupDetailResult toListDetailResult(
             ProductGroupListCompositeResult item) {
+        long legacyProductGroupId = productIdResolver.reverseResolveProductGroupId(item.id());
         return new LegacyProductGroupDetailResult(
-                item.id(),
+                legacyProductGroupId,
                 item.productGroupName(),
                 item.sellerId(),
                 item.sellerName(),
@@ -116,9 +124,9 @@ public class LegacyProductGroupFromMarketAssembler {
                 safe(item.categoryDisplayPath()),
                 toLegacyOptionType(item.optionType()),
                 "MENUAL",
+                item.regularPrice(),
                 item.minPrice(),
-                item.maxPrice(),
-                item.minPrice(),
+                item.salePrice(),
                 0L,
                 0,
                 item.maxDiscountRate(),

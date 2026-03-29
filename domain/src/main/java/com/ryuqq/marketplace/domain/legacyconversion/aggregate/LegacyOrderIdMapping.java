@@ -77,6 +77,20 @@ public class LegacyOrderIdMapping {
                 createdAt);
     }
 
+    /** 매핑 없는 주문의 fallback — market orderItemId를 legacyOrderId로 사용. */
+    public static LegacyOrderIdMapping fallback(
+            Long orderItemId, Long paymentId, String internalOrderId) {
+        return new LegacyOrderIdMapping(
+                LegacyOrderIdMappingId.forNew(),
+                orderItemId,
+                paymentId != null ? paymentId : 0L,
+                internalOrderId,
+                orderItemId,
+                0L,
+                "",
+                Instant.now());
+    }
+
     public boolean isNew() {
         return id.isNew();
     }

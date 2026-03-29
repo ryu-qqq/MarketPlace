@@ -161,6 +161,8 @@ public class ProductGroupAssembler {
                             return base.withEnrichment(
                                     enrichment.minPrice(),
                                     enrichment.maxPrice(),
+                                    enrichment.regularPrice(),
+                                    enrichment.salePrice(),
                                     enrichment.maxDiscountRate(),
                                     enrichment.optionGroups());
                         })

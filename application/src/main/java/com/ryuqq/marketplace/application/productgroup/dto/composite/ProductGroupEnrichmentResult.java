@@ -18,6 +18,8 @@ public record ProductGroupEnrichmentResult(
         Long productGroupId,
         int minPrice,
         int maxPrice,
+        int regularPrice,
+        int salePrice,
         int maxDiscountRate,
         List<OptionGroupSummaryResult> optionGroups) {
 

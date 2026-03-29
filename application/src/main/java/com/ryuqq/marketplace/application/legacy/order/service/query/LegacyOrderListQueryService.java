@@ -82,7 +82,7 @@ public class LegacyOrderListQueryService implements LegacyOrderListQueryUseCase 
             Long itemId = item.productOrder().orderItemId();
             LegacyOrderIdMapping mapping = mappingMap.get(itemId);
             if (mapping == null) {
-                continue;
+                mapping = LegacyOrderIdMapping.fallback(itemId, itemId, item.order().orderId());
             }
             Shipment shipment = shipmentMap.get(itemId);
 

@@ -32,6 +32,8 @@ public record ProductGroupListCompositeResult(
         int productCount,
         int minPrice,
         int maxPrice,
+        int regularPrice,
+        int salePrice,
         int maxDiscountRate,
         List<OptionGroupSummaryResult> optionGroups,
         Instant createdAt,
@@ -83,6 +85,8 @@ public record ProductGroupListCompositeResult(
                 0,
                 0,
                 0,
+                0,
+                0,
                 List.of(),
                 createdAt,
                 updatedAt);
@@ -99,6 +103,8 @@ public record ProductGroupListCompositeResult(
     public ProductGroupListCompositeResult withEnrichment(
             int minPrice,
             int maxPrice,
+            int regularPrice,
+            int salePrice,
             int maxDiscountRate,
             List<OptionGroupSummaryResult> optionGroups) {
         return new ProductGroupListCompositeResult(
@@ -121,6 +127,8 @@ public record ProductGroupListCompositeResult(
                 productCount,
                 minPrice,
                 maxPrice,
+                regularPrice,
+                salePrice,
                 maxDiscountRate,
                 optionGroups,
                 createdAt,

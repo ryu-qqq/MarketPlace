@@ -81,7 +81,7 @@ public class LegacyProductGroupQueryFactory {
                         false,
                         toLocalDate(params.startDate()),
                         toLocalDate(params.endDate()),
-                        "createdAt",
+                        "id",
                         "DESC",
                         params.page(),
                         params.size());

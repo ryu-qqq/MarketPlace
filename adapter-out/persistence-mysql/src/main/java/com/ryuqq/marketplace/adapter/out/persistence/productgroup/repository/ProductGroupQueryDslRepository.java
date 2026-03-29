@@ -175,6 +175,7 @@ public class ProductGroupQueryDslRepository {
         boolean isAsc = direction.isAscending();
 
         return switch (sortKey) {
+            case ID -> isAsc ? productGroup.id.asc() : productGroup.id.desc();
             case CREATED_AT -> isAsc ? productGroup.createdAt.asc() : productGroup.createdAt.desc();
             case UPDATED_AT -> isAsc ? productGroup.updatedAt.asc() : productGroup.updatedAt.desc();
             case NAME ->
