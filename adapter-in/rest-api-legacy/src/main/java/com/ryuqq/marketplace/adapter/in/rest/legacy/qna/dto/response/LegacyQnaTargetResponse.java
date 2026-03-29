@@ -14,9 +14,9 @@ public record LegacyQnaTargetResponse(
         String productGroupName,
         String productGroupMainImageUrl,
         BrandInfo brand,
-        @JsonInclude(JsonInclude.Include.NON_NULL) Long paymentId,
-        @JsonInclude(JsonInclude.Include.NON_NULL) Long orderId,
-        @JsonInclude(JsonInclude.Include.NON_NULL) String option) {
+        Long paymentId,
+        Long orderId,
+        String option) {
 
     public record BrandInfo(long brandId, String brandName) {}
 
@@ -32,9 +32,9 @@ public record LegacyQnaTargetResponse(
                 productGroupName,
                 productGroupMainImageUrl,
                 new BrandInfo(brandId, brandName),
-                null,
-                null,
-                null);
+                0L,
+                0L,
+                "");
     }
 
     /** 주문 QnA 대상 생성. */

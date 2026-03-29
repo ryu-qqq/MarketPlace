@@ -296,7 +296,7 @@ class LegacyQnaQueryApiMapperTest {
             // then
             assertThat(response.qnaTarget()).isNotNull();
             assertThat(response.qnaTarget().productGroupId()).isEqualTo(100L);
-            assertThat(response.qnaTarget().orderId()).isNull();
+            assertThat(response.qnaTarget().orderId()).isEqualTo(0L);
         }
 
         @Test

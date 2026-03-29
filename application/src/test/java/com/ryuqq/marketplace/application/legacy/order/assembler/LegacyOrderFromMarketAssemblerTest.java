@@ -40,7 +40,15 @@ class LegacyOrderFromMarketAssemblerTest {
                         mockManager.findLegacySellerIdByInternalSellerId(
                                 org.mockito.ArgumentMatchers.anyLong()))
                 .thenAnswer(inv -> java.util.Optional.of(inv.getArgument(0, Long.class)));
-        assembler = new LegacyOrderFromMarketAssembler(mockManager);
+        var mockProductIdResolver =
+                org.mockito.Mockito.mock(
+                        com.ryuqq.marketplace.application.legacy.productcontext.resolver
+                                .LegacyProductIdResolver.class);
+        org.mockito.Mockito.when(mockProductIdResolver.reverseResolveProductId(org.mockito.ArgumentMatchers.anyLong()))
+                .thenAnswer(inv -> inv.getArgument(0, Long.class));
+        org.mockito.Mockito.when(mockProductIdResolver.reverseResolveProductGroupId(org.mockito.ArgumentMatchers.anyLong()))
+                .thenAnswer(inv -> inv.getArgument(0, Long.class));
+        assembler = new LegacyOrderFromMarketAssembler(mockManager, mockProductIdResolver);
         mapping =
                 LegacyOrderIdMapping.forNew(
                         5001L,
@@ -322,7 +330,7 @@ class LegacyOrderFromMarketAssemblerTest {
             assertThat(result.order().orderStatus()).isEqualTo("DELIVERY_PENDING");
             assertThat(result.histories()).hasSize(1);
             assertThat(result.histories().getFirst().orderId()).isEqualTo(5001L);
-            assertThat(result.histories().getFirst().orderStatus()).isEqualTo("CONFIRMED");
+            assertThat(result.histories().getFirst().orderStatus()).isEqualTo("ORDER_COMPLETED");
         }
 
         @Test

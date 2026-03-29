@@ -34,10 +34,13 @@ import org.springframework.stereotype.Component;
 public class LegacyOrderFromMarketAssembler {
 
     private final LegacySellerIdMappingReadManager sellerIdMappingReadManager;
+    private final com.ryuqq.marketplace.application.legacy.productcontext.resolver.LegacyProductIdResolver productIdResolver;
 
     public LegacyOrderFromMarketAssembler(
-            LegacySellerIdMappingReadManager sellerIdMappingReadManager) {
+            LegacySellerIdMappingReadManager sellerIdMappingReadManager,
+            com.ryuqq.marketplace.application.legacy.productcontext.resolver.LegacyProductIdResolver productIdResolver) {
         this.sellerIdMappingReadManager = sellerIdMappingReadManager;
+        this.productIdResolver = productIdResolver;
     }
 
     /**
@@ -81,14 +84,14 @@ public class LegacyOrderFromMarketAssembler {
         return new LegacyOrderDetailResult(
                 mapping.legacyOrderId(),
                 mapping.legacyPaymentId(),
-                parseLongSafe(product.externalProductId(), product.productId()),
+                resolveLegacyProductId(product),
                 resolveLegacySellerId(product.sellerId(), order.shopId()),
                 0L,
                 product.paymentAmount(),
                 legacyStatus,
                 product.quantity(),
                 order.createdAt(),
-                product.productGroupId(),
+                resolveLegacyProductGroupId(product.productGroupId()),
                 safe(product.productGroupName()),
                 product.brandId() != null ? product.brandId() : 0L,
                 safe(product.brandName()),
@@ -160,14 +163,14 @@ public class LegacyOrderFromMarketAssembler {
         return new LegacyOrderDetailResult(
                 mapping.legacyOrderId(),
                 mapping.legacyPaymentId(),
-                parseLongSafe(product.externalProductId(), product.productId()),
+                resolveLegacyProductId(product),
                 resolveLegacySellerId(product.sellerId(), order.shopId()),
                 0L,
                 product.paymentAmount(),
                 legacyStatus,
                 product.quantity(),
                 order.createdAt(),
-                product.productGroupId(),
+                resolveLegacyProductGroupId(product.productGroupId()),
                 safe(product.productGroupName()),
                 product.brandId() != null ? product.brandId() : 0L,
                 safe(product.brandName()),
@@ -334,6 +337,37 @@ public class LegacyOrderFromMarketAssembler {
         };
     }
 
+    // ==================== PK 역매핑 ====================
+
+    private long resolveLegacyProductId(ProductOrderInfo product) {
+        long externalId = parseLongSafe(product.externalProductId(), 0L);
+        if (externalId > 0) return externalId;
+        return productIdResolver.reverseResolveProductId(product.productId());
+    }
+
+    private long resolveLegacyProductGroupId(Long productGroupId) {
+        if (productGroupId == null) return 0L;
+        return productIdResolver.reverseResolveProductGroupId(productGroupId);
+    }
+
+    // ==================== 상태 변환 ====================
+
+    /** market 내부 상태 → 레거시 주문 상태. */
+    private String toLegacyOrderStatus(String status) {
+        if (status == null) return "";
+        return switch (status) {
+            case "ORDERED" -> "ORDER_PROCESSING";
+            case "CONFIRMED" -> "ORDER_COMPLETED";
+            case "SHIPPED" -> "DELIVERY_PROCESSING";
+            case "DELIVERED" -> "DELIVERY_COMPLETED";
+            case "CANCELLED" -> "SALE_CANCELLED_COMPLETED";
+            case "CANCEL_REQUESTED" -> "CANCEL_REQUEST_CONFIRMED";
+            case "REFUND_REQUESTED" -> "RETURN_REQUEST";
+            case "REFUND_COMPLETED" -> "RETURN_REQUEST_COMPLETED";
+            default -> status;
+        };
+    }
+
     // ==================== 통합 타임라인 ====================
 
     /**
@@ -355,7 +389,7 @@ public class LegacyOrderFromMarketAssembler {
                                             new LegacyOrderHistoryResult(
                                                     h.historyId(),
                                                     legacyOrderId,
-                                                    safe(h.toStatus()),
+                                                    toLegacyOrderStatus(h.toStatus()),
                                                     safe(h.changedBy()),
                                                     safe(h.reason()),
                                                     h.changedAt())));
@@ -473,7 +507,7 @@ public class LegacyOrderFromMarketAssembler {
         return new LegacyOrderHistoryResult(
                 history.historyId(),
                 legacyOrderId,
-                safe(history.toStatus()),
+                toLegacyOrderStatus(history.toStatus()),
                 safe(history.changedBy()),
                 safe(history.reason()),
                 history.changedAt());
